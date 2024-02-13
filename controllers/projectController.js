@@ -1,5 +1,7 @@
 const Project = require("../models/Project"); 
 const SalesOrder = require("../models/SalesOrder"); 
+const mongoose = require('mongoose');
+
 
 //Create project
 const createProject = async (req, res) => {
@@ -54,10 +56,21 @@ const createSaleOrder = async (productDetails) => {
 
 
 // Get all projects data
-const getAllProjects = async (req, res) => {
+const getProjectById = async (req, res) => {
   try {
-    const allProjects = await Project.find()
-    res.status(200).json(allProjects);
+    // const allProjects = await Project.find()
+    Project.aggregate([
+      {
+        $match: {
+            _id: new mongoose.Types.ObjectId(req.body.id) 
+        }
+      }
+    ]).then(result => {
+      console.log("fetched result",result.length);
+      res.status(200).json(result);
+    }).catch(err => {
+        console.error(err);
+    });      
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -123,6 +136,6 @@ const itemRandomNumber=()=>{
 
 module.exports = {
   createProject,
-  getAllProjects,
+  getProjectById,
   getAllProjectsList
 };
