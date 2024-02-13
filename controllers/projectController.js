@@ -1,8 +1,8 @@
 const Project = require("../models/Project"); 
 const createSaleOrder = require("../controllers/salesOrderController");
-const random8DigitNumber = require("../controllers/salesOrderController");
-const random7DigitNumber = require("../controllers/salesOrderController");
-const itemRandomNumber = require("../controllers/salesOrderController");
+// const random8DigitNumber = require("../controllers/salesOrderController");
+// const random7DigitNumber = require("../controllers/salesOrderController");
+// const itemRandomNumber = require("../controllers/salesOrderController");
 
 //Create project
 const createProject = async (req, res) => {
@@ -23,9 +23,12 @@ const createProject = async (req, res) => {
     });
     let ordDetails = {
       name:data.title,
-      order_number:random8DigitNumber(),
-      order_id:random7DigitNumber(),
-      items:itemRandomNumber,
+      // order_number:random8DigitNumber(),
+      // order_id:random7DigitNumber(),
+      // items:itemRandomNumber,
+      order_number:78654534,
+      order_id:9875643,
+      items:123,
       status:"Pending"
     }
     const cso = await createSaleOrder(ordDetails);

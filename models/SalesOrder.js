@@ -6,15 +6,15 @@ const salesorderSchema = new mongoose.Schema({
       required: true,
     },
     order_number: {
-      type: String,
+      type: Number,
       required: true,
     },
     order_id: {
-      type: String,
+      type: Number,
       required: true,
     },
     items: {
-      type: String,
+      type: Number,
       required: true,
     },
     status: {

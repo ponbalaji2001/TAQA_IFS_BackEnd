@@ -19,7 +19,7 @@ const createSaleOrder = async (productDetails) => {
   }
 };
 
-function random8DigitNumber() {
+const random8DigitNumber=()=> {
   
   let randomNumber = Math.floor(Math.random() * 100000000);
   
@@ -31,7 +31,7 @@ function random8DigitNumber() {
   return randomString;
 }
 
-function random7DigitNumber() {
+const random7DigitNumber=()=> {
   
   let randomNumber = Math.floor(Math.random() * 100000000);
   
@@ -43,7 +43,7 @@ function random7DigitNumber() {
   return randomString;
 }
 
-function itemRandomNumber(){
+const itemRandomNumber=()=>{
   return Math.floor(Math.random() * (700 - 100 + 1)) + 100;
 }
 
