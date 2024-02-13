@@ -1,4 +1,8 @@
 const Project = require("../models/Project"); 
+const createSaleOrder = require("../controllers/salesOrderController");
+const random8DigitNumber = require("../controllers/salesOrderController");
+const random7DigitNumber = require("../controllers/salesOrderController");
+const itemRandomNumber = require("../controllers/salesOrderController");
 
 //Create project
 const createProject = async (req, res) => {
@@ -17,7 +21,15 @@ const createProject = async (req, res) => {
       task:data.task,
       
     });
-    res.status(200).json({ message: "Project created successfully", project });
+    let ordDetails = {
+      name:data.title,
+      order_number:random8DigitNumber(),
+      order_id:random7DigitNumber(),
+      items:itemRandomNumber,
+      status:"Pending"
+    }
+    const cso = await createSaleOrder(ordDetails);
+    res.status(200).json({ message: "Project created successfully", project,"OrderCreated":cso});
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Internal server error" });

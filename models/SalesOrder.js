@@ -1,3 +1,5 @@
+const mongoose = require("mongoose");
+
 const salesorderSchema = new mongoose.Schema({
     name: {
       type: String,
