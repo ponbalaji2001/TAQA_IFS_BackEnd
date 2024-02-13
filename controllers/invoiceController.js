@@ -14,15 +14,24 @@ const createInvoice = async (req, res) => {
         amount_due:data.total
      });
      
-      res.status(200).json({ message: "User created successfully", user });
+      res.status(200).json({ message: "invoice created successfully", invoice});
     } catch (error) {
       console.log(error)
       res.status(500).json({ message: "Internal server error" });
     }
   };
   
+  const getAllInvoices = async (req, res) => {
+    try {
+      const allInvoices = await Invoice.find()
+      res.status(200).json(allInvoices);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  };
+
   module.exports = {
-    createProject,
-    getAllProjects,
-    getAllProjectsList
+    createInvoice,
+    getAllInvoices
   };
