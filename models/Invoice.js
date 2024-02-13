@@ -15,9 +15,6 @@ const invoiceSchema = new mongoose.Schema({
     from: {
       type: String,
       
-    },
-    status: {
-        type: String,
     },    
     service:[{
 
