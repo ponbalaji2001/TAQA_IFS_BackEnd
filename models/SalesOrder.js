@@ -19,8 +19,7 @@ const salesorderSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-    },
-    
+    },      
 
 });
   

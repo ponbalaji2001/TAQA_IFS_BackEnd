@@ -1,8 +1,5 @@
 const Project = require("../models/Project"); 
-const createSaleOrder = require("../controllers/salesOrderController");
-// const random8DigitNumber = require("../controllers/salesOrderController");
-// const random7DigitNumber = require("../controllers/salesOrderController");
-// const itemRandomNumber = require("../controllers/salesOrderController");
+const SalesOrder = require("../models/SalesOrder"); 
 
 //Create project
 const createProject = async (req, res) => {
@@ -18,26 +15,43 @@ const createProject = async (req, res) => {
       start_date:data.start_date,
       end_date:data.end_date,
       status:data.status,
-      task:data.task,
-      
+      task:data.task      
     });
     let ordDetails = {
       name:data.title,
-      // order_number:random8DigitNumber(),
-      // order_id:random7DigitNumber(),
-      // items:itemRandomNumber,
-      order_number:78654534,
-      order_id:9875643,
-      items:123,
+      order_number:random8DigitNumber(),
+      order_id:random7DigitNumber(),
+      items:itemRandomNumber(),      
       status:"Pending"
     }
     const cso = await createSaleOrder(ordDetails);
+    console.log("cso worked",cso);
     res.status(200).json({ message: "Project created successfully", project,"OrderCreated":cso});
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+const createSaleOrder = async (productDetails) => {
+  try {
+    const data =productDetails;
+    const salesorder =await SalesOrder.create({
+      name:data.name,
+      order_number:data.order_number,
+      order_id:data.order_id,
+      items:data.items,
+      status:data.status,
+    });
+    return true;
+    // res.status(200).json({ message: "Project created successfully", salesorder});
+  } catch (error) {
+    console.log(error);
+    return false;
+    // res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 
 // Get all projects data
 const getAllProjects = async (req, res) => {
@@ -76,6 +90,36 @@ const getAllProjectsList = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+
+const random8DigitNumber=()=> {
+  
+  let randomNumber = Math.floor(Math.random() * 100000000);
+  
+  let randomString = randomNumber.toString();
+  
+  while (randomString.length < 8) {
+    randomString = '0' + randomString;
+  }
+  return randomString;
+}
+
+const random7DigitNumber=()=> {
+  
+  let randomNumber = Math.floor(Math.random() * 100000000);
+  
+  let randomString = randomNumber.toString();
+  
+  while (randomString.length < 7) {
+    randomString = '0' + randomString;
+  }
+  return randomString;
+}
+
+const itemRandomNumber=()=>{
+  return Math.floor(Math.random() * (700 - 100 + 1)) + 100;
+}
+
 
 module.exports = {
   createProject,
