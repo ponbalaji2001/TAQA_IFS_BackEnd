@@ -34,7 +34,7 @@ const getSOList = async (req, res) => {
 };
 
 const editSODetails = async(req,res)=>{ 
-  const filter = { status: "Pending", order_id: req.body.id }; // Update YOUR_ORDER_ID with the specific order ID
+  const filter = { status: "Pending", order_id: req.body.orderid }; // Update YOUR_ORDER_ID with the specific order ID
   const update = { status: req.body.status };
   SalesOrder.updateOne(filter, { $set: update })
   .then(result => {
