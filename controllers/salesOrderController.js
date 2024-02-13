@@ -6,6 +6,11 @@ const getSOList = async (req, res) => {
     // const allProjects = await Project.find();
     SalesOrder.aggregate([
       {
+        $match: {
+            status: "Pending"
+        }
+      },
+      {
           $project: {
             name:1,
             order_number:1,
