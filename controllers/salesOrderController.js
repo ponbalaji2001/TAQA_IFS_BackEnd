@@ -63,7 +63,7 @@ const updateSObyId = async (req, res) => {
   const soId = req.params.id;
   const data = req.body;
   try {
-    const so = await Project.findByIdAndUpdate(
+    const so = await SalesOrder.findByIdAndUpdate(
       soId,
       {
        name:data.name,
@@ -79,6 +79,7 @@ const updateSObyId = async (req, res) => {
     }
     res.status(200).json({ message: "Sale order updated successfully", so });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: "Internal server error" });
   }
 }
@@ -87,7 +88,7 @@ const getSOById = async (req, res) => {
   const soId = req.params.id;
 
   try {
-    const so = await ITServices.findById(soId)
+    const so = await SalesOrder.findById(soId)
 
     if (!so) {
       return res.status(404).json({ error: "ITServices not found" });
