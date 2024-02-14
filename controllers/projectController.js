@@ -89,7 +89,7 @@ const getAllProjectsList = async (req, res) => {
               status: 1,
               start_date: 1,
               end_date: 1,
-              _id: 0 // Excluding _id field
+              _id: 1 // Excluding _id field
           }
       }
   ]).then(result => {
