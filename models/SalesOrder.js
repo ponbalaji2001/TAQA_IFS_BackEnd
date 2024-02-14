@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 
 const salesorderSchema = new mongoose.Schema({
+   p_id: {
+    type: String,
+    required: true,
+   },
     name: {
       type: String,
       required: true,
@@ -19,7 +23,35 @@ const salesorderSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-    },      
+    },
+    task_cost:[{   
+      mls:[{}], 
+      mws:[{}], 
+      aws:[{}],
+      mps:[{}],
+      mss:[{}], 
+      mis:[{}], 
+      mdds:[{}]
+   }],
+    total_manpower_cost: {
+        type: Number,
+        required: true,
+    },
+    total_equipment_cost: {
+      type: Number,
+      required: true,
+    },
+    tax: {
+        type: Number
+    }, 
+    total_cost: {
+        type: Number,
+        required: true,
+    },
+    amount_due: {
+        type: Number,
+    },        
+  
 
 });
   
