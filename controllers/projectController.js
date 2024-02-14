@@ -19,7 +19,9 @@ const createProject = async (req, res) => {
       status:data.status,
       task:data.task      
     });
+
     let ordDetails = {
+      p_id:project._id,
       name:data.title,
       order_number:random8DigitNumber(),
       order_id:random7DigitNumber(),
@@ -104,6 +106,51 @@ const getAllProjectsList = async (req, res) => {
   }
 };
 
+const updateProjectbyId = async (req, res) => {
+  const projectId = req.params.id;
+  const data = req.body;
+  try {
+    const project = await Project.findByIdAndUpdate(
+      projectId,
+      {
+        title:data.title,
+        assignee:data.assignee,
+        reporter:data.reporter,
+        location:data.location,
+        priority:data.priority,
+        description:data.description,
+        start_date:data.start_date,
+        end_date:data.end_date,
+        status:data.status,
+        task:data.task    
+      },
+      { new: true }
+    );
+    if (!project) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+    res.status(200).json({ message: "Project updated successfully", project });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+}
+
+const deleteProjectById = async (req, res) => {
+  const projectId = req.params.id;
+  console.log("project id", projectId)
+
+  try {
+    const project = await Project.findByIdAndDelete(projectId);
+    if (!project) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+    res.status(200).json({ message: "Project deleted successfully", project });
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 
 const random8DigitNumber=()=> {
   
@@ -137,5 +184,7 @@ const itemRandomNumber=()=>{
 module.exports = {
   createProject,
   getProjectById,
-  getAllProjectsList
+  deleteProjectById,
+  getAllProjectsList,
+  updateProjectbyId
 };
