@@ -10,7 +10,7 @@ router.get("/project/getallproductlist", projectController.getAllProjectsList);
 router.get("/so/getsolist", SOController.getSOList);
 router.post("/so/updatesostatus", SOController.editSODetails);
 router.delete("/so/delete/:id", SOController.deleteSOById);
-router.get("/so/get/:id", SOController.deleteSOById);
+router.get("/so/get/:id", SOController.getSOById);
 router.patch("/so/update/:id", SOController.updateSObyId);
 
 module.exports = router;
