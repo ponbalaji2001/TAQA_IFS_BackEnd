@@ -16,6 +16,7 @@ const getSOList = async (req, res) => {
       },
       {
           $project: {
+            p_id:1,
             name:1,
             order_number:1,
             order_id:1,
