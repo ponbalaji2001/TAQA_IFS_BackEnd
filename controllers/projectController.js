@@ -20,138 +20,69 @@ const createProject = async (req, res) => {
       task:data.task      
     });
 
-  let totalManpowerCost = 0;
-  let totalEquipmentCost = 0;
-  let mls_mp_cost=0;
-  let mls_eq_cost=0;
-  let mws_mp_cost=0;
-  let mws_eq_cost=0;
-  let aws_mp_cost=0;
-  let aws_eq_cost=0;
-  let mps_mp_cost=0;
-  let mps_eq_cost=0;
-  let mss_mp_cost=0;
-  let mss_eq_cost=0;
-  let mis_mp_cost=0;
-  let mis_eq_cost=0;
-  let mdds_mp_cost=0;
-  let mdds_eq_cost=0;
-  let total_cost=0;
-  
+    let taskTypes = ["mls", "mws", "aws", "mps", "mss", "mis", "mdds"];
+    let totalManpowerCost = 0;
+    let totalEquipmentCost = 0;
+    let totalCost = 0;
+    let totalCostArr = [];
 
-if (data.task) {
-  data.task.forEach(taskType => {
-    taskType.mls?.forEach(ml => {
-      ml.man_power?.forEach(mp => {
-        mls_mp_cost += mp.salary;
-      });
-      ml.equipment?.forEach(eq => {
-        mls_eq_cost += eq.cost;
-      });
+    let costs = {};
+    taskTypes.forEach(taskType => {
+      costs[`${taskType}_mp_cost`] = 0;
+      costs[`${taskType}_eq_cost`] = 0;
     });
-
-    taskType.mws?.forEach(aw => {
-      aw.man_power?.forEach(mp => {
-        mws_mp_cost += mp.salary;
+    
+    if (data.task) {
+      data.task.forEach(taskType => {
+        let typeCosts = { [taskType]: [] };
+    
+        taskTypes.forEach(type => {
+          let mpCost = 0;
+          let eqCost = 0;
+    
+          taskType[type]?.forEach(item => {
+            item.man_power?.forEach(mp => {
+              mpCost += mp.salary;
+            });
+            item.equipment?.forEach(eq => {
+              eqCost += eq.cost;
+            });
+          });
+    
+          if (mpCost !== 0 || eqCost !== 0) {
+            typeCosts[taskType].push({
+              [`${type}_mp_cost`]: mpCost,
+              [`${type}_eq_cost`]: eqCost,
+            });
+          }
+    
+          costs[`${type}_mp_cost`] += mpCost;
+          costs[`${type}_eq_cost`] += eqCost;
+          totalManpowerCost += costs[`${type}_mp_cost`];
+          totalEquipmentCost += costs[`${type}_eq_cost`];
+        });
+        totalCostArr.push(typeCosts);
       });
-      aw.equipment?.forEach(eq => {
-        mws_eq_cost += eq.cost;
-      });
-    }); 
-
-
-    taskType.aws?.forEach(aw => {
-      aw.man_power?.forEach(mp => {
-        aws_mp_cost += mp.salary;
-      });
-      aw.equipment?.forEach(eq => {
-        aws_eq_cost += eq.cost;
-      });
-    });
-
-    taskType.mps?.forEach(aw => {
-      aw.man_power?.forEach(mp => {
-        mps_mp_cost += mp.salary;
-      });
-      aw.equipment?.forEach(eq => {
-        mps_eq_cost += eq.cost;
-      });
-    });
-
-    taskType.mss?.forEach(aw => {
-      aw.man_power?.forEach(mp => {
-         mss_mp_cost += mp.salary;
-      });
-      aw.equipment?.forEach(eq => {
-        mss_eq_cost += eq.cost;
-      });
-    });
-
-    taskType.mis?.forEach(aw => {
-      aw.man_power?.forEach(mp => {
-         mis_mp_cost += mp.salary;
-      });
-      aw.equipment?.forEach(eq => {
-        mis_eq_cost += eq.cost;
-      });
-    });
-
-    taskType.mdds?.forEach(aw => {
-      aw.man_power?.forEach(mp => {
-        mdds_mp_cost += mp.salary;
-      });
-      aw.equipment?.forEach(eq => {
-        mdds_eq_cost += eq.cost;
-      });
-    });
-   
-  });
-}
-  
-  totalManpowerCost=mls_mp_cost+mws_mp_cost+aws_mp_cost+mps_mp_cost+mss_mp_cost+mis_mp_cost+mdds_mp_cost;
-  totalEquipmentCost=mls_eq_cost+mws_eq_cost+aws_eq_cost+mps_eq_cost+mss_eq_cost+mis_mp_cost+mdds_eq_cost;
-  total_cost=totalManpowerCost+totalEquipmentCost;
-  console.log(totalManpowerCost+" "+totalEquipmentCost);
+    }
+    
+    totalCost= totalManpowerCost+totalEquipmentCost;
+    
+    // console.log("Total Cost Array:", JSON.stringify(totalCostArr, null, 2));
+    // console.log("Total Manpower Cost:", totalManpowerCost);
+    // console.log("Total Equipment Cost:", totalEquipmentCost);
+    // console.log("Total Cost:", totalCost);
     
     let ordDetails = {
       p_id:project._id,
+      date:new Date(),
       name:data.title,
       order_number:random8DigitNumber(),
       order_id:random7DigitNumber(),
       items:itemRandomNumber(),
-      task_cost:[{
-        mls:[{
-          mls_manpower_cost:mls_mp_cost,
-          mls_equipment_cost:mls_eq_cost,
-        }], 
-        mws:[{
-          mws_manpower_cost:mws_mp_cost,
-          mws_equipment_cost:mws_eq_cost,
-        }], 
-        aws:[{
-          aws_manpower_cost:aws_mp_cost,
-          aws_equipment_cost:aws_eq_cost,
-        }],
-        mps:[{
-          mps_manpower_cost:mps_mp_cost,
-          mps_equipment_cost:mps_eq_cost,
-        }],
-        mss:[{
-          mss_manpower_cost:mss_mp_cost,
-          mss_equipment_cost:mss_eq_cost,
-        }], 
-        mis:[{
-          mis_manpower_cost:mis_mp_cost,
-          mis_equipment_cost:mis_eq_cost,
-        }], 
-        mdds:[{
-          mdds_manpower_cost:mdds_mp_cost,
-          mdds_equipment_cost:mdds_eq_cost,
-        }]
-      }],
+      task_cost:totalCostArr,
       total_manpower_cost:totalManpowerCost,
       total_equipment_cost:totalEquipmentCost, 
-      total_cost:total_cost,     
+      total_cost:totalCost,     
       status:"Pending"
     }
     const cso = await createSaleOrder(ordDetails);
@@ -168,13 +99,14 @@ const createSaleOrder = async (productDetails) => {
     const data =productDetails;
     const salesorder =await SalesOrder.create({
       p_id:data.p_id,
+      date:data.date,
       name:data.name,
       order_number:data.order_number,
       order_id:data.order_id,
       items:data.items,
       task_cost:data.task_cost,
       total_manpower_cost:data.total_manpower_cost,
-      total_equipment_cost:data.totalEquipmentCost,
+      total_equipment_cost:data.total_equipment_cost,
       total_cost:data.total_cost,
       status:data.status
     });

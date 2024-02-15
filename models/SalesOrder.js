@@ -5,6 +5,10 @@ const salesorderSchema = new mongoose.Schema({
     type: String,
     required: true,
    },
+   issue_date: {
+    type: Date,
+    required: true,
+  },
     name: {
       type: String,
       required: true,
