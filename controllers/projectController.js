@@ -73,7 +73,7 @@ const createProject = async (req, res) => {
       p_id:project.pid,
       issue_date:new Date(),
       due_date:project.end_date,
-      project_locaton:project.location,
+      project_location:project.location,
       name:data.title,
       order_number:random8DigitNumber(),
       order_id:project._id,
@@ -126,6 +126,7 @@ const createSaleOrder = async (productDetails) => {
     return false;
     // res.status(500).json({ message: "Internal server error" });
   }
+
 };
 
 
@@ -182,10 +183,11 @@ const updateProjectbyId = async (req, res) => {
   const projectId = req.params.id;
   const data = req.body;
   try {
-    const project = await Project.findByIdAndUpdate(
-      projectId,
-      {
+
+    try {
+      const project =await Project.create({
         title:data.title,
+        pid:random7DigitNumber(),
         assignee:data.assignee,
         reporter:data.reporter,
         location:data.location,
@@ -194,14 +196,125 @@ const updateProjectbyId = async (req, res) => {
         start_date:data.start_date,
         end_date:data.end_date,
         status:data.status,
-        task:data.task    
-      },
-      { new: true }
-    );
-    if (!project) {
-      return res.status(404).json({ message: "Project not found" });
+        task:data.task      
+      });
+  
+      let totalManpowerCost = 0;
+      let totalEquipmentCost = 0;
+      let totalCost = 0;
+      let tax=0;
+      let allEquipments = [];
+      let allManPower = [];
+  
+      if (data.task) {
+        data.task.forEach(taskType => {
+          Object.keys(taskType).forEach(type => {
+            taskType[type]?.forEach(item => {
+  
+              item.man_power?.forEach(eq => {
+                const manpowerDetails = {
+                  empid: eq.empid,
+                  empname: eq.empname,
+                  experience: eq.experience,
+                  designation: eq.designation,
+                  salary: eq.salary,
+                };
+                 
+                totalManpowerCost+=eq.salary;
+  
+                allManPower.push(manpowerDetails);
+              });
+  
+              item.equipment?.forEach(eq => {
+                const equipmentDetails = {
+                  equipmentid: eq.equipmentid,
+                  name: eq.name,
+                  quantity: eq.quantity,
+                  cost: eq.cost,
+                  specification: eq.specification,
+                };
+  
+                totalEquipmentCost += eq.quantity*eq.cost;
+  
+                allEquipments.push(equipmentDetails);
+              });
+            });
+          });
+        });
+      }
+      
+      totalCost= totalManpowerCost+totalEquipmentCost;
+      tax=0.1*totalCost;
+  
+      console.log(totalManpowerCost+" "+totalEquipmentCost+" "+totalCost);
+      let ordDetails = {
+        p_id:project.pid,
+        issue_date:new Date(),
+        due_date:project.end_date,
+        project_location:project.location,
+        name:data.title,
+        order_number:random8DigitNumber(),
+        order_id:project._id,
+        items:itemRandomNumber(),
+        all_manpower:allManPower,
+        all_equipment:allEquipments,
+        total_manpower_cost:totalManpowerCost,
+        total_equipment_cost:totalEquipmentCost, 
+        total_cost:totalCost,  
+        tax:tax,
+        amount_due: totalCost+tax,   
+        status:"Pending"
+      }
+      
+      const cso = await createSaleOrder(ordDetails);
+     
+    } catch (error) {
+      console.log(error);
     }
-    res.status(200).json({ message: "Project updated successfully", project });
+
+    try {
+      const project = await Project.findByIdAndDelete(projectId);
+      if (!project) {
+        // return res.status(404).json({ message: "Project not found" });
+        console.log("not found");
+      }
+      // res.status(200).json({ message: "Project deleted successfully", project });
+    } catch (error) {
+      console.log(error)
+      // res.status(500).json({ message: "Internal server error" });
+    }
+
+    try {
+      const project = await SalesOrder.findByIdAndDelete({order_number:data.pid});
+      if (!project) {
+        // return res.status(404).json({ message: "Project not found" });
+        console.log("not found");
+      }
+      // res.status(200).json({ message: "Project deleted successfully", project });
+    } catch (error) {
+      console.log(error)
+      // res.status(500).json({ message: "Internal server error" });
+    }
+    // const project = await Project.findByIdAndUpdate(
+    //   projectId,
+    //   {
+    //     title:data.title,
+    //     assignee:data.assignee,
+    //     reporter:data.reporter,
+    //     location:data.location,
+    //     priority:data.priority,
+    //     description:data.description,
+    //     start_date:data.start_date,
+    //     end_date:data.end_date,
+    //     status:data.status,
+    //     task:data.task    
+    //   },
+    //   { new: true }
+    // );
+    // if (!project) {
+    //   return res.status(404).json({ message: "Project not found" });
+    // }
+    res.status(200).json({ message: "Project updated successfully"});
   } catch (error) {
     res.status(500).json({ message: "Internal server error" });
   }
