@@ -39,25 +39,33 @@ const getSOList = async (req, res) => {
 };
 
 const editSODetails = async(req,res)=>{ 
-  const filter = { status: "Pending", order_id: new mongoose.Types.ObjectId(req.body.orderid)}; // Update YOUR_ORDER_ID with the specific order ID
-  const update = { status: req.body.status };
-  let ordid = req.body.orderid;
-  let statusVal = req.body.status;
+  const filter = {
+    status: "Pending",
+    order_id: new mongoose.Types.ObjectId(req.body.orderid),
+  };
 
-  SalesOrder.updateOne(filter, { $set: update })
-  .then(async result => {
-        console.log(result);
-        if(statusVal === "Approved"){
-            const updateMaster = await updateMasterEquipment(ordid);
-            console.log("updated successfully",updateMaster);
-            res.status(200).json({ message: "SO updated successfully", result});
-        }else{
-          res.status(200).json({ message: "SO not found", result});
-        }        
-  }).catch(err => {
-      console.error(err);
-      res.status(500).json({ error: "Internal Server Error" });
-  });
+  const update = {
+    status: req.body.status
+  };
+   
+  console.log(filter);
+
+  try {
+    const updatedOrder = await SalesOrder.findOneAndUpdate(filter, update, { new: true });
+
+    if (!updatedOrder) {
+      return res.status(404).json({ error: "SalesOrder not found" });
+    }
+
+    if(req.body.status === "Approved"){
+      const updateMaster = await updateMasterEquipment(req.body.orderid);
+      console.log("updated successfully",updateMaster);
+    }
+    
+    res.status(200).json({ message: "SO updated successfully", updatedOrder});
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 }
 
 
