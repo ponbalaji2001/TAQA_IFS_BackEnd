@@ -12,7 +12,10 @@ const employeeMaster = new mongoose.Schema({
     },
     experience: {
         type: String,
-    }    
+    },
+    salary: {
+        type: Number,
+    },    
   });
   
   const EmployeeMaster = mongoose.model("employee", employeeMaster);

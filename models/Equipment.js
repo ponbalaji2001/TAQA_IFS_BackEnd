@@ -11,7 +11,7 @@ const equipmentMaster = new mongoose.Schema({
         type: Number,
     },
     cost: {
-        type: String,
+        type: Number,
     },
     specification: {
         type: String,

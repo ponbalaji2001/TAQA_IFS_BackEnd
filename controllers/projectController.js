@@ -20,57 +20,50 @@ const createProject = async (req, res) => {
       task:data.task      
     });
 
-    let taskTypes = ["mls", "mws", "aws", "mps", "mss", "mis", "mdds"];
     let totalManpowerCost = 0;
     let totalEquipmentCost = 0;
     let totalCost = 0;
-    let totalCostArr = [];
+    let allEquipments = [];
+    let allManPower = [];
 
-    let costs = {};
-    taskTypes.forEach(taskType => {
-      costs[`${taskType}_mp_cost`] = 0;
-      costs[`${taskType}_eq_cost`] = 0;
-    });
-    
     if (data.task) {
       data.task.forEach(taskType => {
-        let typeCosts = { [taskType]: [] };
-    
-        taskTypes.forEach(type => {
-          let mpCost = 0;
-          let eqCost = 0;
-    
+        Object.keys(taskType).forEach(type => {
           taskType[type]?.forEach(item => {
-            item.man_power?.forEach(mp => {
-              mpCost += mp.salary;
+
+            item.man_power?.forEach(eq => {
+              const manpowerDetails = {
+                empid: eq.empid,
+                empname: eq.empname,
+                experience: eq.experience,
+                designation: eq.designation,
+                salary: eq.salary,
+              };
+               
+              totalManpowerCost+=eq.salary;
+
+              allEquipments.push(manpowerDetails);
             });
+
             item.equipment?.forEach(eq => {
-              eqCost += eq.cost;
+              const equipmentDetails = {
+                equipmentid: eq.equipmentid,
+                name: eq.name,
+                quantity: eq.quantity,
+                cost: eq.cost,
+                specification: eq.specification,
+              };
+
+              totalEquipmentCost += eq.quantity*eq.cost;
+
+              allEquipments.push(equipmentDetails);
             });
           });
-    
-          if (mpCost !== 0 || eqCost !== 0) {
-            typeCosts[taskType].push({
-              [`${type}_mp_cost`]: mpCost,
-              [`${type}_eq_cost`]: eqCost,
-            });
-          }
-    
-          costs[`${type}_mp_cost`] += mpCost;
-          costs[`${type}_eq_cost`] += eqCost;
-          totalManpowerCost += costs[`${type}_mp_cost`];
-          totalEquipmentCost += costs[`${type}_eq_cost`];
         });
-        totalCostArr.push(typeCosts);
       });
     }
     
     totalCost= totalManpowerCost+totalEquipmentCost;
-    
-    // console.log("Total Cost Array:", JSON.stringify(totalCostArr, null, 2));
-    // console.log("Total Manpower Cost:", totalManpowerCost);
-    // console.log("Total Equipment Cost:", totalEquipmentCost);
-    // console.log("Total Cost:", totalCost);
     
     let ordDetails = {
       p_id:project._id,
@@ -79,7 +72,8 @@ const createProject = async (req, res) => {
       order_number:random8DigitNumber(),
       order_id:project._id,
       items:itemRandomNumber(),
-      task_cost:totalCostArr,
+      all_manpower:allManPower,
+      all_equipment:allEquipments,
       total_manpower_cost:totalManpowerCost,
       total_equipment_cost:totalEquipmentCost, 
       total_cost:totalCost,     
@@ -87,8 +81,8 @@ const createProject = async (req, res) => {
     }
     
     const cso = await createSaleOrder(ordDetails);
-    console.log("cso worked",cso);
-    res.status(200).json({ message: "Project created successfully", project,"OrderCreated":cso});
+    // console.log("cso worked",cso);
+    res.status(200).json({ message: "Project created successfully", project, cso});
     
   } catch (error) {
     console.log(error);
@@ -112,7 +106,7 @@ const createSaleOrder = async (productDetails) => {
       total_cost:data.total_cost,
       status:data.status
     });
-    return true;
+    return salesorder;
     // res.status(200).json({ message: "Project created successfully", salesorder});
   } catch (error) {
     console.log(error);

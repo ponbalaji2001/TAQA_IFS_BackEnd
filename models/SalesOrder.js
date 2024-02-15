@@ -28,14 +28,11 @@ const salesorderSchema = new mongoose.Schema({
     status: {
         type: String,
     },
-    task_cost:[{   
-      mls:[{}], 
-      mws:[{}], 
-      aws:[{}],
-      mps:[{}],
-      mss:[{}], 
-      mis:[{}], 
-      mdds:[{}]
+   all_manpower:[{   
+    
+   }],
+   all_equipment:[{   
+    
    }],
     total_manpower_cost: {
         type: Number,
