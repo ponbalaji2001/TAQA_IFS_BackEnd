@@ -60,7 +60,7 @@ const salesorderSchema = new mongoose.Schema({
     },
     project_location:{
       type:String,
-      required: true,
+      required:true
     }       
   
 

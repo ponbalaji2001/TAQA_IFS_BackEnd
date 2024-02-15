@@ -73,7 +73,7 @@ const createProject = async (req, res) => {
       p_id:project.pid,
       issue_date:new Date(),
       due_date:project.end_date,
-      project_location:project.location,
+      project_location:project.location || " ",
       name:data.title,
       order_number:random8DigitNumber(),
       order_id:project._id,
@@ -105,7 +105,7 @@ const createSaleOrder = async (productDetails) => {
       p_id:data.p_id,
       issue_date:data.issue_date,
       due_date:data.due_date,
-      project_locaton:data.locaton,
+      project_location:data.project_location,
       name:data.name,
       order_number:data.order_number,
       order_id:data.order_id,
@@ -183,7 +183,7 @@ const updateProjectbyId = async (req, res) => {
   const projectId = req.params.id;
   const data = req.body;
   try {
-
+    let resultData={};
     try {
       const project =await Project.create({
         title:data.title,
@@ -251,7 +251,7 @@ const updateProjectbyId = async (req, res) => {
         p_id:project.pid,
         issue_date:new Date(),
         due_date:project.end_date,
-        project_location:project.location,
+        project_location:project.location || " ",
         name:data.title,
         order_number:random8DigitNumber(),
         order_id:project._id,
@@ -267,54 +267,40 @@ const updateProjectbyId = async (req, res) => {
       }
       
       const cso = await createSaleOrder(ordDetails);
-     
+      resultData["updatedProject"] = project;
+      resultData["updatedSo"] = cso;
     } catch (error) {
       console.log(error);
     }
 
     try {
-      const project = await Project.findByIdAndDelete(projectId);
+      const project = await Project.findByIdAndDelete(data._id);
       if (!project) {
-        // return res.status(404).json({ message: "Project not found" });
-        console.log("not found");
+        console.log("Project not found");
+        resultData["oldProject"] = false;
+      }else{
+        resultData["oldProject"] = true;
+        console.log("Project deleted successfully");
       }
-      // res.status(200).json({ message: "Project deleted successfully", project });
     } catch (error) {
       console.log(error)
-      // res.status(500).json({ message: "Internal server error" });
     }
 
     try {
-      const project = await SalesOrder.findByIdAndDelete({order_number:data.pid});
+      let d = { order_id: data._id };
+      const project = await SalesOrder.deleteMany(d);
       if (!project) {
-        // return res.status(404).json({ message: "Project not found" });
-        console.log("not found");
-      }
-      // res.status(200).json({ message: "Project deleted successfully", project });
+        resultData["oldSO"] = false;
+        console.log("SO not found");
+      }else{
+        resultData["oldSO"] = true;
+        console.log("Sales order deleted successfully");
+      }      
     } catch (error) {
       console.log(error)
-      // res.status(500).json({ message: "Internal server error" });
-    }
-    // const project = await Project.findByIdAndUpdate(
-    //   projectId,
-    //   {
-    //     title:data.title,
-    //     assignee:data.assignee,
-    //     reporter:data.reporter,
-    //     location:data.location,
-    //     priority:data.priority,
-    //     description:data.description,
-    //     start_date:data.start_date,
-    //     end_date:data.end_date,
-    //     status:data.status,
-    //     task:data.task    
-    //   },
-    //   { new: true }
-    // );
-    // if (!project) {
-    //   return res.status(404).json({ message: "Project not found" });
-    // }
-    res.status(200).json({ message: "Project updated successfully"});
+    }  
+    console.log(resultData);
+    res.status(200).json({ message: "Project updated successfully",data:resultData});
   } catch (error) {
     res.status(500).json({ message: "Internal server error" });
   }
