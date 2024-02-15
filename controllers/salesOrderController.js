@@ -143,11 +143,17 @@ const updateSObyId = async (req, res) => {
     const so = await SalesOrder.findByIdAndUpdate(
       soId,
       {
-       name:data.name,
-       order_number:data.order_number,
-       order_id:data.order_id,
-       items:data.items,      
-       status:data.status
+        p_id:data.p_id,
+        date:data.date,
+        name:data.name,
+        order_number:data.order_number,
+        order_id:data.order_id,
+        items:data.items,
+        task_cost:data.task_cost,
+        total_manpower_cost:data.total_manpower_cost,
+        total_equipment_cost:data.total_equipment_cost,
+        total_cost:data.total_cost,
+        status:data.status
       },
       { new: true }
     );
