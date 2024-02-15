@@ -13,7 +13,8 @@ const createEmployee = async (req, res) => {
       empid:data.empid,
       empname:data.empname,
       designation:data.designation,
-      experience:data.experience
+      experience:data.experience,
+      salary:data.salary
    });
    console.log(employee);
     res.status(200).json({ message: "Employee created successfully",data:employee });
