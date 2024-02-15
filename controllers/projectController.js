@@ -42,7 +42,7 @@ const createProject = async (req, res) => {
                
               totalManpowerCost+=eq.salary;
 
-              allEquipments.push(manpowerDetails);
+              allManPower.push(manpowerDetails);
             });
 
             item.equipment?.forEach(eq => {
@@ -64,7 +64,7 @@ const createProject = async (req, res) => {
     }
     
     totalCost= totalManpowerCost+totalEquipmentCost;
-    
+    console.log(totalManpowerCost+" "+totalEquipmentCost+" "+totalCost);
     let ordDetails = {
       p_id:project._id,
       issue_date:new Date(),
@@ -100,7 +100,8 @@ const createSaleOrder = async (productDetails) => {
       order_number:data.order_number,
       order_id:data.order_id,
       items:data.items,
-      task_cost:data.task_cost,
+      all_manpower:data.all_manpower,
+      all_equipment:data.all_equipment,
       total_manpower_cost:data.total_manpower_cost,
       total_equipment_cost:data.total_equipment_cost,
       total_cost:data.total_cost,

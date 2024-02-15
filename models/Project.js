@@ -47,7 +47,10 @@ const projectSchema = new mongoose.Schema({
           },
           experience: {
               type: String,
-          },   
+          }, 
+         salary: {
+            type: Number,
+          },  
           duration: {
             type: Number,
           },
@@ -63,7 +66,7 @@ const projectSchema = new mongoose.Schema({
               type: Number,
           },
           cost: {
-              type: String,
+              type: Number,
           },
           specification: {
               type: String,
@@ -84,6 +87,9 @@ const projectSchema = new mongoose.Schema({
           },
           experience: {
               type: String,
+          },
+          salary: {
+            type: Number,
           },   
           duration: {
             type: Number,
@@ -101,7 +107,7 @@ const projectSchema = new mongoose.Schema({
               type: Number,
           },
           cost: {
-              type: String,
+              type: Number,
           },
           specification: {
               type: String,
@@ -122,6 +128,9 @@ const projectSchema = new mongoose.Schema({
           },
           experience: {
               type: String,
+          },
+          salary: {
+            type: Number,
           },   
           duration: {
             type: Number,
@@ -139,7 +148,7 @@ const projectSchema = new mongoose.Schema({
               type: Number,
           },
           cost: {
-              type: String,
+              type: Number,
           },
           specification: {
               type: String,
@@ -160,6 +169,9 @@ const projectSchema = new mongoose.Schema({
           },
           experience: {
               type: String,
+          },
+          salary: {
+            type: Number,
           },   
           duration: {
             type: Number,
@@ -177,7 +189,7 @@ const projectSchema = new mongoose.Schema({
               type: Number,
           },
           cost: {
-              type: String,
+              type: Number,
           },
           specification: {
               type: String,
@@ -197,6 +209,9 @@ const projectSchema = new mongoose.Schema({
           },
           experience: {
               type: String,
+          },
+          salary: {
+            type: Number,
           },   
           duration: {
             type: Number,
@@ -214,7 +229,7 @@ const projectSchema = new mongoose.Schema({
               type: Number,
           },
           cost: {
-              type: String,
+              type: Number,
           },
           specification: {
               type: String,
@@ -234,6 +249,9 @@ const projectSchema = new mongoose.Schema({
           },
           experience: {
               type: String,
+          },
+          salary: {
+            type: Number,
           },   
           duration: {
             type: Number,
@@ -251,7 +269,7 @@ const projectSchema = new mongoose.Schema({
               type: Number,
           },
           cost: {
-              type: String,
+              type: Number,
           },
           specification: {
               type: String,
