@@ -18,7 +18,8 @@ const getSOList = async (req, res) => {
           $project: {
             p_id:1,
             name:1,
-            order_number:1,
+            p_id:1,
+            project_id:1,
             order_id:1,
             items:1,
             status:1,
@@ -105,7 +106,7 @@ const updateMasterEquipment = async (orderid)=>{
         results.forEach(result => {
             EquipmentMaster.updateOne(
               { equipmentid: result._id },
-              { $inc: { quantity: -result.totalQuantity } }
+              { $inc: { quantity: - result.totalQuantity } }
             ).then(() => {
               console.log(`Updated quantity for ${result._id}`);
             }).catch(err => {
@@ -184,6 +185,8 @@ const getSOById = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+
 
 
 module.exports = {
