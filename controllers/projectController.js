@@ -24,6 +24,7 @@ const createProject = async (req, res) => {
     let totalManpowerCost = 0;
     let totalEquipmentCost = 0;
     let totalCost = 0;
+    let tax=0;
     let allEquipments = [];
     let allManPower = [];
 
@@ -65,10 +66,14 @@ const createProject = async (req, res) => {
     }
     
     totalCost= totalManpowerCost+totalEquipmentCost;
+    tax=0.1*totalCost;
+
     console.log(totalManpowerCost+" "+totalEquipmentCost+" "+totalCost);
     let ordDetails = {
       p_id:project.pid,
       issue_date:new Date(),
+      due_date:project.end_date,
+      project_locaton:project.location,
       name:data.title,
       order_number:random8DigitNumber(),
       order_id:project._id,
@@ -77,7 +82,9 @@ const createProject = async (req, res) => {
       all_equipment:allEquipments,
       total_manpower_cost:totalManpowerCost,
       total_equipment_cost:totalEquipmentCost, 
-      total_cost:totalCost,     
+      total_cost:totalCost,  
+      tax:tax,
+      amount_due: totalCost+tax,   
       status:"Pending"
     }
     
@@ -97,6 +104,8 @@ const createSaleOrder = async (productDetails) => {
     const salesorder =await SalesOrder.create({
       p_id:data.p_id,
       issue_date:data.issue_date,
+      due_date:data.due_date,
+      project_locaton:data.project_locaton,
       name:data.name,
       order_number:data.order_number,
       order_id:data.order_id,
@@ -106,6 +115,8 @@ const createSaleOrder = async (productDetails) => {
       total_manpower_cost:data.total_manpower_cost,
       total_equipment_cost:data.total_equipment_cost,
       total_cost:data.total_cost,
+      tax:data.tax,
+      amount_due:data.amount_due,
       status:data.status
     });
     return salesorder;

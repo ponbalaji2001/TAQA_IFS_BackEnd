@@ -8,6 +8,10 @@ const salesorderSchema = new mongoose.Schema({
    issue_date: {
     type: Date,
     required: true,
+  }, 
+  due_date: {
+    type: Date,
+    required: true,
   },
     name: {
       type: String,
@@ -51,7 +55,10 @@ const salesorderSchema = new mongoose.Schema({
     },
     amount_due: {
         type: Number,
-    },        
+    },
+    project_location:{
+      type:String,
+    }       
   
 
 });

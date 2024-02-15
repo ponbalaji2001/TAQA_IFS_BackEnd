@@ -154,6 +154,8 @@ const updateSObyId = async (req, res) => {
       {
         p_id:data.p_id,
         issue_date:data.issue_date,
+        due_date:data.due_date,
+        project_locaton:data.project_location,
         name:data.name,
         order_number:data.order_number,
         order_id:data.order_id,
@@ -162,6 +164,8 @@ const updateSObyId = async (req, res) => {
         total_manpower_cost:data.total_manpower_cost,
         total_equipment_cost:data.total_equipment_cost,
         total_cost:data.total_cost,
+        tax:data.tax,
+        amount_due:data.amount_due,
         status:data.status
       },
       { new: true }
