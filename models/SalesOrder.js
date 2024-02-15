@@ -47,7 +47,8 @@ const salesorderSchema = new mongoose.Schema({
       required: true,
     },
     tax: {
-        type: Number
+        type: Number,
+        required: true,
     }, 
     total_cost: {
         type: Number,
@@ -55,9 +56,11 @@ const salesorderSchema = new mongoose.Schema({
     },
     amount_due: {
         type: Number,
+        required: true,
     },
     project_location:{
       type:String,
+      required: true,
     }       
   
 

@@ -17,6 +17,7 @@ const projectSchema = new mongoose.Schema({
     },
     location: {
       type: String, 
+      required: true,
       
     },
     priority: {
@@ -25,14 +26,16 @@ const projectSchema = new mongoose.Schema({
     },
     description: {
       type: String,
+      required: true,
     },
     start_date: {
       type: Date,
+      required: true,
      
     },
     end_date: {
       type: Date,
-      
+      required: true,
     },
     status: {
       type: String,
