@@ -105,7 +105,7 @@ const createSaleOrder = async (productDetails) => {
       p_id:data.p_id,
       issue_date:data.issue_date,
       due_date:data.due_date,
-      project_locaton:data.project_locaton,
+      project_locaton:data.locaton,
       name:data.name,
       order_number:data.order_number,
       order_id:data.order_id,
