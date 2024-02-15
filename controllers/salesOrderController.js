@@ -144,7 +144,7 @@ const updateSObyId = async (req, res) => {
       soId,
       {
         p_id:data.p_id,
-        date:data.date,
+        issue_date:data.issue_date,
         name:data.name,
         order_number:data.order_number,
         order_id:data.order_id,

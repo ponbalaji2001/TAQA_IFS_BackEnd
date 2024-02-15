@@ -74,7 +74,7 @@ const createProject = async (req, res) => {
     
     let ordDetails = {
       p_id:project._id,
-      date:new Date(),
+      issue_date:new Date(),
       name:data.title,
       order_number:random8DigitNumber(),
       order_id:project._id,
@@ -86,6 +86,9 @@ const createProject = async (req, res) => {
       status:"Pending"
     }
     
+    const cso = await createSaleOrder(ordDetails);
+    console.log("cso worked",cso);
+    res.status(200).json({ message: "Project created successfully", project,"OrderCreated":cso});
     
   } catch (error) {
     console.log(error);
@@ -98,7 +101,7 @@ const createSaleOrder = async (productDetails) => {
     const data =productDetails;
     const salesorder =await SalesOrder.create({
       p_id:data.p_id,
-      date:data.date,
+      issue_date:data.issue_date,
       name:data.name,
       order_number:data.order_number,
       order_id:data.order_id,
