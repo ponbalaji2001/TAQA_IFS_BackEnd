@@ -14,7 +14,7 @@ const salesorderSchema = new mongoose.Schema({
       required: true,
     },
     order_id: {
-      type: Number,
+      type: mongoose.Schema.Types.ObjectId,
       required: true,
     },
     items: {

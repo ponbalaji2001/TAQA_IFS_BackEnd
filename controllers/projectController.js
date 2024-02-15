@@ -20,6 +20,7 @@ const createProject = async (req, res) => {
       task:data.task      
     });
 
+
   let totalManpowerCost = 0;
   let totalEquipmentCost = 0;
   let mls_mp_cost=0;
@@ -117,7 +118,7 @@ if (data.task) {
       p_id:project._id,
       name:data.title,
       order_number:random8DigitNumber(),
-      order_id:random7DigitNumber(),
+      order_id:project._id,
       items:itemRandomNumber(),
       task_cost:[{
         mls:[{
@@ -154,9 +155,8 @@ if (data.task) {
       total_cost:total_cost,     
       status:"Pending"
     }
-    const cso = await createSaleOrder(ordDetails);
-    console.log("cso worked",cso);
-    res.status(200).json({ message: "Project created successfully", project,"OrderCreated":cso});
+    
+    
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Internal server error" });

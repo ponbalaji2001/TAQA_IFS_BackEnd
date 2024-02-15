@@ -7,10 +7,10 @@ const employeeMaster = new mongoose.Schema({
     empname: {
         type: String,
     },
-    desigination: {
+    designation: {
         type: String,
     },
-    salary: {
+    experience: {
         type: String,
     }    
   });

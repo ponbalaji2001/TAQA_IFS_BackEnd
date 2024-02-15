@@ -6,15 +6,13 @@ const projectSchema = new mongoose.Schema({
       required: true,
     },
     assignee: {
-      type: String,
-      required: true,
+      type: String,      
     },
     reporter: {
       type: String,
-      required: true,
     },
     location: {
-      type: String,
+      type: String, 
       required: true,
     },
     priority: {
@@ -38,229 +36,225 @@ const projectSchema = new mongoose.Schema({
     task:[{
       mls:[{
         man_power:[{
-          name: {
+          empid: {
             type: String,
           },
-          role: {
-            type: String,
+          empname: {
+              type: String,
+          },
+          desigination: {
+              type: String,
           },
           experience: {
-            type: Number,
-          },
-          salary: {
-            type: Number,
-          },
-          work_hours: {
+              type: String,
+          },   
+          duration: {
             type: Number,
           },
         }],
-
         equipment:[{
+          equipmentid: {
+            type: String,
+          },
           name: {
-            type: String,
+              type: String,
           },
-          size: {
-            type: String,
-          },
-          experience:{
-            type: Number,
+          quantity: {
+              type: Number,
           },
           cost: {
-            type: Number,
+              type: String,
           },
-          work_hours: {
-            type: Number,
+          specification: {
+              type: String,
           },
         }],
-
       }],
       mws:[{
          
         man_power:[{
-          name: {
+          empid: {
             type: String,
           },
-          role: {
-            type: String,
+          empname: {
+              type: String,
+          },
+          desigination: {
+              type: String,
           },
           experience: {
-            type: Number,
-          },
-          salary: {
-            type: Number,
-          },
-          work_hours: {
+              type: String,
+          },   
+          duration: {
             type: Number,
           },
         }],
 
         equipment:[{
+          equipmentid: {
+            type: String,
+          },
           name: {
-            type: String,
+              type: String,
           },
-          size: {
-            type: String,
-          },
-          experience:{
-            type: Number,
+          quantity: {
+              type: Number,
           },
           cost: {
-            type: Number,
+              type: String,
           },
-          work_hours: {
-            type: Number,
+          specification: {
+              type: String,
           },
         }],
         
       }],
       aws:[{
         man_power:[{
-          name: {
+          empid: {
             type: String,
           },
-          role: {
-            type: String,
+          empname: {
+              type: String,
+          },
+          desigination: {
+              type: String,
           },
           experience: {
-            type: Number,
-          },
-          salary: {
-            type: Number,
-          },
-          work_hours: {
+              type: String,
+          },   
+          duration: {
             type: Number,
           },
         }],
 
         equipment:[{
+          equipmentid: {
+            type: String,
+          },
           name: {
-            type: String,
+              type: String,
           },
-          size: {
-            type: String,
-          },
-
-          experience:{
-            type: Number,
+          quantity: {
+              type: Number,
           },
           cost: {
-            type: Number,
+              type: String,
           },
-          work_hours: {
-            type: Number,
+          specification: {
+              type: String,
           },
         }],
 
       }],
       mps:[{
         man_power:[{
-          name: {
+          empid: {
             type: String,
           },
-          role: {
-            type: String,
+          empname: {
+              type: String,
+          },
+          desigination: {
+              type: String,
           },
           experience: {
-            type: Number,
-          },
-          salary: {
-            type: Number,
-          },
-          work_hours: {
+              type: String,
+          },   
+          duration: {
             type: Number,
           },
         }],
 
         equipment:[{
+          equipmentid: {
+            type: String,
+          },
           name: {
-            type: String,
+              type: String,
           },
-          size: {
-            type: String,
-          },
-          experience:{
-            type: Number,
+          quantity: {
+              type: Number,
           },
           cost: {
-            type: Number,
+              type: String,
           },
-          work_hours: {
-            type: Number,
+          specification: {
+              type: String,
           },
         }],
       }],
       mss:[{
         man_power:[{
-          name: {
+          empid: {
             type: String,
           },
-          role: {
-            type: String,
+          empname: {
+              type: String,
+          },
+          desigination: {
+              type: String,
           },
           experience: {
-            type: Number,
-          },
-          salary: {
-            type: Number,
-          },
-          work_hours: {
+              type: String,
+          },   
+          duration: {
             type: Number,
           },
         }],
 
         equipment:[{
+          equipmentid: {
+            type: String,
+          },
           name: {
-            type: String,
+              type: String,
           },
-          size: {
-            type: String,
-          },
-          experience:{
-            type: Number,
+          quantity: {
+              type: Number,
           },
           cost: {
-            type: Number,
+              type: String,
           },
-          work_hours: {
-            type: Number,
+          specification: {
+              type: String,
           },
         }],
       }],
       mdds:[{
         man_power:[{
-          name: {
+          empid: {
             type: String,
           },
-          role: {
-            type: String,
+          empname: {
+              type: String,
+          },
+          desigination: {
+              type: String,
           },
           experience: {
-            type: Number,
-          },
-          salary: {
-            type: Number,
-          },
-          work_hours: {
+              type: String,
+          },   
+          duration: {
             type: Number,
           },
         }],
 
         equipment:[{
+          equipmentid: {
+            type: String,
+          },
           name: {
-            type: String,
+              type: String,
           },
-          size: {
-            type: String,
-          },
-
-          experience:{
-            type: Number,
+          quantity: {
+              type: Number,
           },
           cost: {
-            type: Number,
+              type: String,
           },
-          work_hours: {
-            type: Number,
+          specification: {
+              type: String,
           },
         }],
       }],
