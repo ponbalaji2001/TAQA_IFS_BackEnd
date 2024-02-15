@@ -8,7 +8,7 @@ const equipmentMaster = new mongoose.Schema({
         type: String,
     },
     quantity: {
-        type: String,
+        type: Number,
     },
     cost: {
         type: String,

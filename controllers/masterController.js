@@ -1,5 +1,7 @@
 const EmployeeMaster = require("../models/employee"); 
 const EquipmentMaster = require("../models/Equipment");
+const Project = require("../models/Project"); 
+const mongoose = require('mongoose');
 
 const alive = async(req,res)=>{
     res.status(500).json("Success");
@@ -10,8 +12,8 @@ const createEmployee = async (req, res) => {
     const employee = await EmployeeMaster.create({
       empid:data.empid,
       empname:data.empname,
-      desigination:data.designation,
-      salary:data.salary
+      designation:data.designation,
+      experience:data.experience
    });
    console.log(employee);
     res.status(200).json({ message: "Employee created successfully",data:employee });
@@ -82,10 +84,96 @@ const getEquipmentByName = async(req,res)=>{
 }
 
 
+const updateMasterEquipment = async(req,res)=>{
+  
+
+Project.aggregate([
+  {
+    $match: {
+        _id: new mongoose.Types.ObjectId(req.body.orderid) 
+    }
+  },
+  { $unwind: "$task" },
+  { $unwind: { path: "$task.mls", preserveNullAndEmptyArrays: true } },
+  { $unwind: { path: "$task.mws", preserveNullAndEmptyArrays: true } },
+  { $unwind: { path: "$task.aws", preserveNullAndEmptyArrays: true } },
+  { $unwind: { path: "$task.mps", preserveNullAndEmptyArrays: true } },
+  { $unwind: { path: "$task.mss", preserveNullAndEmptyArrays: true } },
+  { $unwind: { path: "$task.mdds", preserveNullAndEmptyArrays: true } },
+  { 
+    $project: {
+      equipment: {
+        $concatArrays: [
+          "$task.mls.equipment",
+          "$task.mws.equipment",
+          "$task.aws.equipment",
+          "$task.mps.equipment",
+          "$task.mss.equipment",
+          "$task.mdds.equipment"
+        ]
+      }
+    } 
+  },
+  { $unwind: "$equipment" },
+  { 
+    $group: {
+      _id: "$equipment.equipmentid",
+      totalQuantity: { $sum: { $toInt: "$equipment.quantity" } }
+    }
+  }
+]).then(results => {
+  console.log("fetched result",results.length);
+  console.log(results);
+    // results is an array of objects containing _id (equipmentid) and totalQuantity
+    // Update master equipment table to reduce quantity
+    results.forEach(result => {
+        EquipmentMaster.updateOne(
+          { equipmentid: result._id },
+          { $inc: { quantity: -result.totalQuantity } }
+        ).then(() => {
+          console.log(`Updated quantity for ${result._id}`);
+        }).catch(err => {
+          console.error(err);
+          // Handle error        
+        });
+    }); 
+  res.status(200).json(results);
+}).catch(err => {
+    console.error(err);
+}); 
+}
+
+
+const getAllEquip = async (req, res) => {
+  try {
+    // const allProjects = await Project.find();
+    EquipmentMaster.aggregate([
+      {
+          $project: {
+            equipmentid: 1,
+            quantity: 1,
+            name: 1,              
+            _id: 0 // Excluding _id field
+          }
+      }
+  ]).then(result => {
+    console.log("fetched result",result.length);
+    res.status(200).json(result);
+  }).catch(err => {
+      console.error(err);
+  });  
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 module.exports = {
     createEmployee,
     createEquipment,
     alive,
     getEmployeeByName,
-    getEquipmentByName
+    getEquipmentByName,
+    updateMasterEquipment,
+    getAllEquip
 };

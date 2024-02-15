@@ -19,16 +19,22 @@ const createProject = async (req, res) => {
       status:data.status,
       task:data.task      
     });
-    let ordDetails = {
-      name:data.title,
-      order_number:random8DigitNumber(),
-      order_id:random7DigitNumber(),
-      items:itemRandomNumber(),      
-      status:"Pending"
+    if(project){
+      let ordDetails = {
+        name:data.title,
+        order_number:random8DigitNumber(),
+        order_id:project._id,
+        items:itemRandomNumber(),      
+        status:"Pending"
+      }
+      const cso = await createSaleOrder(ordDetails);
+      console.log("cso worked",cso);
+      res.status(200).json({ message: "Project created successfully", project,"OrderCreated":cso});
+    }else{
+      res.status(500).json({ message: "Unable to create a sales order" });
     }
-    const cso = await createSaleOrder(ordDetails);
-    console.log("cso worked",cso);
-    res.status(200).json({ message: "Project created successfully", project,"OrderCreated":cso});
+    
+    
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Internal server error" });
