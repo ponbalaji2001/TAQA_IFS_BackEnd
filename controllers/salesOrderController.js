@@ -18,8 +18,7 @@ const getSOList = async (req, res) => {
           $project: {
             p_id:1,
             name:1,
-            p_id:1,
-            project_id:1,
+            order_number:1,
             order_id:1,
             items:1,
             status:1,
@@ -53,7 +52,7 @@ const editSODetails = async(req,res)=>{
             console.log("updated successfully",updateMaster);
             res.status(200).json({ message: "SO updated successfully", result});
         }else{
-          res.status(200).json({ message: "SO updated successfully", result});
+          res.status(200).json({ message: "SO not found", result});
         }        
   }).catch(err => {
       console.error(err);
@@ -176,7 +175,7 @@ const getSOById = async (req, res) => {
     const so = await SalesOrder.findById(soId)
 
     if (!so) {
-      return res.status(404).json({ error: "ITServices not found" });
+      return res.status(404).json({ error: "so not found" });
     }
 
     res.status(200).json(so);

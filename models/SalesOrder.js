@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const salesorderSchema = new mongoose.Schema({
-   project_id: {
+   p_id: {
     type: Number,
     required: true,
    },
@@ -13,11 +13,11 @@ const salesorderSchema = new mongoose.Schema({
       type: String,
       required: true,
     },
-    order_id: {
+    order_number: {
       type: Number,
       required: true,
     },
-    p_id: {
+    order_id: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
     },
