@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const salesorderSchema = new mongoose.Schema({
    p_id: {
-    type: String,
+    type: Number,
     required: true,
    },
    issue_date: {

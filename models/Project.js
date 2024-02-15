@@ -5,6 +5,10 @@ const projectSchema = new mongoose.Schema({
       type: String,
       required: true,
     },
+    pid: {
+      type: Number,
+      required: true,
+    },
     assignee: {
       type: String,      
     },

@@ -153,7 +153,9 @@ const getAllEquip = async (req, res) => {
           $project: {
             equipmentid: 1,
             quantity: 1,
-            name: 1,              
+            name: 1,    
+            cost:1,
+            specification:1,        
             _id: 0 // Excluding _id field
           }
       }

@@ -9,6 +9,7 @@ const createProject = async (req, res) => {
     const data =req.body;
     const project =await Project.create({
       title:data.title,
+      pid:random7DigitNumber(),
       assignee:data.assignee,
       reporter:data.reporter,
       location:data.location,
@@ -66,7 +67,7 @@ const createProject = async (req, res) => {
     totalCost= totalManpowerCost+totalEquipmentCost;
     console.log(totalManpowerCost+" "+totalEquipmentCost+" "+totalCost);
     let ordDetails = {
-      p_id:project._id,
+      p_id:project.pid,
       issue_date:new Date(),
       name:data.title,
       order_number:random8DigitNumber(),
@@ -81,7 +82,7 @@ const createProject = async (req, res) => {
     }
     
     const cso = await createSaleOrder(ordDetails);
-    // console.log("cso worked",cso);
+    console.log("cso worked",cso);
     res.status(200).json({ message: "Project created successfully", project, cso});
     
   } catch (error) {
