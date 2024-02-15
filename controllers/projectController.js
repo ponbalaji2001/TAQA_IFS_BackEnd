@@ -19,19 +19,141 @@ const createProject = async (req, res) => {
       status:data.status,
       task:data.task      
     });
-    if(project){
-      let ordDetails = {
-        name:data.title,
-        order_number:random8DigitNumber(),
-        order_id:project._id,
-        items:itemRandomNumber(),      
-        status:"Pending"
-      }
-      const cso = await createSaleOrder(ordDetails);
-      console.log("cso worked",cso);
-      res.status(200).json({ message: "Project created successfully", project,"OrderCreated":cso});
-    }else{
-      res.status(500).json({ message: "Unable to create a sales order" });
+
+
+  let totalManpowerCost = 0;
+  let totalEquipmentCost = 0;
+  let mls_mp_cost=0;
+  let mls_eq_cost=0;
+  let mws_mp_cost=0;
+  let mws_eq_cost=0;
+  let aws_mp_cost=0;
+  let aws_eq_cost=0;
+  let mps_mp_cost=0;
+  let mps_eq_cost=0;
+  let mss_mp_cost=0;
+  let mss_eq_cost=0;
+  let mis_mp_cost=0;
+  let mis_eq_cost=0;
+  let mdds_mp_cost=0;
+  let mdds_eq_cost=0;
+  let total_cost=0;
+  
+
+if (data.task) {
+  data.task.forEach(taskType => {
+    taskType.mls?.forEach(ml => {
+      ml.man_power?.forEach(mp => {
+        mls_mp_cost += mp.salary;
+      });
+      ml.equipment?.forEach(eq => {
+        mls_eq_cost += eq.cost;
+      });
+    });
+
+    taskType.mws?.forEach(aw => {
+      aw.man_power?.forEach(mp => {
+        mws_mp_cost += mp.salary;
+      });
+      aw.equipment?.forEach(eq => {
+        mws_eq_cost += eq.cost;
+      });
+    }); 
+
+
+    taskType.aws?.forEach(aw => {
+      aw.man_power?.forEach(mp => {
+        aws_mp_cost += mp.salary;
+      });
+      aw.equipment?.forEach(eq => {
+        aws_eq_cost += eq.cost;
+      });
+    });
+
+    taskType.mps?.forEach(aw => {
+      aw.man_power?.forEach(mp => {
+        mps_mp_cost += mp.salary;
+      });
+      aw.equipment?.forEach(eq => {
+        mps_eq_cost += eq.cost;
+      });
+    });
+
+    taskType.mss?.forEach(aw => {
+      aw.man_power?.forEach(mp => {
+         mss_mp_cost += mp.salary;
+      });
+      aw.equipment?.forEach(eq => {
+        mss_eq_cost += eq.cost;
+      });
+    });
+
+    taskType.mis?.forEach(aw => {
+      aw.man_power?.forEach(mp => {
+         mis_mp_cost += mp.salary;
+      });
+      aw.equipment?.forEach(eq => {
+        mis_eq_cost += eq.cost;
+      });
+    });
+
+    taskType.mdds?.forEach(aw => {
+      aw.man_power?.forEach(mp => {
+        mdds_mp_cost += mp.salary;
+      });
+      aw.equipment?.forEach(eq => {
+        mdds_eq_cost += eq.cost;
+      });
+    });
+   
+  });
+}
+  
+  totalManpowerCost=mls_mp_cost+mws_mp_cost+aws_mp_cost+mps_mp_cost+mss_mp_cost+mis_mp_cost+mdds_mp_cost;
+  totalEquipmentCost=mls_eq_cost+mws_eq_cost+aws_eq_cost+mps_eq_cost+mss_eq_cost+mis_mp_cost+mdds_eq_cost;
+  total_cost=totalManpowerCost+totalEquipmentCost;
+  console.log(totalManpowerCost+" "+totalEquipmentCost);
+    
+    let ordDetails = {
+      p_id:project._id,
+      name:data.title,
+      order_number:random8DigitNumber(),
+      order_id:project._id,
+      items:itemRandomNumber(),
+      task_cost:[{
+        mls:[{
+          mls_manpower_cost:mls_mp_cost,
+          mls_equipment_cost:mls_eq_cost,
+        }], 
+        mws:[{
+          mws_manpower_cost:mws_mp_cost,
+          mws_equipment_cost:mws_eq_cost,
+        }], 
+        aws:[{
+          aws_manpower_cost:aws_mp_cost,
+          aws_equipment_cost:aws_eq_cost,
+        }],
+        mps:[{
+          mps_manpower_cost:mps_mp_cost,
+          mps_equipment_cost:mps_eq_cost,
+        }],
+        mss:[{
+          mss_manpower_cost:mss_mp_cost,
+          mss_equipment_cost:mss_eq_cost,
+        }], 
+        mis:[{
+          mis_manpower_cost:mis_mp_cost,
+          mis_equipment_cost:mis_eq_cost,
+        }], 
+        mdds:[{
+          mdds_manpower_cost:mdds_mp_cost,
+          mdds_equipment_cost:mdds_eq_cost,
+        }]
+      }],
+      total_manpower_cost:totalManpowerCost,
+      total_equipment_cost:totalEquipmentCost, 
+      total_cost:total_cost,     
+      status:"Pending"
     }
     
     
@@ -45,11 +167,16 @@ const createSaleOrder = async (productDetails) => {
   try {
     const data =productDetails;
     const salesorder =await SalesOrder.create({
+      p_id:data.p_id,
       name:data.name,
       order_number:data.order_number,
       order_id:data.order_id,
       items:data.items,
-      status:data.status,
+      task_cost:data.task_cost,
+      total_manpower_cost:data.total_manpower_cost,
+      total_equipment_cost:data.totalEquipmentCost,
+      total_cost:data.total_cost,
+      status:data.status
     });
     return true;
     // res.status(200).json({ message: "Project created successfully", salesorder});
@@ -110,6 +237,51 @@ const getAllProjectsList = async (req, res) => {
   }
 };
 
+const updateProjectbyId = async (req, res) => {
+  const projectId = req.params.id;
+  const data = req.body;
+  try {
+    const project = await Project.findByIdAndUpdate(
+      projectId,
+      {
+        title:data.title,
+        assignee:data.assignee,
+        reporter:data.reporter,
+        location:data.location,
+        priority:data.priority,
+        description:data.description,
+        start_date:data.start_date,
+        end_date:data.end_date,
+        status:data.status,
+        task:data.task    
+      },
+      { new: true }
+    );
+    if (!project) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+    res.status(200).json({ message: "Project updated successfully", project });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+}
+
+const deleteProjectById = async (req, res) => {
+  const projectId = req.params.id;
+  console.log("project id", projectId)
+
+  try {
+    const project = await Project.findByIdAndDelete(projectId);
+    if (!project) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+    res.status(200).json({ message: "Project deleted successfully", project });
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 
 const random8DigitNumber=()=> {
   
@@ -143,5 +315,7 @@ const itemRandomNumber=()=>{
 module.exports = {
   createProject,
   getProjectById,
-  getAllProjectsList
+  deleteProjectById,
+  getAllProjectsList,
+  updateProjectbyId
 };

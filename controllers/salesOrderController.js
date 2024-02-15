@@ -59,6 +59,7 @@ const editSODetails = async(req,res)=>{
   });
 }
 
+
 const updateMasterEquipment = async (orderid)=>{
   try{
     Project.aggregate([
@@ -121,7 +122,67 @@ const updateMasterEquipment = async (orderid)=>{
   }
 }
 
+
+const deleteSOById = async (req, res) => {
+  const projectId = req.params.id;
+  try {
+    const so = await SalesOrder.findByIdAndDelete(projectId);
+    if (!so) {
+      return res.status(404).json({ message: "Sale Order not found" });
+    }
+    res.status(200).json({ message: "Sale Order deleted successfully", so });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+const updateSObyId = async (req, res) => {
+  const soId = req.params.id;
+  const data = req.body;
+  try {
+    const so = await SalesOrder.findByIdAndUpdate(
+      soId,
+      {
+       name:data.name,
+       order_number:data.order_number,
+       order_id:data.order_id,
+       items:data.items,      
+       status:data.status
+      },
+      { new: true }
+    );
+    if (!so) {
+      return res.status(404).json({ message: "Sale order not found" });
+    }
+    res.status(200).json({ message: "Sale order updated successfully", so });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+}
+
+const getSOById = async (req, res) => {
+  const soId = req.params.id;
+
+  try {
+    const so = await SalesOrder.findById(soId)
+
+    if (!so) {
+      return res.status(404).json({ error: "ITServices not found" });
+    }
+
+    res.status(200).json(so);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+
 module.exports = {
   getSOList,
-  editSODetails
+  editSODetails,
+  deleteSOById,
+  updateSObyId,
+  getSOById
 };

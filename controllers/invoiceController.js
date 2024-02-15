@@ -11,7 +11,7 @@ const createInvoice = async (req, res) => {
         sub_total:data.sub_total,
         tax:data.tax,
         total:data.total,
-        amount_due:data.total
+        amount_due:data.amount_due,
      });
      
       res.status(200).json({ message: "invoice created successfully", invoice});
