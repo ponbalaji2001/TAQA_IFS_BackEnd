@@ -288,7 +288,7 @@ const updateProjectbyId = async (req, res) => {
     }
 
     try {
-      let d = { order_id: data._id };
+      let d = { order_id: new mongoose.Types.ObjectId(data._id) };
       const project = await SalesOrder.deleteMany(d);
       if (!project) {
         resultData["oldSO"] = false;
