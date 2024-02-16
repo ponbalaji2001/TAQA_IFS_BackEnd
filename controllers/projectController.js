@@ -159,6 +159,7 @@ const getAllProjectsList = async (req, res) => {
     Project.aggregate([
       {
           $project: {
+              pid:1,
               title: 1,
               assignee: 1,
               status: 1,
