@@ -49,7 +49,7 @@ const projectSchema = new mongoose.Schema({
           empname: {
               type: String,
           },
-          desigination: {
+          designation: {
               type: String,
           },
           experience: {
@@ -89,7 +89,7 @@ const projectSchema = new mongoose.Schema({
           empname: {
               type: String,
           },
-          desigination: {
+          designation: {
               type: String,
           },
           experience: {
@@ -130,7 +130,7 @@ const projectSchema = new mongoose.Schema({
           empname: {
               type: String,
           },
-          desigination: {
+          designation: {
               type: String,
           },
           experience: {
@@ -171,7 +171,7 @@ const projectSchema = new mongoose.Schema({
           empname: {
               type: String,
           },
-          desigination: {
+          designation: {
               type: String,
           },
           experience: {
@@ -211,7 +211,7 @@ const projectSchema = new mongoose.Schema({
           empname: {
               type: String,
           },
-          desigination: {
+          designation: {
               type: String,
           },
           experience: {
@@ -251,7 +251,7 @@ const projectSchema = new mongoose.Schema({
           empname: {
               type: String,
           },
-          desigination: {
+          designation: {
               type: String,
           },
           experience: {
