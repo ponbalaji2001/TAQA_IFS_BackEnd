@@ -323,7 +323,7 @@ const deleteProjectById = async (req, res) => {
   }
 
   try {
-    let d = { order_id: data._id };
+    let d = { order_id: projectId};
     const project = await SalesOrder.deleteMany(d);
     if (!project) {
       resultData["oldSO"] = false;
