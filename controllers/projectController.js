@@ -288,7 +288,7 @@ const updateProjectbyId = async (req, res) => {
     }
 
     try {
-      let d = { order_id: new mongoose.Types.ObjectId(data._id) };
+      let d = { order_id: data._id };
       const project = await SalesOrder.deleteMany(d);
       if (!project) {
         resultData["oldSO"] = false;
@@ -321,6 +321,20 @@ const deleteProjectById = async (req, res) => {
     console.log(error)
     res.status(500).json({ message: "Internal server error" });
   }
+
+  try {
+    let d = { order_id: data._id };
+    const project = await SalesOrder.deleteMany(d);
+    if (!project) {
+      resultData["oldSO"] = false;
+      console.log("SO not found");
+    }else{
+      resultData["oldSO"] = true;
+      console.log("Sales order deleted successfully");
+    }      
+  } catch (error) {
+    console.log(error)
+  }  
 };
 
 
