@@ -165,6 +165,7 @@ const getAllProjectsList = async (req, res) => {
               status: 1,
               start_date: 1,
               end_date: 1,
+              location:1,
               _id: 1 // Excluding _id field
           }
       }
@@ -243,6 +244,18 @@ const updateProjectbyId = async (req, res) => {
           });
         });
       }
+
+      // try {
+
+      //   const filter = { empid: { $in: ['id1', 'id2', 'id3'] } };
+      //   const update = { $set: { empid: 'new_id' } };
+
+      //   const result = await collection.updateMany(filter, update);
+      //   console.log("Project deleted successfully");
+  
+      // } catch (error) {
+      //   console.log(error)
+      // }
       
       totalCost= totalManpowerCost+totalEquipmentCost;
       tax=0.1*totalCost;

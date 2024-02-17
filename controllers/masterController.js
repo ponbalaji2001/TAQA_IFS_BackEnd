@@ -10,7 +10,7 @@ const createEmployee = async (req, res) => {
   try {
     const data= req.body;
     const employee = await EmployeeMaster.create({
-      empid:data.empid,
+      empid:random3DigitNumber(),
       empname:data.empname,
       designation:data.designation,
       experience:data.experience,
@@ -216,6 +216,12 @@ const getAllEquip = async (req, res) => {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
   }
+};
+
+const random3DigitNumber = () => {
+  // Generate a random number between 100 and 999
+  const randomNumber = Math.floor(Math.random() * 900) + 100;
+  return randomNumber.toString();
 };
 
 module.exports = {

@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const employeeMaster = new mongoose.Schema({
     empid: {
-      type: String,
+      type: Number,
       required:true,
     },
     empname: {
