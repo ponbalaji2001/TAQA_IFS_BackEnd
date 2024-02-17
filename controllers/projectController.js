@@ -345,7 +345,15 @@ const deleteProjectById = async (req, res) => {
 
     try {
 
-      console.log(project.pid+"  "+project.location)
+      const filter = {
+        "projects": {
+          $elemMatch: {
+            project_id: project.pid
+          }
+        }
+      };
+
+
       const update = {
         $pull: {
           projects: {
@@ -355,7 +363,7 @@ const deleteProjectById = async (req, res) => {
         }
       };
 
-      const result = await EmployeeMaster.findByIdAndUpdate(projectId, update);
+      const result = await EmployeeMaster.updateOne(filter, update);
     
       if (result) {
         console.log("Object removed successfully from the array in employees", result);
