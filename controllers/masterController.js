@@ -45,6 +45,7 @@ const createEquipment = async (req, res) => {
   const getAllEmployees = async (req, res) => {
     try {
       const allEmp = await EmployeeMaster.find();
+      res.status(200).json(allEmp);
     } catch (error) {
       res.status(500).json({ message: "Internal server error" });
     }
