@@ -42,6 +42,15 @@ const createEquipment = async (req, res) => {
     }
   };
 
+  const getAllEmployees = async (req, res) => {
+    try {
+      const allEmp = await EmployeeMaster.find();
+      res.status(200).json(allEmp);
+    } catch (error) {
+      res.status(500).json({ message: "Internal server error" });
+    }
+  };
+
 const getEmployeeByName = async(req,res)=>{
     try{
         let searchLetter = req.body.empname;        
@@ -62,6 +71,44 @@ const getEmployeeByName = async(req,res)=>{
         res.status(500).json({ error: "Internal Server Error" });
       }
 }
+
+const updateEmpbyId = async (req, res) => {
+  const empId = req.params.id;
+  const data = req.body;
+  try {
+    const emp = await EmployeeMaster.findByIdAndUpdate(
+      empId,
+      {
+        empname:data.empname,
+        designation:data.designation,
+        experience:data.experience,
+        salary:data.salary
+      },
+      { new: true }
+    );
+    if (!emp) {
+      return res.status(404).json({ message: "Employee not found" });
+    }
+    res.status(200).json({ message: "Employee updated successfully", emp });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+}
+
+const deleteEmpById = async (req, res) => {
+  const empId = req.params.id;
+  try {
+    const emp = await EmployeeMaster.findByIdAndDelete(empId);
+    if (!emp) {
+      return res.status(404).json({ message: "Employee not found" });
+    }
+    res.status(200).json({ message: "Employee deleted successfully", emp });
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 
 const getEquipmentByName = async(req,res)=>{
     try{
@@ -178,5 +225,8 @@ module.exports = {
     getEmployeeByName,
     getEquipmentByName,
     updateMasterEquipment,
-    getAllEquip
+    getAllEquip,
+    getAllEmployees,
+    updateEmpbyId,
+    deleteEmpById
 };
