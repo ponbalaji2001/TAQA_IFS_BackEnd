@@ -338,14 +338,50 @@ const deleteProjectById = async (req, res) => {
 
   try {
     const project = await Project.findByIdAndDelete(projectId);
+
     if (!project) {
       return res.status(404).json({ message: "Project not found" });
     }
+
     res.status(200).json({ message: "Project deleted successfully", project });
+
   } catch (error) {
     console.log(error)
     res.status(500).json({ message: "Internal server error" });
   }
+
+    
+    try {
+
+      const filter = {
+        _id:projectId,
+        projects: {
+          $elemMatch: {
+            project_id: project.pid,
+          }
+        }
+      };
+      
+      const update = {
+        $pull: {
+          projects: {
+            project_id:  project.pid,
+          }
+        }
+      };
+
+      const result = await EmployeeMaster.updateMany(filter, update);
+    
+      if (result.nModified > 0) {
+        console.log("Object removed successfully from the array in employees");
+      } else {
+        console.log("Project not found in employees");
+      }
+    } catch (error) {
+      console.log("Error:", error);
+    }
+      
+  
 
   try {
     let d = { order_id: projectId};

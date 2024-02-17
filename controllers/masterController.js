@@ -82,6 +82,24 @@ const getEmployeeByName = async(req,res)=>{
       }
 }
 
+
+const getEmployeeById = async (req, res) => {
+  const empId = req.params.id;
+
+  try {
+    const emp = await EmployeeMaster.findById(empId)
+
+    if (!emp) {
+      return res.status(404).json({ error: "employee not found" });
+    }
+
+    res.status(200).json(emp);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 const updateEmpbyId = async (req, res) => {
   const empId = req.params.id;
   const data = req.body;
@@ -245,5 +263,6 @@ module.exports = {
     getAllEmployees,
     updateEmpbyId,
     deleteEmpById,
-    getAvailEmployees
+    getAvailEmployees,
+    getEmployeeById
 };
