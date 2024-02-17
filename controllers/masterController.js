@@ -45,9 +45,19 @@ const createEquipment = async (req, res) => {
   const getAllEmployees = async (req, res) => {
     try {
       const allEmp = await EmployeeMaster.find();
-      res.status(200).json(allEmp);
     } catch (error) {
       res.status(500).json({ message: "Internal server error" });
+    }
+  };
+
+  const getAvailEmployees = async (req, res) => {
+    try {
+      const filter = { projects: { $size: 0 } };
+      const filter_emp= await EmployeeMaster.find(filter);
+      res.status(200).json(filter_emp);
+
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -234,5 +244,6 @@ module.exports = {
     getAllEquip,
     getAllEmployees,
     updateEmpbyId,
-    deleteEmpById
+    deleteEmpById,
+    getAvailEmployees
 };

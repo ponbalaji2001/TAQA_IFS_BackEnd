@@ -28,6 +28,7 @@ const createProject = async (req, res) => {
     let tax=0;
     let allEquipments = [];
     let allManPower = [];
+    let allEmpIds=[];
 
     if (data.task) {
       data.task.forEach(taskType => {
@@ -43,8 +44,8 @@ const createProject = async (req, res) => {
                 salary: eq.salary,
               };
                
+              allEmpIds.push(eq.empid);
               totalManpowerCost+=eq.salary;
-
               allManPower.push(manpowerDetails);
             });
 
@@ -57,7 +58,6 @@ const createProject = async (req, res) => {
                 specification: eq.specification,
               };
 
-              allEmpIds.push(eq.empid);
               totalEquipmentCost += eq.quantity*eq.cost;
               allEquipments.push(equipmentDetails);
             });
@@ -66,6 +66,7 @@ const createProject = async (req, res) => {
       });
     }
 
+    console.log(allEmpIds)
     try {
       const filter = { empid: { $in: allEmpIds } };
       const update = {
@@ -77,10 +78,10 @@ const createProject = async (req, res) => {
           }
       };
       
-      const result = await collection.updateMany(filter, update);
+      const result = await EmployeeMaster.updateMany(filter, update);
       
       if (result) {
-          console.log("Employee Project details updated successfully");
+          console.log("Employee Project details updated successfully", result);
         }
       } catch (error) {
         console.log(error);

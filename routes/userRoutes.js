@@ -7,6 +7,7 @@ const masterController = require("../controllers/masterController");
 router.post("/user/create", userController.createUser);
 router.post("/master/addemployee",masterController.createEmployee);
 router.get("/master/get/allemployees",masterController.getAllEmployees);
+router.get("/master/get/avail/employees",masterController.getAvailEmployees);
 router.post("/master/update/employee/:id",masterController.updateEmpbyId);
 router.delete("/master/delete/employee/:id",masterController.deleteEmpById);
 router.get("/master/alive",masterController.alive);
