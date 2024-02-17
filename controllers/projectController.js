@@ -363,7 +363,7 @@ const deleteProjectById = async (req, res) => {
         }
       };
 
-      const result = await EmployeeMaster.updateOne(filter, update);
+      const result = await EmployeeMaster.updateMany(filter, update);
     
       if (result) {
         console.log("Object removed successfully from the array in employees", result);
