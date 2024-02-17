@@ -1,5 +1,6 @@
 const Project = require("../models/Project"); 
 const SalesOrder = require("../models/SalesOrder"); 
+const EmployeeMaster = require("../models/employee"); 
 const mongoose = require('mongoose');
 
 
@@ -56,14 +57,35 @@ const createProject = async (req, res) => {
                 specification: eq.specification,
               };
 
+              allEmpIds.push(eq.empid);
               totalEquipmentCost += eq.quantity*eq.cost;
-
               allEquipments.push(equipmentDetails);
             });
           });
         });
       });
     }
+
+    try {
+      const filter = { empid: { $in: allEmpIds } };
+      const update = {
+          $push: {
+              projects: {
+                  project_id: project.pid,
+                  project_location: project.location
+              }
+          }
+      };
+      
+      const result = await collection.updateMany(filter, update);
+      
+      if (result) {
+          console.log("Employee Project details updated successfully");
+        }
+      } catch (error) {
+        console.log(error);
+      }
+  
     
     totalCost= totalManpowerCost+totalEquipmentCost;
     tax=0.1*totalCost;
@@ -222,7 +244,6 @@ const updateProjectbyId = async (req, res) => {
                   designation: eq.designation,
                   salary: eq.salary,
                 };
-                allEmpIds.push(eq.empid);
                 totalManpowerCost+=eq.salary;
                 allManPower.push(manpowerDetails);
               });
@@ -245,24 +266,7 @@ const updateProjectbyId = async (req, res) => {
         });
       }
 
-      try {
-        const filter = { empid: { $in: allEmpIds } };
-        const update = {
-            $set: {
-                "projects.$[elem].project_id": project.pid,
-                "projects.$[elem].project_location": project.location
-            }
-        };
-        const arrayFilters = [{ "elem.project_id": { $exists: true } }]; 
-    
-        const result = await collection.updateMany(filter, update, { arrayFilters });
-    
-        if (result) {
-            console.log("Employee Project details updated successfully");
-        }
-    } catch (error) {
-        console.log(error);
-    }
+      console.log(allEmpIds)
       
       totalCost= totalManpowerCost+totalEquipmentCost;
       tax=0.1*totalCost;
