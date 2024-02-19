@@ -19,7 +19,7 @@ const createProject = async (req, res) => {
       start_date:data.start_date,
       end_date:data.end_date,
       status:data.status,
-      task:data.task      
+      phases:data.phases     
     });
 
     let totalManpowerCost = 0;
@@ -30,42 +30,51 @@ const createProject = async (req, res) => {
     let allManPower = [];
     let allEmpIds=[];
 
-    if (data.task) {
-      data.task.forEach(taskType => {
-        Object.keys(taskType).forEach(type => {
-          taskType[type]?.forEach(item => {
-
-            item.man_power?.forEach(eq => {
-              const manpowerDetails = {
-                empid: eq.empid,
-                empname: eq.empname,
-                experience: eq.experience,
-                designation: eq.designation,
-                salary: eq.salary,
-              };
-               
-              allEmpIds.push(eq.empid);
-              totalManpowerCost+=eq.salary;
-              allManPower.push(manpowerDetails);
-            });
-
-            item.equipment?.forEach(eq => {
-              const equipmentDetails = {
-                equipmentid: eq.equipmentid,
-                name: eq.name,
-                quantity: eq.quantity,
-                cost: eq.cost,
-                specification: eq.specification,
-              };
-
-              totalEquipmentCost += eq.quantity*eq.cost;
-              allEquipments.push(equipmentDetails);
-            });
+    if (data.phases) {
+      data.phases.forEach(phase => {
+        phase.tasks.forEach(task => {
+          Object.keys(task).forEach(taskType => {
+            const taskArray = task[taskType] || [];
+    
+            if (taskArray.length > 0) {
+              taskArray.forEach(item => {
+                (item.man_power || []).forEach(eq => {
+                  const manpowerDetails = {
+                    empid: eq.empid,
+                    empname: eq.empname,
+                    experience: eq.experience,
+                    designation: eq.designation,
+                    salary: eq.salary,
+                  };
+                  totalManpowerCost += eq.salary;
+                  allManPower.push(manpowerDetails);
+                });
+    
+                (item.equipment || []).forEach(eq => {
+                  const equipmentDetails = {
+                    equipmentid: eq.equipmentid,
+                    name: eq.name,
+                    quantity: eq.quantity,
+                    cost: eq.cost,
+                    specification: eq.specification,
+                  };
+    
+                  totalEquipmentCost += eq.quantity * eq.cost;
+    
+                  allEquipments.push(equipmentDetails);
+                });
+              });
+            }
           });
         });
       });
     }
 
+    console.log("All Manpower:", allManPower);
+    console.log("All Equipments:", allEquipments);
+    console.log("Total Manpower Cost:", totalManpowerCost);
+    console.log("Total Equipment Cost:", totalEquipmentCost);
+    
     console.log(allEmpIds)
     try {
       const filter = { empid: { $in: allEmpIds } };
@@ -101,6 +110,7 @@ const createProject = async (req, res) => {
       order_number:random8DigitNumber(),
       order_id:project._id,
       items:itemRandomNumber(),
+      phases:project.phases,
       all_manpower:allManPower,
       all_equipment:allEquipments,
       total_manpower_cost:totalManpowerCost,
@@ -133,6 +143,7 @@ const createSaleOrder = async (productDetails) => {
       order_number:data.order_number,
       order_id:data.order_id,
       items:data.items,
+      phases:data.phases,
       all_manpower:data.all_manpower,
       all_equipment:data.all_equipment,
       total_manpower_cost:data.total_manpower_cost,
@@ -221,7 +232,7 @@ const updateProjectbyId = async (req, res) => {
         start_date:data.start_date,
         end_date:data.end_date,
         status:data.status,
-        task:data.task      
+        phases:data.phases     
       });
   
       let totalManpowerCost = 0;
@@ -232,40 +243,50 @@ const updateProjectbyId = async (req, res) => {
       let allManPower = [];
       let allEmpIds=[];
   
-      if (data.task) {
-        data.task.forEach(taskType => {
-          Object.keys(taskType).forEach(type => {
-            taskType[type]?.forEach(item => {
-  
-              item.man_power?.forEach(eq => {
-                const manpowerDetails = {
-                  empid: eq.empid,
-                  empname: eq.empname,
-                  experience: eq.experience,
-                  designation: eq.designation,
-                  salary: eq.salary,
-                };
-                totalManpowerCost+=eq.salary;
-                allManPower.push(manpowerDetails);
-              });
-  
-              item.equipment?.forEach(eq => {
-                const equipmentDetails = {
-                  equipmentid: eq.equipmentid,
-                  name: eq.name,
-                  quantity: eq.quantity,
-                  cost: eq.cost,
-                  specification: eq.specification,
-                };
-  
-                totalEquipmentCost += eq.quantity*eq.cost;
-  
-                allEquipments.push(equipmentDetails);
-              });
+      if (data.phases) {
+        data.phases.forEach(phase => {
+          phase.tasks.forEach(task => {
+            Object.keys(task).forEach(taskType => {
+              const taskArray = task[taskType] || [];
+      
+              if (taskArray.length > 0) {
+                taskArray.forEach(item => {
+                  (item.man_power || []).forEach(eq => {
+                    const manpowerDetails = {
+                      empid: eq.empid,
+                      empname: eq.empname,
+                      experience: eq.experience,
+                      designation: eq.designation,
+                      salary: eq.salary,
+                    };
+                    totalManpowerCost += eq.salary;
+                    allManPower.push(manpowerDetails);
+                  });
+      
+                  (item.equipment || []).forEach(eq => {
+                    const equipmentDetails = {
+                      equipmentid: eq.equipmentid,
+                      name: eq.name,
+                      quantity: eq.quantity,
+                      cost: eq.cost,
+                      specification: eq.specification,
+                    };
+      
+                    totalEquipmentCost += eq.quantity * eq.cost;
+      
+                    allEquipments.push(equipmentDetails);
+                  });
+                });
+              }
             });
           });
         });
       }
+      console.log("All Manpower:", allManPower);
+      console.log("All Equipments:", allEquipments);
+      console.log("Total Manpower Cost:", totalManpowerCost);
+      console.log("Total Equipment Cost:", totalEquipmentCost);
+      
 
       console.log(allEmpIds)
       
@@ -282,6 +303,7 @@ const updateProjectbyId = async (req, res) => {
         order_number:random8DigitNumber(),
         order_id:project._id,
         items:itemRandomNumber(),
+        phases:project.phases,
         all_manpower:allManPower,
         all_equipment:allEquipments,
         total_manpower_cost:totalManpowerCost,
@@ -333,6 +355,7 @@ const updateProjectbyId = async (req, res) => {
 }
 
 const deleteProjectById = async (req, res) => {
+  let resultData={};
   const projectId = req.params.id;
   console.log("project id", projectId)
 
@@ -343,58 +366,70 @@ const deleteProjectById = async (req, res) => {
       return res.status(404).json({ message: "Project not found" });
     }
 
-    try {
-
-      const filter = {
-        "projects": {
-          $elemMatch: {
-            project_id: project.pid
-          }
-        }
-      };
-
-
-      const update = {
-        $pull: {
-          projects: {
-            project_id:project.pid, 
-            project_location:project.location
-          }
-        }
-      };
-
-      const result = await EmployeeMaster.updateMany(filter, update);
-    
-      if (result) {
-        console.log("Object removed successfully from the array in employees", result);
-      } else {
-        console.log("Project not found in employees");
-      }
-    } catch (error) {
-      console.log("Error:", error);
-    }
-      
-  
-
-    res.status(200).json({ message: "Project deleted successfully", project });
+    // res.status(200).json({ message: "Project deleted successfully", project });
 
   } catch (error) {
     console.log(error)
-    res.status(500).json({ message: "Internal server error" });
+    // res.status(500).json({ message: "Internal server error" });
   }
 
     
 
   try {
     let d = { order_id: projectId};
-    const project = await SalesOrder.deleteMany(d);
-    if (!project) {
+    const saleorder = await SalesOrder.find(d);
+    const so = await SalesOrder.deleteMany(d);
+    if (!so) {
       resultData["oldSO"] = false;
       console.log("SO not found");
     }else{
       resultData["oldSO"] = true;
       console.log("Sales order deleted successfully");
-    }      
+    }   
+    
+    // try {
+
+    //   let allEmpIds = [];
+
+    //   if (saleorder.all_manpower) {
+    //     allEmpIds = saleorder.all_manpower.map(manpower => manpower.empid);
+    //   }
+
+    //   console.log(allEmpIds)
+      
+    //   const filter = {
+    //     "projects": {
+    //       $elemMatch: {
+    //         project_id: saleorder.p_id,
+    //         project_location: saleorder.location
+    //       }
+    //     },
+    //     "empid": { $in: allEmpIds }
+    //   };
+    
+    //   const update = {
+    //     $pull: {
+    //       projects: {
+    //         project_id: saleorder.p_id,
+    //         project_location: saleorder.location
+    //       }
+    //     }
+    //   };
+    
+    //   const result = await EmployeeMaster.updateMany(filter, update);
+    
+    //   if (result.nModified > 0) {
+    //     console.log(`Object removed successfully from the array in employees for ${allEmpIds.length} employees`, result);
+    //   } else {
+    //     console.log(`Project not found in employees for ${allEmpIds.length} employees`);
+    //   }
+    
+    //   res.status(200).json({ message: "so deleted successfully",so});
+    // } catch (error) {
+    //   console.log(error);
+    //   res.status(500).json({ message: "Internal server error" });
+    // }
+    
   } catch (error) {
     console.log(error)
   }  

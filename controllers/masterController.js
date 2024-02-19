@@ -247,6 +247,7 @@ const getAllEquip = async (req, res) => {
   }
 };
 
+
 const random3DigitNumber = () => {
   // Generate a random number between 100 and 999
   const randomNumber = Math.floor(Math.random() * 900) + 100;
@@ -265,5 +266,5 @@ module.exports = {
     updateEmpbyId,
     deleteEmpById,
     getAvailEmployees,
-    getEmployeeById
+    getEmployeeById,
 };

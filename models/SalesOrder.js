@@ -32,6 +32,9 @@ const salesorderSchema = new mongoose.Schema({
     status: {
         type: String,
     },
+    phases:[{   
+    
+    }],
    all_manpower:[{   
     
    }],

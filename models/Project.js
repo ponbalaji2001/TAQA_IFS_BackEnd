@@ -40,251 +40,317 @@ const projectSchema = new mongoose.Schema({
     status: {
       type: String,
     },
-    task:[{
-      mls:[{
-        man_power:[{
-          empid: {
-            type: String,
-          },
-          empname: {
-              type: String,
-          },
-          designation: {
-              type: String,
-          },
-          experience: {
-              type: String,
-          }, 
-         salary: {
-            type: Number,
-          },  
-          duration: {
-            type: Number,
-          },
-        }],
-        equipment:[{
-          equipmentid: {
-            type: String,
-          },
-          name: {
-              type: String,
-          },
-          quantity: {
-              type: Number,
-          },
-          cost: {
-              type: Number,
-          },
-          specification: {
-              type: String,
-          },
-        }],
-      }],
-      mws:[{
+    phases:[{
+
+      phase_start:{
+        type: Date,
+        required: true,
+      },
+      phase_end:{
+        type: Date,
+        required: true,
+      },
+
+      tasks:[{
+    //   mls:[{
+    //     supervisor:{
+    //       supervisor_id:{
+    //         type:Number,
+    //       },
+    //       supervisor_name:{
+    //         type:String,
+    //       }
+    //     },
+    //     man_power:[{
+    //       empid: {
+    //         type: String,
+    //       },
+    //       empname: {
+    //           type: String,
+    //       },
+    //       designation: {
+    //           type: String,
+    //       },
+    //       experience: {
+    //           type: String,
+    //       }, 
+    //      salary: {
+    //         type: Number,
+    //       },  
+    //       duration: {
+    //         type: Number,
+    //       },
+    //     }],
+    //     equipment:[{
+    //       equipmentid: {
+    //         type: String,
+    //       },
+    //       name: {
+    //           type: String,
+    //       },
+    //       quantity: {
+    //           type: Number,
+    //       },
+    //       cost: {
+    //           type: Number,
+    //       },
+    //       specification: {
+    //           type: String,
+    //       },
+    //     }],
+    //   }],
+    //   mws:[{
+
+    //     supervisor:{
+    //       supervisor_id:{
+    //         type:Number,
+    //       },
+    //       supervisor_name:{
+    //         type:String,
+    //       }
+    //     },
          
-        man_power:[{
-          empid: {
-            type: String,
-          },
-          empname: {
-              type: String,
-          },
-          designation: {
-              type: String,
-          },
-          experience: {
-              type: String,
-          },
-          salary: {
-            type: Number,
-          },   
-          duration: {
-            type: Number,
-          },
-        }],
+    //     man_power:[{
+    //       empid: {
+    //         type: String,
+    //       },
+    //       empname: {
+    //           type: String,
+    //       },
+    //       designation: {
+    //           type: String,
+    //       },
+    //       experience: {
+    //           type: String,
+    //       },
+    //       salary: {
+    //         type: Number,
+    //       },   
+    //       duration: {
+    //         type: Number,
+    //       },
+    //     }],
 
-        equipment:[{
-          equipmentid: {
-            type: String,
-          },
-          name: {
-              type: String,
-          },
-          quantity: {
-              type: Number,
-          },
-          cost: {
-              type: Number,
-          },
-          specification: {
-              type: String,
-          },
-        }],
+    //     equipment:[{
+    //       equipmentid: {
+    //         type: String,
+    //       },
+    //       name: {
+    //           type: String,
+    //       },
+    //       quantity: {
+    //           type: Number,
+    //       },
+    //       cost: {
+    //           type: Number,
+    //       },
+    //       specification: {
+    //           type: String,
+    //       },
+    //     }],
         
-      }],
-      aws:[{
-        man_power:[{
-          empid: {
-            type: String,
-          },
-          empname: {
-              type: String,
-          },
-          designation: {
-              type: String,
-          },
-          experience: {
-              type: String,
-          },
-          salary: {
-            type: Number,
-          },   
-          duration: {
-            type: Number,
-          },
-        }],
+    //   }],
+    //   aws:[{
+    //     supervisor:{
+    //       supervisor_id:{
+    //         type:Number,
+    //       },
+    //       supervisor_name:{
+    //         type:String,
+    //       }
+    //     },
 
-        equipment:[{
-          equipmentid: {
-            type: String,
-          },
-          name: {
-              type: String,
-          },
-          quantity: {
-              type: Number,
-          },
-          cost: {
-              type: Number,
-          },
-          specification: {
-              type: String,
-          },
-        }],
+    //     man_power:[{
+    //       empid: {
+    //         type: String,
+    //       },
+    //       empname: {
+    //           type: String,
+    //       },
+    //       designation: {
+    //           type: String,
+    //       },
+    //       experience: {
+    //           type: String,
+    //       },
+    //       salary: {
+    //         type: Number,
+    //       },   
+    //       duration: {
+    //         type: Number,
+    //       },
+    //     }],
 
-      }],
-      mps:[{
-        man_power:[{
-          empid: {
-            type: String,
-          },
-          empname: {
-              type: String,
-          },
-          designation: {
-              type: String,
-          },
-          experience: {
-              type: String,
-          },
-          salary: {
-            type: Number,
-          },   
-          duration: {
-            type: Number,
-          },
-        }],
+    //     equipment:[{
+    //       equipmentid: {
+    //         type: String,
+    //       },
+    //       name: {
+    //           type: String,
+    //       },
+    //       quantity: {
+    //           type: Number,
+    //       },
+    //       cost: {
+    //           type: Number,
+    //       },
+    //       specification: {
+    //           type: String,
+    //       },
+    //     }],
 
-        equipment:[{
-          equipmentid: {
-            type: String,
-          },
-          name: {
-              type: String,
-          },
-          quantity: {
-              type: Number,
-          },
-          cost: {
-              type: Number,
-          },
-          specification: {
-              type: String,
-          },
-        }],
-      }],
-      mss:[{
-        man_power:[{
-          empid: {
-            type: String,
-          },
-          empname: {
-              type: String,
-          },
-          designation: {
-              type: String,
-          },
-          experience: {
-              type: String,
-          },
-          salary: {
-            type: Number,
-          },   
-          duration: {
-            type: Number,
-          },
-        }],
+    //   }],
+    //   mps:[{
+    //     supervisor:{
+    //       supervisor_id:{
+    //         type:Number,
+    //       },
+    //       supervisor_name:{
+    //         type:String,
+    //       }
+    //     },
 
-        equipment:[{
-          equipmentid: {
-            type: String,
-          },
-          name: {
-              type: String,
-          },
-          quantity: {
-              type: Number,
-          },
-          cost: {
-              type: Number,
-          },
-          specification: {
-              type: String,
-          },
-        }],
-      }],
-      mdds:[{
-        man_power:[{
-          empid: {
-            type: String,
-          },
-          empname: {
-              type: String,
-          },
-          designation: {
-              type: String,
-          },
-          experience: {
-              type: String,
-          },
-          salary: {
-            type: Number,
-          },   
-          duration: {
-            type: Number,
-          },
-        }],
+    //     man_power:[{
+    //       empid: {
+    //         type: String,
+    //       },
+    //       empname: {
+    //           type: String,
+    //       },
+    //       designation: {
+    //           type: String,
+    //       },
+    //       experience: {
+    //           type: String,
+    //       },
+    //       salary: {
+    //         type: Number,
+    //       },   
+    //       duration: {
+    //         type: Number,
+    //       },
+    //     }],
 
-        equipment:[{
-          equipmentid: {
-            type: String,
-          },
-          name: {
-              type: String,
-          },
-          quantity: {
-              type: Number,
-          },
-          cost: {
-              type: Number,
-          },
-          specification: {
-              type: String,
-          },
-        }],
-      }],
+    //     equipment:[{
+    //       equipmentid: {
+    //         type: String,
+    //       },
+    //       name: {
+    //           type: String,
+    //       },
+    //       quantity: {
+    //           type: Number,
+    //       },
+    //       cost: {
+    //           type: Number,
+    //       },
+    //       specification: {
+    //           type: String,
+    //       },
+    //     }],
+    //   }],
+    //   mss:[{
+    //     supervisor:{
+    //       supervisor_id:{
+    //         type:Number,
+    //       },
+    //       supervisor_name:{
+    //         type:String,
+    //       }
+    //     },
+
+    //     man_power:[{
+    //       empid: {
+    //         type: String,
+    //       },
+    //       empname: {
+    //           type: String,
+    //       },
+    //       designation: {
+    //           type: String,
+    //       },
+    //       experience: {
+    //           type: String,
+    //       },
+    //       salary: {
+    //         type: Number,
+    //       },   
+    //       duration: {
+    //         type: Number,
+    //       },
+    //     }],
+
+    //     equipment:[{
+    //       equipmentid: {
+    //         type: String,
+    //       },
+    //       name: {
+    //           type: String,
+    //       },
+    //       quantity: {
+    //           type: Number,
+    //       },
+    //       cost: {
+    //           type: Number,
+    //       },
+    //       specification: {
+    //           type: String,
+    //       },
+    //     }],
+    //   }],
+    //   mdds:[{
+    //     supervisor:{
+    //       supervisor_id:{
+    //         type:Number,
+    //       },
+    //       supervisor_name:{
+    //         type:String,
+    //       }
+    //     },
+        
+    //     man_power:[{
+    //       empid: {
+    //         type: String,
+    //       },
+    //       empname: {
+    //           type: String,
+    //       },
+    //       designation: {
+    //           type: String,
+    //       },
+    //       experience: {
+    //           type: String,
+    //       },
+    //       salary: {
+    //         type: Number,
+    //       },   
+    //       duration: {
+    //         type: Number,
+    //       },
+    //     }],
+
+    //     equipment:[{
+    //       equipmentid: {
+    //         type: String,
+    //       },
+    //       name: {
+    //           type: String,
+    //       },
+    //       quantity: {
+    //           type: Number,
+    //       },
+    //       cost: {
+    //           type: Number,
+    //       },
+    //       specification: {
+    //           type: String,
+    //       },
+    //     }],
+    //   }],
     }]
-    
+
+  }]
+
   });
   
   const Project = mongoose.model("project", projectSchema);

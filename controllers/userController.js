@@ -16,6 +16,26 @@ const createUser = async (req, res) => {
   }
 };
 
+const getAllSupervisor = async (req, res) => {
+  try {
+    const allEmp = await User.find({role:"supervisor"});
+    res.status(200).json(allEmp);
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+const getAllAdmin = async (req, res) => {
+  try {
+    const allEmp = await User.find({role:"admin"});
+    res.status(200).json(allEmp);
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 module.exports = {
   createUser,
+  getAllSupervisor,
+  getAllAdmin
 };
