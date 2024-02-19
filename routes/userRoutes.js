@@ -19,6 +19,7 @@ router.post("/master/getequipmentbyname",masterController.getEquipmentByName);
 router.post("/master/updatemaster",masterController.updateMasterEquipment);
 router.get("/master/get/all/supervisors", userController.getAllSupervisor);
 router.get("/master/get/all/admins", userController.getAllAdmin);
+router.get("/master/get/all/users", userController.getAllUser);
 
 
 module.exports = router;
