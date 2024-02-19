@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
-   mapid: {
-     type: mongoose.Schema.Types.ObjectId,
+   id: {
+     type: Number,
 
     },
     name: {
