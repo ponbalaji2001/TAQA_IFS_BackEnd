@@ -46,6 +46,7 @@ const createProject = async (req, res) => {
                     designation: eq.designation,
                     salary: eq.salary,
                   };
+                  allEmpIds.push(eq.empid)
                   totalManpowerCost += eq.salary;
                   allManPower.push(manpowerDetails);
                 });
@@ -259,6 +260,7 @@ const updateProjectbyId = async (req, res) => {
                       designation: eq.designation,
                       salary: eq.salary,
                     };
+                    allEmpIds.push(eq.empid)
                     totalManpowerCost += eq.salary;
                     allManPower.push(manpowerDetails);
                   });
@@ -282,10 +284,10 @@ const updateProjectbyId = async (req, res) => {
           });
         });
       }
-      console.log("All Manpower:", allManPower);
-      console.log("All Equipments:", allEquipments);
-      console.log("Total Manpower Cost:", totalManpowerCost);
-      console.log("Total Equipment Cost:", totalEquipmentCost);
+      // console.log("All Manpower:", allManPower);
+      // console.log("All Equipments:", allEquipments);
+      // console.log("Total Manpower Cost:", totalManpowerCost);
+      // console.log("Total Equipment Cost:", totalEquipmentCost);
       
 
       console.log(allEmpIds)
@@ -387,48 +389,48 @@ const deleteProjectById = async (req, res) => {
       console.log("Sales order deleted successfully");
     }   
     
-    // try {
+    try {
 
-    //   let allEmpIds = [];
+      let allEmpIds = [];
 
-    //   if (saleorder.all_manpower) {
-    //     allEmpIds = saleorder.all_manpower.map(manpower => manpower.empid);
-    //   }
+      saleorder.all_manpower.forEach(eq => {
+        allEmpIds.push(eq.empid)
+      });
 
-    //   console.log(allEmpIds)
+      console.log(allEmpIds)
       
-    //   const filter = {
-    //     "projects": {
-    //       $elemMatch: {
-    //         project_id: saleorder.p_id,
-    //         project_location: saleorder.location
-    //       }
-    //     },
-    //     "empid": { $in: allEmpIds }
-    //   };
+      const filter = {
+        "projects": {
+          $elemMatch: {
+            project_id: saleorder.p_id,
+            project_location: saleorder.location
+          }
+        },
+        "empid": { $in: allEmpIds }
+      };
     
-    //   const update = {
-    //     $pull: {
-    //       projects: {
-    //         project_id: saleorder.p_id,
-    //         project_location: saleorder.location
-    //       }
-    //     }
-    //   };
+      const update = {
+        $pull: {
+          projects: {
+            project_id: saleorder.p_id,
+            project_location: saleorder.location
+          }
+        }
+      };
     
-    //   const result = await EmployeeMaster.updateMany(filter, update);
+      const result = await EmployeeMaster.updateMany(filter, update);
     
-    //   if (result.nModified > 0) {
-    //     console.log(`Object removed successfully from the array in employees for ${allEmpIds.length} employees`, result);
-    //   } else {
-    //     console.log(`Project not found in employees for ${allEmpIds.length} employees`);
-    //   }
+      if (result.nModified > 0) {
+        console.log(`Object removed successfully from the array in employees for ${allEmpIds.length} employees`, result);
+      } else {
+        console.log(`Project not found in employees for ${allEmpIds.length} employees`);
+      }
     
-    //   res.status(200).json({ message: "so deleted successfully",so});
-    // } catch (error) {
-    //   console.log(error);
-    //   res.status(500).json({ message: "Internal server error" });
-    // }
+      res.status(200).json({ message: "so deleted successfully",so});
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "Internal server error" });
+    }
     
   } catch (error) {
     console.log(error)
