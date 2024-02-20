@@ -375,11 +375,52 @@ const deleteProjectById = async (req, res) => {
     // res.status(500).json({ message: "Internal server error" });
   }
 
-    
+  
+   let d = { order_id: projectId};
 
-  try {
-    let d = { order_id: projectId};
-    const saleorder = await SalesOrder.find(d);
+    try {
+
+      const saleorder = await SalesOrder.find(d);
+
+      let allEmpIds = [];
+     
+      saleorder[0]["all_manpower"].forEach(eq => {
+        allEmpIds.push(eq.empid)
+      });
+
+      console.log(allEmpIds)
+      
+      const filter = {
+        "projects": {
+          $elemMatch: {
+            project_id: saleorder[0].p_id,
+            project_location: saleorder[0].project_location
+          }
+        },
+        "empid": { $in: allEmpIds }
+      };
+    
+      const update = {
+        $pull: {
+          projects: {
+            project_id: saleorder[0].p_id,
+            project_location: saleorder[0].project_location
+          }
+        }
+      };
+    
+      const result = await EmployeeMaster.updateMany(filter, update);
+    
+      if (result) {
+        console.log(`Object removed successfully from the array in employees for ${allEmpIds.length} employees`, result);
+      } else {
+        console.log(`Project not found in employees for ${allEmpIds.length} employees`);
+      }
+    
+    } catch (error) {
+      console.log(error); 
+    }
+
     const so = await SalesOrder.deleteMany(d);
     if (!so) {
       resultData["oldSO"] = false;
@@ -389,52 +430,8 @@ const deleteProjectById = async (req, res) => {
       console.log("Sales order deleted successfully");
     }   
     
-    try {
-
-      let allEmpIds = [];
-
-      saleorder.all_manpower.forEach(eq => {
-        allEmpIds.push(eq.empid)
-      });
-
-      console.log(allEmpIds)
-      
-      const filter = {
-        "projects": {
-          $elemMatch: {
-            project_id: saleorder.p_id,
-            project_location: saleorder.location
-          }
-        },
-        "empid": { $in: allEmpIds }
-      };
+    res.status(200).json({ message: "project deleted successfully"});
     
-      const update = {
-        $pull: {
-          projects: {
-            project_id: saleorder.p_id,
-            project_location: saleorder.location
-          }
-        }
-      };
-    
-      const result = await EmployeeMaster.updateMany(filter, update);
-    
-      if (result.nModified > 0) {
-        console.log(`Object removed successfully from the array in employees for ${allEmpIds.length} employees`, result);
-      } else {
-        console.log(`Project not found in employees for ${allEmpIds.length} employees`);
-      }
-    
-      res.status(200).json({ message: "so deleted successfully",so});
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({ message: "Internal server error" });
-    }
-    
-  } catch (error) {
-    console.log(error)
-  }  
 };
 
 
