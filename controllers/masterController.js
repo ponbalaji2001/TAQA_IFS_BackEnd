@@ -1,6 +1,7 @@
 const EmployeeMaster = require("../models/employee"); 
 const EquipmentMaster = require("../models/Equipment");
-const Project = require("../models/Project"); 
+const Project = require("../models/Project");
+const TimeSheet = require("../models/timesheet"); 
 const mongoose = require('mongoose');
 
 const alive = async(req,res)=>{
@@ -17,7 +18,8 @@ const createEmployee = async (req, res) => {
       salary:data.salary
    });
    console.log(employee);
-    res.status(200).json({ message: "Employee created successfully",data:employee });
+   const newTS =  await createTimeSheet(employee);
+    res.status(200).json({ message: "Employee created successfully",data:employee,ts:newTS });
   } catch (error) {
     console.log(error)
     res.status(500).json({ message: "Internal server error" });
@@ -253,6 +255,41 @@ const random3DigitNumber = () => {
   const randomNumber = Math.floor(Math.random() * 900) + 100;
   return randomNumber.toString();
 };
+
+const createTimeSheet = async(details)=>{
+  let data = details;
+  const currentDate = new Date();
+  // Get the current year
+  const currentYear = currentDate.getFullYear();
+  // Get the current month as a number (0-indexed, where January is 0)
+  const currentMonthNumber = currentDate.getMonth();
+  // Array of month names
+  const monthNames = ["January", "February", "March", "April", "May", "June",
+                      "July", "August", "September", "October", "November", "December"];
+  // Get the current month name
+  const currentMonthName = monthNames[currentMonthNumber];
+  // create timeheet trigger
+  const newts = await TimeSheet.create({
+      employee_id:data._id,
+      empid:data.empid,      
+      timesheets:{
+          yearly:{
+              years:[
+                  {
+                      "year":currentYear,
+                      months:[{
+                          monthnumber:currentMonthNumber+1,
+                          month:currentMonthName,
+                          days:[]
+                      }]
+                  }
+              ]
+          }
+      }
+  });
+  return newts;
+}
+
 
 module.exports = {
     createEmployee,
