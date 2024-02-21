@@ -32,7 +32,27 @@ const timeSheetSchema = new mongoose.Schema({
                 month: {
                   type: String,
                 },
-                weeks:[]                
+                weeks:[{
+                  weekno:{
+                    type:Number
+                  },
+                  days: [
+                    {
+                      day: {
+                        type: Number,
+                      },
+                      dayname:{
+                        type:String
+                      },
+                      hours_worked: {
+                        type: Number,
+                      },
+                      status:{
+                        type: String
+                      }                    
+                    }
+                  ]
+                }]                
               }
             ]
           }
@@ -46,5 +66,5 @@ const timeSheetSchema = new mongoose.Schema({
   );
   
   const TimeSheet = mongoose.model("timesheet", timeSheetSchema);
-  module.exports = TimeSheet;
+//   module.exports = TimeSheet;
   

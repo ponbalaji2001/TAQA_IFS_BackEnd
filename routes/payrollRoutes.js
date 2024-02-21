@@ -3,6 +3,6 @@ const router = express.Router();
 const tsController = require("../controllers/tsController");
 
 router.get("/alive", tsController.alive);
-router.post("/updatets", tsController.updateTs);
+router.post("/updates", tsController.updateTs);
 
 module.exports = router;
