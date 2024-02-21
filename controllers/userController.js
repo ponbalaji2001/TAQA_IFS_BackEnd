@@ -43,9 +43,19 @@ const getAllUser = async (req, res) => {
   }
 };
 
+const getSupervisorById = async (req, res) => {
+  try {
+    const sup = await User.findById(req.params.id);
+    res.status(200).json(sup);
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 module.exports = {
   createUser,
   getAllSupervisor,
   getAllAdmin,
-  getAllUser
+  getAllUser,
+  getSupervisorById
 };

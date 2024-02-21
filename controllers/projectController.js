@@ -1,6 +1,7 @@
 const Project = require("../models/Project"); 
 const SalesOrder = require("../models/SalesOrder"); 
 const EmployeeMaster = require("../models/employee"); 
+const User = require("../models/User"); 
 const mongoose = require('mongoose');
 
 
@@ -38,7 +39,8 @@ const createProject = async (req, res) => {
     
             if (taskArray.length > 0) {
               taskArray.forEach(item => {
-                (item.man_power || []).forEach(eq => {
+                
+                (item.man_power || []).forEach(async eq => {
                   const manpowerDetails = {
                     empid: eq.empid,
                     empname: eq.empname,
@@ -46,6 +48,24 @@ const createProject = async (req, res) => {
                     designation: eq.designation,
                     salary: eq.salary,
                   };
+
+                  try {
+                    const filter = { _id : item.supervisor.supervisor_id };
+                    const update = {
+                        $push: {
+                            assigned_emps: manpowerDetails
+                        }
+                    };
+                    
+                    const result = await User.updateMany(filter, update);
+                    
+                    if (result) {
+                        console.log("Employee Supervisor details updated successfully");
+                      }
+                    } catch (error) {
+                      console.log(error);
+                    }
+                    
                   allEmpIds.push(eq.empid)
                   totalManpowerCost += eq.salary;
                   allManPower.push(manpowerDetails);
@@ -71,10 +91,10 @@ const createProject = async (req, res) => {
       });
     }
 
-    console.log("All Manpower:", allManPower);
-    console.log("All Equipments:", allEquipments);
-    console.log("Total Manpower Cost:", totalManpowerCost);
-    console.log("Total Equipment Cost:", totalEquipmentCost);
+    // console.log("All Manpower:", allManPower);
+    // console.log("All Equipments:", allEquipments);
+    // console.log("Total Manpower Cost:", totalManpowerCost);
+    // console.log("Total Equipment Cost:", totalEquipmentCost);
     
     console.log(allEmpIds)
     try {
