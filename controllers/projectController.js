@@ -48,8 +48,8 @@ const createProject = async (req, res) => {
                             project_id:project.pid,
                             project_name:project.title,
                             phase:project.phases.phase,
-                            phase_start:project.phases[project.phases.phase].phase_start,
-                            phase_end:project.phases[project.phases.phase].phase_end,
+                            phase_start:project.phases[(project.phases.phase)-1].phase_start,
+                            phase_end:project.phases[(project.phases.phase)-1].phase_end,
                             tasks:[{
                               task_type:taskType,
                               man_power:item.man_power,
