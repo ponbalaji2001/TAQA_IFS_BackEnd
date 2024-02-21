@@ -42,6 +42,10 @@ const projectSchema = new mongoose.Schema({
     },
     phases:[{
 
+      phase:{
+        type:Number,
+        required: true,
+      },
       phase_start:{
         type: Date,
         required: true,

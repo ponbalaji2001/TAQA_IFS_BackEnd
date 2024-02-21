@@ -38,7 +38,35 @@ const createProject = async (req, res) => {
             const taskArray = task[taskType] || [];
     
             if (taskArray.length > 0) {
-              taskArray.forEach(item => {
+              taskArray.forEach(async item => {
+
+                try {
+                  const filter = { _id : item.supervisor.supervisor_id };
+                  const update = {
+                      $push: {
+                          projects: {
+                            project_id:project.pid,
+                            project_name:project.title,
+                            phase:project.phase,
+                            phase_start:project.phases[project. phases.phase].phase_start,
+                            phase_end:project.phases[project. phases.phase].phase_end,
+                            tasks:[{
+                              task_type:taskType,
+                              man_power:item.man_power,
+                              equipment:item.equipment
+                            }]
+                          }
+                      }
+                  };
+                  
+                  const result = await User.updateMany(filter, update);
+                  
+                  if (result) {
+                      console.log("Employee Supervisor details updated successfully");
+                    }
+                  } catch (error) {
+                    console.log(error);
+              }
                 
                 (item.man_power || []).forEach(async eq => {
                   const manpowerDetails = {
