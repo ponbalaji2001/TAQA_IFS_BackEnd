@@ -10,6 +10,12 @@ const daySchema = new mongoose.Schema({
   hoursWorked: {
     type: Number,
   },
+  supervisor_id: {
+    type: mongoose.Schema.Types.ObjectId,
+  },
+  project_id: {
+    type: mongoose.Schema.Types.ObjectId,
+  },
 });
 
 const weekSchema = new mongoose.Schema({
@@ -26,38 +32,33 @@ const timeSheetSchema = new mongoose.Schema({
   empid: {
     type: Number,
   },
-  supervisor_id: {
+  current_supervisor_id: {
     type: mongoose.Schema.Types.ObjectId,
   },
-  supervisorname: {
-    type: String,
-  },
-  project_id: {
+  current_project_id: {
     type: mongoose.Schema.Types.ObjectId,
   },
   timesheets: {
-    yearly: {
-      years: [
-        {
-          year: {
-            type: Number,
-          },
-          months: [
-            {
-              monthnumber: {
-                type: Number,
-              },
-              month: {
-                type: String,
-              },
-              weeks: {
-                type: [weekSchema],
-              },
-            },
-          ],
+    years: [
+      {
+        year: {
+          type: Number,
         },
-      ],
-    },
+        months: [
+          {
+            monthnumber: {
+              type: Number,
+            },
+            month: {
+              type: String,
+            },
+            weeks: {
+              type: [weekSchema],
+            },
+          },
+        ],
+      },
+    ]
   },
   createdAt: {
     type: Date,
