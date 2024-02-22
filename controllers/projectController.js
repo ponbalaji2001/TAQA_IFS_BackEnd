@@ -32,11 +32,11 @@ const createProject = async (req, res) => {
     let allEmpIds=[];
 
     if (data.phases) {
-      data.phases.forEach(phase => {
+      data.phases.forEach((phase,index) => {
         phase.tasks.forEach(task => {
           Object.keys(task).forEach(taskType => {
             const taskArray = task[taskType] || [];
-    
+          
             if (taskArray.length > 0) {
               taskArray.forEach(async item => {
 
@@ -47,9 +47,9 @@ const createProject = async (req, res) => {
                           projects: {
                             project_id:project.pid,
                             project_name:project.title,
-                            phase:project.phases.phase,
-                            phase_start:project.phases[(project.phases.phase)-1].phase_start,
-                            phase_end:project.phases[(project.phases.phase)-1].phase_end,
+                            phase:project.phases[index].phase,
+                            phase_start:project.phases[index].phase_start,
+                            phase_end:project.phases[index].phase_end,
                             tasks:[{
                               task_type:taskType,
                               man_power:item.man_power,
@@ -112,6 +112,7 @@ const createProject = async (req, res) => {
     
                   allEquipments.push(equipmentDetails);
                 });
+              
               });
             }
           });
