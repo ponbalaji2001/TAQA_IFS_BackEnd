@@ -50,7 +50,9 @@ const timeSheetSchema = new mongoose.Schema({
               month: {
                 type: String,
               },
-              weeks: [weekSchema],
+              weeks: {
+                type: [weekSchema],
+              },
             },
           ],
         },
