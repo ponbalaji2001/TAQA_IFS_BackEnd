@@ -64,5 +64,5 @@ const timeSheetSchema = new mongoose.Schema({
   },
 });
 
-const TimeSheet = mongoose.model("timesheet", timeSheetSchema);
+const TimeSheet = mongoose.model("newTs", timeSheetSchema);
 module.exports = TimeSheet;

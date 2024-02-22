@@ -7,6 +7,7 @@ const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const projectRoutes = require("./routes/projectRoutes");
 const payrollRoutes = require("./routes/payrollRoutes");
+const newTsRoute = require("./routes/newTsRoutes");
 
 dotenv.config();
 const db = require("./config/db");
@@ -19,8 +20,8 @@ app.use(cors());
 app.use("/auth", authRoutes);
 app.use("/api", userRoutes);
 app.use("/api", projectRoutes);
-app.use("/payroll",payrollRoutes);
-
+app.use("/payroll", payrollRoutes);
+app.use("/newTs", newTsRoute);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
