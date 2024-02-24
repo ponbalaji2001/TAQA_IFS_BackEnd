@@ -9,7 +9,10 @@ const alive = async(req,res)=>{
 const getTs = async(req,res)=>{
   console.log("get payroll",req.body);
   try{
-  const resTs = await TimeSheet.findOne({ _id: new mongoose.Types.ObjectId(req.body._id) })
+  const resTs = await TimeSheet.findOne({ 
+    _id: new mongoose.Types.ObjectId(req.body._id),
+    tsStatus:"active"
+   })
   .then(timesheet => {
     if (timesheet) {
       // Timesheet document found, you can use it here
@@ -39,8 +42,7 @@ const getTs = async(req,res)=>{
 }
 
 
-//65d61ac5a55ff08b02d3622b  - ass
-//65d5d0660e7dfdb75571711d -jan 
+
 const updateTs = async (req, res) => {
     console.log( req.body.length);
     let data =  req.body;
@@ -57,15 +59,13 @@ const updateTs = async (req, res) => {
             console.log(result);
             return res.status(200).json({ 
               message: "Timesheet saved successfully",
-              res:result,
-              data:ts 
+              res:result
           });
         }).catch(err => {
             console.error(err);
             return res.status(200).json({ 
               message: "Timesheet Error",
               res:err,
-              data:ts 
           });
         });        
         //update timesheet trigeers        
@@ -76,9 +76,83 @@ const updateTs = async (req, res) => {
     }
   };
 
+  //for existing days 
+  const updateTsDays = async (req, res) => {
+    console.log( req.body);
+    let _id  =  req.body._id;  
+    let dateid = req.body.dateid;
+    let datehours = req.body.hoursWorked;
+    let daystatus = req.body.status;
+    try {
+      const ts = await TimeSheet.findOne({ _id });
+      console.log(ts);
+      if (ts){
+        TimeSheet.updateOne(
+          { 'timesheets._id': dateid },
+          { $set: { 
+            'timesheets.$.hoursWorked': datehours,
+            "timesheets.$.status": daystatus
+          } }          
+        ).then(result => {
+            console.log(result);
+            return res.status(200).json({ 
+              message: "Timesheet days updated successfully",
+              res:result
+          });
+        }).catch(err => {
+            console.error(err);
+            return res.status(200).json({ 
+              message: "Timesheet Error",
+              res:err,
+          });
+        });        
+        //update timesheet trigeers        
+      }      
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  }
+
+
+  const updateTsStatus = async (req, res) => {
+    console.log( req.body);
+    let _id  =  req.body._id;  
+    try {
+      const ts = await TimeSheet.findOne({ _id });
+      console.log(ts);
+      if (ts){
+        TimeSheet.updateOne(
+          { _id: _id }, // Specify the employee to update
+          {$set:{tsStatus:req.body.tsStatus} } // Add the new objects to the timesheets array
+        ).then(result => {
+            console.log(result);
+            return res.status(200).json({ 
+              message: "Timesheet status updated successfully",
+              res:result,
+              data:ts 
+          });
+        }).catch(err => {
+            console.error(err);
+            return res.status(200).json({ 
+              message: "Timesheet Error",
+              res:err,
+          });
+        });        
+        //update timesheet trigeers        
+      }      
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  }
+
+
   
   module.exports = {
     updateTs,
+    updateTsStatus,
+    updateTsDays,
     alive,
     getTs
   };
