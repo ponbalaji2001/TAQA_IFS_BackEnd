@@ -1,59 +1,56 @@
 const mongoose = require("mongoose");
 
+const daySchema = new mongoose.Schema({
+  date: {
+    type: Date,
+  },
+  dayno: {
+    type: Number,
+  },
+  day:{
+    type:String
+  },
+  month:{
+    type:String
+  },
+  year:{
+    type:Number
+  },
+  hoursWorked: {
+    type: Number,
+  },
+  status:{
+    type:String
+  }  
+});
+
 const timeSheetSchema = new mongoose.Schema({
-    "employee_id": {
-          type: mongoose.Schema.Types.ObjectId,
-          "required": true 
-        },
-        empid: {
-            type: Number,
-          },
-      "supervisor_id":{
-          type: mongoose.Schema.Types.ObjectId,
-        },
-      "supervisorname": {
-          type: String
-        },
-      "project_id":  {
-          type: mongoose.Schema.Types.ObjectId,
-        },
-    "timesheets": {
-      "yearly": {
-        "years": [
-          {
-            "year": {
-              "type": Number,
-            },            
-            "months": [
-              {
-                "monthnumber":{
-                    "type":Number,
-                },
-                "month": {
-                  "type": String,
-                },
-                "days": [
-                  {
-                    "day": {
-                      "type": Number,
-                    },
-                    "hours_worked": {
-                      "type": Number,
-                    },                    
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      }
-    },
-    "createdAt": {
-      "type": Date
-    }
-  }
-  );
-  
-  const TimeSheet = mongoose.model("timesheet", timeSheetSchema);
-  module.exports = TimeSheet;
-  
+  employee_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+  },
+  empid: {
+    type: Number,
+    required: true,
+  },
+  current_supervisor_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+  },
+  current_project_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+  },
+  timesheets: {
+   type:[daySchema]
+  },
+  tsStatus:{
+    type:String
+  },
+  createdAt: {
+    type: Date,
+  },
+});
+
+const TimeSheet = mongoose.model("timesheets", timeSheetSchema);
+module.exports = TimeSheet;

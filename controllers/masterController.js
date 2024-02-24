@@ -257,35 +257,14 @@ const random3DigitNumber = () => {
 };
 
 const createTimeSheet = async(details)=>{
-  let data = details;
-  const currentDate = new Date();
-  // Get the current year
-  const currentYear = currentDate.getFullYear();
-  // Get the current month as a number (0-indexed, where January is 0)
-  const currentMonthNumber = currentDate.getMonth();
-  // Array of month names
-  const monthNames = ["January", "February", "March", "April", "May", "June",
-                      "July", "August", "September", "October", "November", "December"];
-  // Get the current month name
-  const currentMonthName = monthNames[currentMonthNumber];
-  // create timeheet trigger
+  let data = details;  
   const newts = await TimeSheet.create({
       employee_id:data._id,
-      empid:data.empid,      
-      timesheets:{
-          yearly:{
-              years:[
-                  {
-                      "year":currentYear,
-                      months:[{
-                          monthnumber:currentMonthNumber+1,
-                          month:currentMonthName,
-                          days:[]
-                      }]
-                  }
-              ]
-          }
-      }
+      empid:data.empid,
+      current_supervisor_id:"65cb488f4aed17b2c3ce2cda",
+      current_project_id:"65d7654a3560793b336331d5",     
+      timesheets:[],
+      tsStatus:"active"
   });
   return newts;
 }
