@@ -32,18 +32,12 @@ const createProject = async (req, res) => {
     let allEmpIds = [];
 
     if (data.phases) {
-      // await data.phases.forEach(async (phase, index) => {
       for(let [index,phases] of data.phases.entries()) {
-        // await phase.tasks.forEach(async task => {
-          console.log(phases);
         for(let task of phases.tasks) {
-          console.log("Keys", Object.keys(task), task);
-          // Object.keys(task).forEach(async taskType => {
           for(let taskType of Object.keys(task)) {
             const taskArray = task[taskType] || [];
 
             if (taskArray.length > 0) {
-              // taskArray.forEach(async item => {
               for(let item of taskArray) {
                 console.log(item);
                 try {
@@ -79,7 +73,6 @@ const createProject = async (req, res) => {
                 }
 
                 console.log(item);
-                // await (item.man_power || []).forEach(async eq => {
                 for (let eq of item.man_power) {
                   const manpowerDetails = {
                     empid: eq.empid,
@@ -117,7 +110,6 @@ const createProject = async (req, res) => {
                   console.log("Checking inside data", manpowerDetails, allManPower);
                 };
 
-                // await (item.equipment || []).forEach(eq => {
                 for (let eq of item.equipment) {
                   const equipmentDetails = {
                     equipmentid: eq.equipmentid,
