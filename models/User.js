@@ -16,7 +16,13 @@ const userSchema = new mongoose.Schema({
     role: {
       type: String,
       required: true,
-    }
+    },
+    projects:[{
+      
+    }],
+    assigned_emps:[{
+      
+    }]
     
   });
   
