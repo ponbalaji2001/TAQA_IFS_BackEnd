@@ -69,9 +69,9 @@ const getTs = async(req,res)=>{
       }
     ])
     .then(timesheet => {
-      if (timesheet) {
+      if (timesheet.length > 0) {
         // Timesheet document found, you can use it here
-        // console.log(timesheet);
+        console.log(timesheet);
         return res.status(200).json({ 
           message: "Timesheet Found successfully",
           res:timesheet
