@@ -18,6 +18,7 @@ router.post("/master/getemployeebyname",masterController.getEmployeeByName);
 router.post("/master/getequipmentbyname",masterController.getEquipmentByName);
 router.post("/master/updatemaster",masterController.updateMasterEquipment);
 router.get("/master/get/all/supervisors", userController.getAllSupervisor);
+router.get("/master/get/supervisor/:id", userController.getSupervisorById);
 router.get("/master/get/all/admins", userController.getAllAdmin);
 router.get("/master/get/all/users", userController.getAllUser);
 

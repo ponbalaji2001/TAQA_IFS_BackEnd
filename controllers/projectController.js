@@ -1,6 +1,7 @@
 const Project = require("../models/Project"); 
 const SalesOrder = require("../models/SalesOrder"); 
 const EmployeeMaster = require("../models/employee"); 
+const User = require("../models/User"); 
 const mongoose = require('mongoose');
 const TimeSheet = require("../models/timesheet"); 
 
@@ -32,14 +33,45 @@ const createProject = async (req, res) => {
     let allEmpIds=[];
 
     if (data.phases) {
-      data.phases.forEach(phase => {
+      data.phases.forEach((phase,index) => {
         phase.tasks.forEach(task => {
           Object.keys(task).forEach(taskType => {
             const taskArray = task[taskType] || [];
-    
+          
             if (taskArray.length > 0) {
-              taskArray.forEach(item => {
-                (item.man_power || []).forEach(eq => {
+              taskArray.forEach(async item => {
+
+                try {
+                  const filter = { _id : item.supervisor.supervisor_id };
+                  const update = {
+                      $push: {
+                          projects: {
+                            project_id:project.pid,
+                            project_name:project.title,
+                            phase:project.phases[index].phase,
+                            phase_name:project.phases[index].phase_name,
+                            phase_description:project.phases[index].phase_description,
+                            phase_start:project.phases[index].phase_start,
+                            phase_end:project.phases[index].phase_end,
+                            tasks:[{
+                              task_type:taskType,
+                              man_power:item.man_power,
+                              equipment:item.equipment
+                            }]
+                          }
+                      }
+                  };
+                  
+                  const result = await User.updateMany(filter, update);
+                  
+                  if (result) {
+                      console.log("Employee Supervisor details updated successfully");
+                    }
+                  } catch (error) {
+                    console.log(error);
+              }
+                
+                (item.man_power || []).forEach(async eq => {
                   const manpowerDetails = {
                     empid: eq.empid,
                     empname: eq.empname,
@@ -51,6 +83,24 @@ const createProject = async (req, res) => {
                     phase_start:eq.phase_start,
                     phase_end:eq.phase_end
                   };
+
+                  try {
+                    const filter = { _id : item.supervisor.supervisor_id };
+                    const update = {
+                        $push: {
+                            assigned_emps: manpowerDetails
+                        }
+                    };
+                    
+                    const result = await User.updateMany(filter, update);
+                    
+                    if (result) {
+                        console.log("Employee Supervisor details updated successfully");
+                      }
+                    } catch (error) {
+                      console.log(error);
+                    }
+                    
                   allEmpIds.push(eq.empid)
                   totalManpowerCost += eq.salary;
                   allManPower.push(manpowerDetails);
@@ -69,6 +119,7 @@ const createProject = async (req, res) => {
     
                   allEquipments.push(equipmentDetails);
                 });
+              
               });
             }
           });
@@ -84,7 +135,11 @@ const createProject = async (req, res) => {
     console.log(allEmpIds);
     console.log("check")
 
-   
+
+    // console.log("All Manpower:", allManPower);
+    // console.log("All Equipments:", allEquipments);
+    // console.log("Total Manpower Cost:", totalManpowerCost);
+    // console.log("Total Equipment Cost:", totalEquipmentCost);
 
     
     try {
@@ -436,11 +491,52 @@ const deleteProjectById = async (req, res) => {
     // res.status(500).json({ message: "Internal server error" });
   }
 
-    
+  
+   let d = { order_id: projectId};
 
-  try {
-    let d = { order_id: projectId};
-    const saleorder = await SalesOrder.find(d);
+    try {
+
+      const saleorder = await SalesOrder.find(d);
+
+      let allEmpIds = [];
+     
+      saleorder[0]["all_manpower"].forEach(eq => {
+        allEmpIds.push(eq.empid)
+      });
+
+      console.log(allEmpIds)
+      
+      const filter = {
+        "projects": {
+          $elemMatch: {
+            project_id: saleorder[0].p_id,
+            project_location: saleorder[0].project_location
+          }
+        },
+        "empid": { $in: allEmpIds }
+      };
+    
+      const update = {
+        $pull: {
+          projects: {
+            project_id: saleorder[0].p_id,
+            project_location: saleorder[0].project_location
+          }
+        }
+      };
+    
+      const result = await EmployeeMaster.updateMany(filter, update);
+    
+      if (result) {
+        console.log(`Object removed successfully from the array in employees for ${allEmpIds.length} employees`, result);
+      } else {
+        console.log(`Project not found in employees for ${allEmpIds.length} employees`);
+      }
+    
+    } catch (error) {
+      console.log(error); 
+    }
+
     const so = await SalesOrder.deleteMany(d);
     if (!so) {
       resultData["oldSO"] = false;
@@ -450,52 +546,8 @@ const deleteProjectById = async (req, res) => {
       console.log("Sales order deleted successfully");
     }   
     
-    try {
-
-      let allEmpIds = [];
-
-      saleorder.all_manpower.forEach(eq => {
-        allEmpIds.push(eq.empid)
-      });
-
-      console.log(allEmpIds)
-      
-      const filter = {
-        "projects": {
-          $elemMatch: {
-            project_id: saleorder.p_id,
-            project_location: saleorder.location
-          }
-        },
-        "empid": { $in: allEmpIds }
-      };
+    res.status(200).json({ message: "project deleted successfully"});
     
-      const update = {
-        $pull: {
-          projects: {
-            project_id: saleorder.p_id,
-            project_location: saleorder.location
-          }
-        }
-      };
-    
-      const result = await EmployeeMaster.updateMany(filter, update);
-    
-      if (result.nModified > 0) {
-        console.log(`Object removed successfully from the array in employees for ${allEmpIds.length} employees`, result);
-      } else {
-        console.log(`Project not found in employees for ${allEmpIds.length} employees`);
-      }
-    
-      res.status(200).json({ message: "so deleted successfully",so});
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({ message: "Internal server error" });
-    }
-    
-  } catch (error) {
-    console.log(error)
-  }  
 };
 
 
