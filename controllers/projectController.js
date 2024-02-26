@@ -48,6 +48,8 @@ const createProject = async (req, res) => {
                             project_id:project.pid,
                             project_name:project.title,
                             phase:project.phases[index].phase,
+                            phase_name:project.phases[index].phase_name,
+                            phase_description:project.phases[index].phase_description,
                             phase_start:project.phases[index].phase_start,
                             phase_end:project.phases[index].phase_end,
                             tasks:[{

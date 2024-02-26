@@ -46,6 +46,12 @@ const projectSchema = new mongoose.Schema({
         type:Number,
         required: true,
       },
+      phase_name:{
+        type:String,
+      },
+      phase_description:{
+        type:String,
+      },
       phase_start:{
         type: Date,
         required: true,
