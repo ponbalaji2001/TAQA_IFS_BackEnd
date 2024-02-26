@@ -126,14 +126,6 @@ const createProject = async (req, res) => {
         });
       });
     }
-    
-    console.log("All Manpower:", allManPower);
-    console.log("All Equipments:", allEquipments);
-    console.log("Total Manpower Cost:", totalManpowerCost);
-    console.log("Total Equipment Cost:", totalEquipmentCost);
-   
-    console.log(allEmpIds);
-    console.log("check")
 
 
     // console.log("All Manpower:", allManPower);
