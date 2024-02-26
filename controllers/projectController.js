@@ -3,12 +3,10 @@ const SalesOrder = require("../models/SalesOrder");
 const EmployeeMaster = require("../models/employee"); 
 const User = require("../models/User"); 
 const mongoose = require('mongoose');
-const TimeSheet = require("../models/timesheet"); 
 
 
 //Create project
 const createProject = async (req, res) => {
-
   try {
     const data =req.body;
     const project =await Project.create({
@@ -32,26 +30,72 @@ const createProject = async (req, res) => {
     let allEquipments = [];
     let allManPower = [];
     let allEmpIds=[];
+
     if (data.phases) {
-      data.phases.forEach(phase => {
+      data.phases.forEach((phase,index) => {
         phase.tasks.forEach(task => {
           Object.keys(task).forEach(taskType => {
             const taskArray = task[taskType] || [];
-    
+          
             if (taskArray.length > 0) {
-              taskArray.forEach(item => {
-                (item.man_power || []).forEach(eq => {
+              taskArray.forEach(async item => {
+
+                try {
+                  const filter = { _id : item.supervisor.supervisor_id };
+                  const update = {
+                      $push: {
+                          projects: {
+                            project_id:project.pid,
+                            project_name:project.title,
+                            phase:project.phases[index].phase,
+                            phase_name:project.phases[index].phase_name,
+                            phase_description:project.phases[index].phase_description,
+                            phase_start:project.phases[index].phase_start,
+                            phase_end:project.phases[index].phase_end,
+                            tasks:[{
+                              task_type:taskType,
+                              man_power:item.man_power,
+                              equipment:item.equipment
+                            }]
+                          }
+                      }
+                  };
+                  
+                  const result = await User.updateMany(filter, update);
+                  
+                  if (result) {
+                      console.log("Employee Supervisor details updated successfully");
+                    }
+                  } catch (error) {
+                    console.log(error);
+              }
+                
+                (item.man_power || []).forEach(async eq => {
                   const manpowerDetails = {
                     empid: eq.empid,
                     empname: eq.empname,
                     experience: eq.experience,
                     designation: eq.designation,
                     salary: eq.salary,
-                    supervisor_id:eq.supid,
-                    _id:eq._id,
-                    phase_start:eq.phase_start,
-                    phase_end:eq.phase_end
                   };
+
+                  try {
+                    const filter = { _id : item.supervisor.supervisor_id };
+                    const update = {
+                        $push: {
+                            assigned_emps: manpowerDetails
+                        }
+                    };
+                    
+                    const result = await User.updateMany(filter, update);
+                    
+                    if (result) {
+                        console.log("Employee Supervisor details updated successfully");
+                      }
+                    } catch (error) {
+                      console.log(error);
+                    }
+                    
                   allEmpIds.push(eq.empid)
                   totalManpowerCost += eq.salary;
                   allManPower.push(manpowerDetails);
@@ -70,6 +114,7 @@ const createProject = async (req, res) => {
     
                   allEquipments.push(equipmentDetails);
                 });
+              
               });
             }
           });
@@ -77,19 +122,12 @@ const createProject = async (req, res) => {
       });
     }
 
-
     // console.log("All Manpower:", allManPower);
     // console.log("All Equipments:", allEquipments);
     // console.log("Total Manpower Cost:", totalManpowerCost);
     // console.log("Total Equipment Cost:", totalEquipmentCost);
-
     
-    console.log("All Manpower:", allManPower);
-    console.log("All Equipments:", allEquipments);
-    console.log("Total Manpower Cost:", totalManpowerCost);
-    console.log("Total Equipment Cost:", totalEquipmentCost);
-    console.log(allEmpIds);
-
+    console.log(allEmpIds)
     try {
       const filter = { empid: { $in: allEmpIds } };
       const update = {
@@ -100,40 +138,18 @@ const createProject = async (req, res) => {
               }
           }
       };
-
-
-      console.log('filter',filter);
-      console.log("update",update);
+      
       const result = await EmployeeMaster.updateMany(filter, update);
+      
       if (result) {
-        console.log("Employee Project details updated successfully", result);
+          console.log("Employee Project details updated successfully", result);
+        }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
-    }
-
-
-      console.log("Projct Id:", project._id);
-       let TsCreated = [];
-       if(allManPower.length > 0){        
-          allManPower.forEach(employee => {                    
-            let sendData = {
-              _id:employee._id,
-              empid:employee.empid,
-              supid:employee.supervisor_id,
-              projectid:project._id,
-              pro_start_date:employee.phase_start,  
-              pro_end_date:employee.phase_end,   
-            }
-            // console.log("send data",sendData);
-            const newTS = createTimeSheet(sendData);
-            TsCreated.push(newTS);
-          });
-      }else{
-        console.log("Emp Empty !.. Timesheet not created")
-      }
-
-      totalCost= totalManpowerCost+totalEquipmentCost;
+  
+    
+    totalCost= totalManpowerCost+totalEquipmentCost;
     tax=0.1*totalCost;
 
     console.log(totalManpowerCost+" "+totalEquipmentCost+" "+totalCost);
@@ -156,42 +172,16 @@ const createProject = async (req, res) => {
       amount_due: totalCost+tax,   
       status:"Pending"
     }
-
+    
     const cso = await createSaleOrder(ordDetails);
     console.log("cso worked",cso);
-    res.status(200).json({ 
-      message: "Project created successfully",
-      tsmsg:"TimeSheet created Successfully"
-    });
-
-  }catch(error) {
+    res.status(200).json({ message: "Project created successfully", project, cso});
+    
+  } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
-const createTimeSheet = async(details)=>{
-
-  try{
-    let data = details;  
-    const newts = await TimeSheet.create({
-        employee_id:data._id,
-        empid:data.empid,
-        current_supervisor_id:data.supid,
-        current_project_id:data.projectid,
-        current_phase_start_date:data.pro_start_date,  
-        current_phase_end_date:data.pro_end_date,     
-        timesheets:[],
-        tsStatus:"active"
-    });
-    console.log("Timesheet created : ",newts);
-    return true;
-  }catch(err){
-    console.log("While ts creating ",err);
-    return false;
-  }
-}
-
 
 const createSaleOrder = async (productDetails) => {
   try {
@@ -431,42 +421,12 @@ const deleteProjectById = async (req, res) => {
 
     // res.status(200).json({ message: "Project deleted successfully", project });
 
-    try {
-    
-      const filter = {
-        "projects": {
-          $elemMatch: {
-            project_id: project.pid
-          }
-        }
-      };
-    
-      const update = {
-        $pull: {
-          projects: {
-            project_id: project.pid,
-          }
-        }
-      };
-    
-      const result = await User.updateMany(filter, update);
-    
-      if (result) {
-        console.log(`Projcet removed successfully from Supervisors`, result);
-      } else {
-        console.log(`Project not found in Supervisors`);
-      }
-    
-    } catch (error) {
-      console.log(error); 
-    }
-    
-
   } catch (error) {
     console.log(error)
     // res.status(500).json({ message: "Internal server error" });
   }
 
+  
    let d = { order_id: projectId};
 
     try {
