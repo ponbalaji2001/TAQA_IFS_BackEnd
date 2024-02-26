@@ -75,6 +75,7 @@ const createProject = async (req, res) => {
                 console.log(item);
                 for (let eq of item.man_power) {
                   const manpowerDetails = {
+                    project_id: project.pid,
                     empid: eq.empid,
                     empname: eq.empname,
                     experience: eq.experience,
@@ -498,12 +499,20 @@ const deleteProjectById = async (req, res) => {
           $elemMatch: {
             project_id: project.pid
           }
+        },
+        "assigned_emps": {
+          $elemMatch: {
+            project_id: project.pid
+          }
         }
       };
    
       const update = {
         $pull: {
           projects: {
+            project_id: project.pid,
+          },
+          assigned_emps: {
             project_id: project.pid,
           }
         }
@@ -535,9 +544,10 @@ const deleteProjectById = async (req, res) => {
  
       let allEmpIds = [];
      
-      saleorder[0]["all_manpower"].forEach(eq => {
-        allEmpIds.push(eq.empid)
-      });
+
+      for(let eq of saleorder[0]["all_manpower"]) {
+        allEmpIds.push(eq.empid);
+      }
  
       console.log(allEmpIds)
      
