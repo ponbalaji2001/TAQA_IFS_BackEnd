@@ -39,8 +39,39 @@ const createProject = async (req, res) => {
             const taskArray = task[taskType] || [];
     
             if (taskArray.length > 0) {
-              taskArray.forEach(item => {
-                (item.man_power || []).forEach(eq => {
+              taskArray.forEach(async item => {
+                try {
+                  const filter = { _id : item.supervisor.supervisor_id };
+                  const update = {
+                      $push: {
+                          projects: {
+                            project_id:project.pid,
+                            project_name:project.title,
+                            phase:project.phases[index].phase,
+                            phase_name:project.phases[index].phase_name,
+                            phase_description:project.phases[index].phase_description,
+                            phase_start:project.phases[index].phase_start,
+                            phase_end:project.phases[index].phase_end,
+                            tasks:[{
+                              task_type:taskType,
+                              man_power:item.man_power,
+                              equipment:item.equipment
+                            }]
+                          }
+                      }
+                  };
+                  
+                  const result = await User.updateMany(filter, update);
+                  
+                  if (result) {
+                      console.log("Employee Supervisor details updated successfully");
+                    }
+                  } catch (error) {
+                    console.log(error);
+              }
+
+
+                (item.man_power || []).forEach(async eq => {
                   const manpowerDetails = {
                     empid: eq.empid,
                     empname: eq.empname,
@@ -52,6 +83,24 @@ const createProject = async (req, res) => {
                     phase_start:eq.phase_start,
                     phase_end:eq.phase_end
                   };
+
+                  try {
+                    const filter = { _id : item.supervisor.supervisor_id };
+                    const update = {
+                        $push: {
+                            assigned_emps: manpowerDetails
+                        }
+                    };
+                    
+                    const result = await User.updateMany(filter, update);
+                    
+                    if (result) {
+                        console.log("Employee Supervisor details updated successfully");
+                      }
+                    } catch (error) {
+                      console.log(error);
+                    }
+                    
                   allEmpIds.push(eq.empid)
                   totalManpowerCost += eq.salary;
                   allManPower.push(manpowerDetails);
