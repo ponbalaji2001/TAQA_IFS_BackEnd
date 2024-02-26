@@ -8,33 +8,90 @@ const alive = async(req,res)=>{
 
 const getTs = async(req,res)=>{
   console.log("get payroll",req.body);
+  let monthstatus = req.body.month;
   try{
-  const resTs = await TimeSheet.findOne({ 
-    _id: new mongoose.Types.ObjectId(req.body._id),
-    tsStatus:"active"
-   })
-  .then(timesheet => {
-    if (timesheet) {
-      // Timesheet document found, you can use it here
-      console.log(timesheet);
-      return res.status(200).json({ 
-        message: "Timesheet Found successfully",
-        res:timesheet
-      });
-    } else {
-      // Timesheet document not found
-      console.log('Timesheet not found');
-      return res.status(200).json({ 
-        message: "Timesheet Not Found",
-        res:timesheet
-      });
-    }
-  })
-  .catch(err => {
-    // Error occurred while fetching the document
-    console.error(err);
-    res.status(500).json({ message: "Timesheet error" });
-  });
+    if(monthstatus === "all"){   
+      const resTs = await TimeSheet.findOne({ 
+        employee_id: new mongoose.Types.ObjectId(req.body.employee_id),
+        current_supervisor_id: new mongoose.Types.ObjectId(req.body.current_supervisor_id),
+        tsStatus:"active"
+      })
+      .then(timesheet => {
+        if (timesheet) {
+          // Timesheet document found, you can use it here
+          // console.log(timesheet);
+          return res.status(200).json({ 
+            message: "Timesheet Found successfully",
+            res:[timesheet]
+          });
+        } else {
+          // Timesheet document not found
+          console.log('Timesheet not found');
+          return res.status(200).json({ 
+            message: "Timesheet Not Found",
+            res:timesheet
+          });
+        }
+      })
+      .catch(err => {
+        // Error occurred while fetching the document
+        console.error(err);
+        res.status(500).json({ message: "Timesheet error" });
+      })
+  }else{
+    console.log("else block")
+    const resTs = await TimeSheet.aggregate([
+      {
+        $match: {
+          employee_id: new mongoose.Types.ObjectId(req.body.employee_id),
+          current_supervisor_id: new mongoose.Types.ObjectId(req.body.current_supervisor_id),
+          'timesheets.month': monthstatus,
+          tsStatus:"active"
+        }
+      },
+      {
+        $project: {
+          _id: 1,
+          employee_id: 1,
+          empid: 1,
+          current_supervisor_id: 1,
+          current_project_id: 1,
+          current_phase_start_date: 1,
+          current_phase_end_date: 1,
+          timesheets: {
+            $filter: {
+              input: '$timesheets',
+              as: 'timesheet',
+              cond: { $eq: ['$$timesheet.month', monthstatus] }
+            }
+          }
+        }
+      }
+    ])
+    .then(timesheet => {
+      if (timesheet) {
+        // Timesheet document found, you can use it here
+        // console.log(timesheet);
+        return res.status(200).json({ 
+          message: "Timesheet Found successfully",
+          res:timesheet
+        });
+      } else {
+        // Timesheet document not found
+        console.log('Timesheet not found');
+        return res.status(200).json({ 
+          message: "Timesheet Not Found",
+          res:timesheet
+        });
+      }
+    })
+    .catch(err => {
+      // Error occurred while fetching the document
+      console.error(err);
+      res.status(500).json({ message: "Timesheet error" });
+    })
+
+  }
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Internal server error" });
@@ -44,16 +101,20 @@ const getTs = async(req,res)=>{
 
 
 const updateTs = async (req, res) => {
-    console.log( req.body.length);
+    console.log("body",req.body);
     let data =  req.body;
     let employee_id  =  req.body.employee_id; 
+    let current_supervisor_id = req.body.current_supervisor_id;
     let tsdays = data.timesheets;   
     try {
       const ts = await TimeSheet.findOne({ employee_id });
-      console.log(ts);
+      console.log("found",ts);
       if (ts){
         TimeSheet.updateOne(
-          { employee_id: employee_id }, // Specify the employee to update
+          { 
+            employee_id: employee_id,
+            current_supervisor_id:current_supervisor_id
+          }, // Specify the employee to update
           { $push: { timesheets: { $each: tsdays } } } // Add the new objects to the timesheets array
         ).then(result => {
             console.log(result);
@@ -69,7 +130,12 @@ const updateTs = async (req, res) => {
           });
         });        
         //update timesheet trigeers        
-      }      
+      }else{
+        return res.status(200).json({ 
+          message: "Timesheet Not Found",
+          res:[],
+      });
+      }    
     } catch (error) {
       console.log(error);
       res.status(500).json({ message: "Internal server error" });
