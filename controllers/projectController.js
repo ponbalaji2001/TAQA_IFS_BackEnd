@@ -478,12 +478,42 @@ const deleteProjectById = async (req, res) => {
 
     // res.status(200).json({ message: "Project deleted successfully", project });
 
+    try {
+    
+      const filter = {
+        "projects": {
+          $elemMatch: {
+            project_id: project.pid
+          }
+        }
+      };
+    
+      const update = {
+        $pull: {
+          projects: {
+            project_id: project.pid,
+          }
+        }
+      };
+    
+      const result = await User.updateMany(filter, update);
+    
+      if (result) {
+        console.log(`Projcet removed successfully from Supervisors`, result);
+      } else {
+        console.log(`Project not found in Supervisors`);
+      }
+    
+    } catch (error) {
+      console.log(error); 
+    }
+    
+
   } catch (error) {
     console.log(error)
     // res.status(500).json({ message: "Internal server error" });
   }
 
-  
    let d = { order_id: projectId};
 
     try {
