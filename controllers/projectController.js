@@ -9,19 +9,19 @@ const TimeSheet = require("../models/timesheet");
 const createProject = async (req, res) => {
   try {
     const data =req.body;
-    // const project =await Project.create({
-    //   title:data.title,
-    //   pid:random7DigitNumber(),
-    //   assignee:data.assignee,
-    //   reporter:data.reporter,
-    //   location:data.location,
-    //   priority:data.priority,
-    //   description:data.description,
-    //   start_date:data.start_date,
-    //   end_date:data.end_date,
-    //   status:data.status,
-    //   phases:data.phases     
-    // });
+    const project =await Project.create({
+      title:data.title,
+      pid:random7DigitNumber(),
+      assignee:data.assignee,
+      reporter:data.reporter,
+      location:data.location,
+      priority:data.priority,
+      description:data.description,
+      start_date:data.start_date,
+      end_date:data.end_date,
+      status:data.status,
+      phases:data.phases     
+    });
 
     let totalManpowerCost = 0;
     let totalEquipmentCost = 0;
@@ -77,50 +77,40 @@ const createProject = async (req, res) => {
     }
     
     console.log("All Manpower:", allManPower);
-    // console.log("All Equipments:", allEquipments);
-    // console.log("Total Manpower Cost:", totalManpowerCost);
-    // console.log("Total Equipment Cost:", totalEquipmentCost);
+    console.log("All Equipments:", allEquipments);
+    console.log("Total Manpower Cost:", totalManpowerCost);
+    console.log("Total Equipment Cost:", totalEquipmentCost);
    
-    // console.log(allEmpIds);
+    console.log(allEmpIds);
 
    
 
     
-    // try {
-      // const filter = { empid: { $in: allEmpIds } };
-      // const update = {
-      //     $push: {
-      //         projects: {
-      //             project_id: project.pid,
-      //             project_location: project.location
-      //         }
-      //     }
-      // };
+    try {
+      const filter = { empid: { $in: allEmpIds } };
+      const update = {
+          $push: {
+              projects: {
+                  project_id: project.pid,
+                  project_location: project.location
+              }
+          }
+      };
 
-      // const filter = { empid: { $in: allEmpIds } };
-      // const update = {
-      //     $push: {
-      //         projects: {
-      //             project_id: "project.pid",
-      //             project_location: "project.location"
-      //         }
-      //     }
-      // };
-      // console.log('filter',filter);
-      // console.log("update",update);
-      // const result = await EmployeeMaster.updateMany(filter, update);
       
-      // if (result) {
-      //     console.log("Employee Project details updated successfully", result);
-      //   }
-      // } catch (error) {
-      //   console.log(error);
-      // }
+      console.log('filter',filter);
+      console.log("update",update);
+      const result = await EmployeeMaster.updateMany(filter, update);
+      
+      if (result) {
+          console.log("Employee Project details updated successfully", result);
+        }
+      } catch (error) {
+        console.log(error);
+      }
       
        // const newTS =  await createTimeSheet(employee);
-       let project = {
-        _id:"65d7654a3560793b336331d5"
-       }
+       
        console.log("Projct Id:", project._id);
        let TsCreated = [];
        if(allManPower.length > 0){        
@@ -141,32 +131,32 @@ const createProject = async (req, res) => {
         console.log("Emp Empty !.. Timesheet not created")
       }
     
-    // totalCost= totalManpowerCost+totalEquipmentCost;
-    // tax=0.1*totalCost;
+    totalCost= totalManpowerCost+totalEquipmentCost;
+    tax=0.1*totalCost;
 
-    // console.log(totalManpowerCost+" "+totalEquipmentCost+" "+totalCost);
-    // let ordDetails = {
-    //   p_id:project.pid,
-    //   issue_date:new Date(),
-    //   due_date:project.end_date,
-    //   project_location:project.location || " ",
-    //   name:data.title,
-    //   order_number:random8DigitNumber(),
-    //   order_id:project._id,
-    //   items:itemRandomNumber(),
-    //   phases:project.phases,
-    //   all_manpower:allManPower,
-    //   all_equipment:allEquipments,
-    //   total_manpower_cost:totalManpowerCost,
-    //   total_equipment_cost:totalEquipmentCost, 
-    //   total_cost:totalCost,  
-    //   tax:tax,
-    //   amount_due: totalCost+tax,   
-    //   status:"Pending"
-    // }
+    console.log(totalManpowerCost+" "+totalEquipmentCost+" "+totalCost);
+    let ordDetails = {
+      p_id:project.pid,
+      issue_date:new Date(),
+      due_date:project.end_date,
+      project_location:project.location || " ",
+      name:data.title,
+      order_number:random8DigitNumber(),
+      order_id:project._id,
+      items:itemRandomNumber(),
+      phases:project.phases,
+      all_manpower:allManPower,
+      all_equipment:allEquipments,
+      total_manpower_cost:totalManpowerCost,
+      total_equipment_cost:totalEquipmentCost, 
+      total_cost:totalCost,  
+      tax:tax,
+      amount_due: totalCost+tax,   
+      status:"Pending"
+    }
     
-    // const cso = await createSaleOrder(ordDetails);
-    // console.log("cso worked",cso);
+    const cso = await createSaleOrder(ordDetails);
+    console.log("cso worked",cso);
     res.status(200).json({ 
       message: "Project created successfully",
       tsmsg:"TimeSheet created Successfully"
