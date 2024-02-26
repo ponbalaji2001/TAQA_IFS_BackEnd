@@ -8,6 +8,7 @@ const TimeSheet = require("../models/timesheet");
 
 //Create project
 const createProject = async (req, res) => {
+
   try {
     const data =req.body;
     const project =await Project.create({
@@ -31,47 +32,15 @@ const createProject = async (req, res) => {
     let allEquipments = [];
     let allManPower = [];
     let allEmpIds=[];
-
     if (data.phases) {
-      data.phases.forEach((phase,index) => {
+      data.phases.forEach(phase => {
         phase.tasks.forEach(task => {
           Object.keys(task).forEach(taskType => {
             const taskArray = task[taskType] || [];
-          
+    
             if (taskArray.length > 0) {
-              taskArray.forEach(async item => {
-
-                try {
-                  const filter = { _id : item.supervisor.supervisor_id };
-                  const update = {
-                      $push: {
-                          projects: {
-                            project_id:project.pid,
-                            project_name:project.title,
-                            phase:project.phases[index].phase,
-                            phase_name:project.phases[index].phase_name,
-                            phase_description:project.phases[index].phase_description,
-                            phase_start:project.phases[index].phase_start,
-                            phase_end:project.phases[index].phase_end,
-                            tasks:[{
-                              task_type:taskType,
-                              man_power:item.man_power,
-                              equipment:item.equipment
-                            }]
-                          }
-                      }
-                  };
-                  
-                  const result = await User.updateMany(filter, update);
-                  
-                  if (result) {
-                      console.log("Employee Supervisor details updated successfully");
-                    }
-                  } catch (error) {
-                    console.log(error);
-              }
-                
-                (item.man_power || []).forEach(async eq => {
+              taskArray.forEach(item => {
+                (item.man_power || []).forEach(eq => {
                   const manpowerDetails = {
                     empid: eq.empid,
                     empname: eq.empname,
@@ -83,24 +52,6 @@ const createProject = async (req, res) => {
                     phase_start:eq.phase_start,
                     phase_end:eq.phase_end
                   };
-
-                  try {
-                    const filter = { _id : item.supervisor.supervisor_id };
-                    const update = {
-                        $push: {
-                            assigned_emps: manpowerDetails
-                        }
-                    };
-                    
-                    const result = await User.updateMany(filter, update);
-                    
-                    if (result) {
-                        console.log("Employee Supervisor details updated successfully");
-                      }
-                    } catch (error) {
-                      console.log(error);
-                    }
-                    
                   allEmpIds.push(eq.empid)
                   totalManpowerCost += eq.salary;
                   allManPower.push(manpowerDetails);
@@ -119,7 +70,6 @@ const createProject = async (req, res) => {
     
                   allEquipments.push(equipmentDetails);
                 });
-              
               });
             }
           });
@@ -134,6 +84,12 @@ const createProject = async (req, res) => {
     // console.log("Total Equipment Cost:", totalEquipmentCost);
 
     
+    console.log("All Manpower:", allManPower);
+    console.log("All Equipments:", allEquipments);
+    console.log("Total Manpower Cost:", totalManpowerCost);
+    console.log("Total Equipment Cost:", totalEquipmentCost);
+    console.log(allEmpIds);
+
     try {
       const filter = { empid: { $in: allEmpIds } };
       const update = {
@@ -145,21 +101,19 @@ const createProject = async (req, res) => {
           }
       };
 
-      
+
       console.log('filter',filter);
       console.log("update",update);
       const result = await EmployeeMaster.updateMany(filter, update);
-      
       if (result) {
-          console.log("Employee Project details updated successfully", result);
-        }
-      } catch (error) {
-        console.log(error);
+        console.log("Employee Project details updated successfully", result);
       }
-      
-       // const newTS =  await createTimeSheet(employee);
-       
-       console.log("Projct Id:", project._id);
+    } catch (error) {
+      console.log(error);
+    }
+
+
+      console.log("Projct Id:", project._id);
        let TsCreated = [];
        if(allManPower.length > 0){        
           allManPower.forEach(employee => {                    
@@ -178,8 +132,8 @@ const createProject = async (req, res) => {
       }else{
         console.log("Emp Empty !.. Timesheet not created")
       }
-    
-    totalCost= totalManpowerCost+totalEquipmentCost;
+
+      totalCost= totalManpowerCost+totalEquipmentCost;
     tax=0.1*totalCost;
 
     console.log(totalManpowerCost+" "+totalEquipmentCost+" "+totalCost);
@@ -202,16 +156,15 @@ const createProject = async (req, res) => {
       amount_due: totalCost+tax,   
       status:"Pending"
     }
-    
+
     const cso = await createSaleOrder(ordDetails);
     console.log("cso worked",cso);
     res.status(200).json({ 
       message: "Project created successfully",
       tsmsg:"TimeSheet created Successfully"
     });
-    // res.status(200).json({ message: "Project created successfully", project, cso});
-    
-  } catch (error) {
+
+  }catch(error) {
     console.log(error);
     res.status(500).json({ message: "Internal server error" });
   }
