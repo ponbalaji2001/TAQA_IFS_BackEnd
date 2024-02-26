@@ -41,6 +41,12 @@ const timeSheetSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     required: true,
   },
+  current_phase_start_date: {
+    type: Date,
+  },
+  current_phase_end_date: {
+    type: Date,
+  },
   timesheets: {
    type:[daySchema]
   },

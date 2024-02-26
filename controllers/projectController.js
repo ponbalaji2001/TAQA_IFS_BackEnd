@@ -3,6 +3,7 @@ const SalesOrder = require("../models/SalesOrder");
 const EmployeeMaster = require("../models/employee"); 
 const User = require("../models/User"); 
 const mongoose = require('mongoose');
+const TimeSheet = require("../models/timesheet"); 
 
 
 //Create project
@@ -77,6 +78,10 @@ const createProject = async (req, res) => {
                     experience: eq.experience,
                     designation: eq.designation,
                     salary: eq.salary,
+                    supervisor_id:eq.supid,
+                    _id:eq._id,
+                    phase_start:eq.phase_start,
+                    phase_end:eq.phase_end
                   };
 
                   try {
@@ -122,12 +127,13 @@ const createProject = async (req, res) => {
       });
     }
 
+
     // console.log("All Manpower:", allManPower);
     // console.log("All Equipments:", allEquipments);
     // console.log("Total Manpower Cost:", totalManpowerCost);
     // console.log("Total Equipment Cost:", totalEquipmentCost);
+
     
-    console.log(allEmpIds)
     try {
       const filter = { empid: { $in: allEmpIds } };
       const update = {
@@ -138,7 +144,10 @@ const createProject = async (req, res) => {
               }
           }
       };
+
       
+      console.log('filter',filter);
+      console.log("update",update);
       const result = await EmployeeMaster.updateMany(filter, update);
       
       if (result) {
@@ -147,7 +156,28 @@ const createProject = async (req, res) => {
       } catch (error) {
         console.log(error);
       }
-  
+      
+       // const newTS =  await createTimeSheet(employee);
+       
+       console.log("Projct Id:", project._id);
+       let TsCreated = [];
+       if(allManPower.length > 0){        
+          allManPower.forEach(employee => {                    
+            let sendData = {
+              _id:employee._id,
+              empid:employee.empid,
+              supid:employee.supervisor_id,
+              projectid:project._id,
+              pro_start_date:employee.phase_start,  
+              pro_end_date:employee.phase_end,   
+            }
+            // console.log("send data",sendData);
+            const newTS = createTimeSheet(sendData);
+            TsCreated.push(newTS);
+          });
+      }else{
+        console.log("Emp Empty !.. Timesheet not created")
+      }
     
     totalCost= totalManpowerCost+totalEquipmentCost;
     tax=0.1*totalCost;
@@ -175,13 +205,40 @@ const createProject = async (req, res) => {
     
     const cso = await createSaleOrder(ordDetails);
     console.log("cso worked",cso);
-    res.status(200).json({ message: "Project created successfully", project, cso});
+    res.status(200).json({ 
+      message: "Project created successfully",
+      tsmsg:"TimeSheet created Successfully"
+    });
+    // res.status(200).json({ message: "Project created successfully", project, cso});
     
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+const createTimeSheet = async(details)=>{
+
+  try{
+    let data = details;  
+    const newts = await TimeSheet.create({
+        employee_id:data._id,
+        empid:data.empid,
+        current_supervisor_id:data.supid,
+        current_project_id:data.projectid,
+        current_phase_start_date:data.pro_start_date,  
+        current_phase_end_date:data.pro_end_date,     
+        timesheets:[],
+        tsStatus:"active"
+    });
+    console.log("Timesheet created : ",newts);
+    return true;
+  }catch(err){
+    console.log("While ts creating ",err);
+    return false;
+  }
+}
+
 
 const createSaleOrder = async (productDetails) => {
   try {
