@@ -33,7 +33,7 @@ const createProject = async (req, res) => {
     let allManPower = [];
     let allEmpIds=[];
     if (data.phases) {
-      data.phases.forEach(phase => {
+      data.phases.forEach((phase,index) => {
         phase.tasks.forEach(task => {
           Object.keys(task).forEach(taskType => {
             const taskArray = task[taskType] || [];
@@ -68,7 +68,7 @@ const createProject = async (req, res) => {
                     }
                   } catch (error) {
                     console.log(error);
-              }
+                }
 
 
                 (item.man_power || []).forEach(async eq => {
@@ -462,36 +462,66 @@ const deleteProjectById = async (req, res) => {
   let resultData={};
   const projectId = req.params.id;
   console.log("project id", projectId)
-
+ 
   try {
     const project = await Project.findByIdAndDelete(projectId);
-
+ 
     if (!project) {
       return res.status(404).json({ message: "Project not found" });
     }
-
+ 
     // res.status(200).json({ message: "Project deleted successfully", project });
-
+ 
+    try {
+   
+      const filter = {
+        "projects": {
+          $elemMatch: {
+            project_id: project.pid
+          }
+        }
+      };
+   
+      const update = {
+        $pull: {
+          projects: {
+            project_id: project.pid,
+          }
+        }
+      };
+   
+      const result = await User.updateMany(filter, update);
+   
+      if (result) {
+        console.log(`Projcet removed successfully from Supervisors`, result);
+      } else {
+        console.log(`Project not found in Supervisors`);
+      }
+   
+    } catch (error) {
+      console.log(error);
+    }
+   
+ 
   } catch (error) {
     console.log(error)
     // res.status(500).json({ message: "Internal server error" });
   }
-
-  
+ 
    let d = { order_id: projectId};
-
+ 
     try {
-
+ 
       const saleorder = await SalesOrder.find(d);
-
+ 
       let allEmpIds = [];
      
       saleorder[0]["all_manpower"].forEach(eq => {
         allEmpIds.push(eq.empid)
       });
-
+ 
       console.log(allEmpIds)
-      
+     
       const filter = {
         "projects": {
           $elemMatch: {
@@ -501,7 +531,7 @@ const deleteProjectById = async (req, res) => {
         },
         "empid": { $in: allEmpIds }
       };
-    
+   
       const update = {
         $pull: {
           projects: {
@@ -510,19 +540,19 @@ const deleteProjectById = async (req, res) => {
           }
         }
       };
-    
+   
       const result = await EmployeeMaster.updateMany(filter, update);
-    
+   
       if (result) {
         console.log(`Object removed successfully from the array in employees for ${allEmpIds.length} employees`, result);
       } else {
         console.log(`Project not found in employees for ${allEmpIds.length} employees`);
       }
-    
+   
     } catch (error) {
-      console.log(error); 
+      console.log(error);
     }
-
+ 
     const so = await SalesOrder.deleteMany(d);
     if (!so) {
       resultData["oldSO"] = false;
@@ -530,10 +560,10 @@ const deleteProjectById = async (req, res) => {
     }else{
       resultData["oldSO"] = true;
       console.log("Sales order deleted successfully");
-    }   
-    
+    }  
+   
     res.status(200).json({ message: "project deleted successfully"});
-    
+   
 };
 
 
