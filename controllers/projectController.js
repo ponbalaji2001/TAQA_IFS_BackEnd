@@ -82,6 +82,7 @@ const createProject = async (req, res) => {
     console.log("Total Equipment Cost:", totalEquipmentCost);
    
     console.log(allEmpIds);
+    console.log("check")
 
    
 
