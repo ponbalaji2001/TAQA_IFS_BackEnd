@@ -386,15 +386,15 @@ const updateTs = async (req, res) => {
 
     try {
       
-      const startDate = new Date(data.phase_start);
-      const endDate = new Date(data.phase_end);
+      const startDate = data.phase_start;
+      const endDate = data.phase_end;
       
       console.log(startDate+" "+endDate);
       TimeSheet.aggregate([
         {
           $match: {
             current_supervisor_id: querydata.current_supervisor_id, // Supervisor 1
-            "timesheets.date": {$gte:startDate, $lte:endDate},
+            // "timesheets.date": {$gte:startDate, $lte:endDate},
             current_project_id: querydata.current_project_id,
             "timesheets.task": querydata.task
           }
@@ -404,7 +404,7 @@ const updateTs = async (req, res) => {
         },
         {
           $match: {
-            "timesheets.date": {$gte:startDate, $lte:endDate},
+            // "timesheets.date": {$gte:startDate, $lte:endDate},
             "timesheets.task": querydata.task
           }
         },
