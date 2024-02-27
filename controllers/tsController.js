@@ -244,7 +244,7 @@ const updateTs = async (req, res) => {
         {
           $match: {
             "timesheets.date": queryDate,
-            "timesheets.task": "mls"
+            "timesheets.task": querydata.task
           }
         },
         {
@@ -271,7 +271,8 @@ const updateTs = async (req, res) => {
                 hoursWorked: "$timesheets.hoursWorked",
                 status: "$timesheets.status"
               }
-            }
+            },
+            totalHoursWorked: { $sum: "$timesheets.hoursWorked" }
           }
         }
       ])  
@@ -320,14 +321,14 @@ const updateTs = async (req, res) => {
                         as: "task",
                         cond: {
                           $and: [
-                            { $eq: ["$$task.task_type", data.task] },
+                            { $eq: ["$$task.task_type", eqdata.task] },
                             {
                               $anyElementTrue: {
                                 $map: {
                                   input: "$$task.man_power",
                                   as: "mp",
-                                  in: { $eq: ["$$mp.supid", data.supervisor_id] }
-                                }
+                                  in: { $eq: ["$$mp.supid", eqdata.supervisor_id] }
+                                }                               
                               }
                             }
                           ]
@@ -335,14 +336,26 @@ const updateTs = async (req, res) => {
                       }
                     }
                   }
+                },
+                {
+                  $project: {
+                    _id: 0,
+                    project_name:1,
+                    project_id:1,
+                    phase:1,
+                    tasks: {
+                      task_type: 1,
+                      equipment: "$tasks.equipment"
+                    }
+                  }
                 }
               ]);    
               console.log(ts);       
               if (ts.length > 0) {
-                res.status(200).json({ message: "Fetched successfully",resultset:result,equipset:ts});
+                res.status(200).json({ message: "Fetched successfully",manpowerset:result,equipset:ts});
                 // console.log(ts[0]);
               } else {
-                res.status(200).json({ message: "Fetched successfully",resultset:result,equipset:[]});
+                res.status(200).json({ message: "Fetched successfully",manpowerset:result,equipset:[]});
                 // res.status(404).json({ message: "Project not found" });
               }
             } catch (error) {
