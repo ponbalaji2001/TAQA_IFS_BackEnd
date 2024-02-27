@@ -1,4 +1,5 @@
 const TimeSheet = require("../models/timesheet");
+const User = require("../models/User"); 
 const mongoose = require('mongoose');
 
 const alive = async(req,res)=>{
@@ -142,6 +143,82 @@ const updateTs = async (req, res) => {
     }
   };
 
+  const getDlsReport = async (req, res) => {
+    console.log("body",req.body);
+    let data =  req.body;
+   
+    try {
+      try {
+        const ts = await User.aggregate([
+          {
+            $unwind: "$projects" 
+          },
+          {
+            $match: {
+              "projects.project_id": data.project_id,
+              "projects.phase": data.phase,
+              "projects.tasks": {
+                $elemMatch: {
+                  "task_type": data.task,
+                  "man_power": {
+                    $elemMatch: {
+                      supid: data.supervisor_id
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            $project: {
+              _id: 0, 
+              project_id: "$projects.project_id",
+              project_name: "$projects.project_name",
+              phase: "$projects.phase",
+              tasks: {
+                $filter: {
+                  input: "$projects.tasks",
+                  as: "task",
+                  cond: {
+                    $and: [
+                      { $eq: ["$$task.task_type", data.task] },
+                      {
+                        $anyElementTrue: {
+                          $map: {
+                            input: "$$task.man_power",
+                            as: "mp",
+                            in: { $eq: ["$$mp.supid", data.supervisor_id] }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        ]);
+      
+        if (ts.length > 0) {
+          console.log(ts[0]);
+          res.status(200).json(ts[0]);
+        } else {
+          res.status(404).json({ message: "Project not found" });
+        }
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Internal server error" });
+      }
+
+      console.log("found",ts);
+      res.status(200).json(ts);
+      
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  };
+
   //for existing days 
   const updateTsDays = async (req, res) => {
     console.log( req.body);
@@ -220,7 +297,8 @@ const updateTs = async (req, res) => {
     updateTsStatus,
     updateTsDays,
     alive,
-    getTs
+    getTs,
+    getDlsReport
   };
   
   
