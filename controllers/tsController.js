@@ -226,7 +226,7 @@ const updateTs = async (req, res) => {
     //date:"2024-02-01T18:30:00.000+00:00",
 
     try {
-      const queryDate = new Date(data.date);
+      const queryDate = data.date;
 
       
       TimeSheet.aggregate([
