@@ -8,5 +8,6 @@ router.post("/fetchtsbyid", tsController.getTs);
 router.post("/updatetsstatus", tsController.updateTsStatus);
 router.post("/updateexistdays", tsController.updateTsDays);
 
+router.post("/dslreport", tsController.dslReport);
 
 module.exports = router;

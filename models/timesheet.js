@@ -21,7 +21,10 @@ const daySchema = new mongoose.Schema({
   },
   status:{
     type:String
-  }  
+  },
+  task:{
+    type:String
+  },  
 });
 
 const timeSheetSchema = new mongoose.Schema({
