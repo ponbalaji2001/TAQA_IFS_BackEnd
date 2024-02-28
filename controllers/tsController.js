@@ -232,9 +232,11 @@ const updateTs = async (req, res) => {
     let project_phase_details= {
       project_id : project_data._id,    
       project_name: project_data.name,
+      project_location:project_data.location,
       project_start: project_data.start_date,
       project_end: project_data.end_date,
       phase:data.phase,
+      phase_name:project_data.phases[data.phase-1].phase_name,
       phase_start:project_data.phases[data.phase-1].phase_start,
       phase_end:project_data.phases[data.phase-1].phase_end,
       task:data.task,
@@ -401,12 +403,18 @@ const updateTs = async (req, res) => {
 
     const project_data = await Project.findById(data.current_project_id)
 
+    if(!project_data){
+      res.status(200).json({ message: "Project not found" });
+    }
+
     let project_phase_details= {
       project_id : project_data._id,    
       project_name: project_data.name,
+      project_location:project_data.location,
       project_start: project_data.start_date,
       project_end: project_data.end_date,
       phase:data.phase,
+      phase_name:project_data.phases[data.phase-1].phase_name,
       phase_start:project_data.phases[data.phase-1].phase_start,
       phase_end:project_data.phases[data.phase-1].phase_end,
       task:data.task,
