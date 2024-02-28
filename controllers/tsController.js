@@ -1,6 +1,7 @@
 const TimeSheet = require("../models/timesheet");
 const mongoose = require('mongoose');
 const EmployeeMaster = require("../models/employee"); 
+const Project = require("../models/Project");
 const User = require("../models/User");
 
 
@@ -225,10 +226,23 @@ const updateTs = async (req, res) => {
       task:data.task,
     };
     //date:"2024-02-01T18:30:00.000+00:00",
+   
+    const project_data = await Project.findById(data.current_project_id)
+
+    let project_phase_details= {
+      project_id : project_data._id,    
+      project_name: project_data.name,
+      project_start: project_data.start_date,
+      project_end: project_data.end_date,
+      phase:data.phase,
+      phase_start:project_data.phases[data.phase-1].phase_start,
+      phase_end:project_data.phases[data.phase-1].phase_end,
+      task:data.task,
+    };
 
     try {
-      const queryDate = data.date;
-
+      const queryDate = new Date(data.date);
+       
       
       TimeSheet.aggregate([
         {
@@ -353,10 +367,10 @@ const updateTs = async (req, res) => {
               ]);    
               console.log(ts);       
               if (ts.length > 0) {
-                res.status(200).json({ message: "Fetched successfully",manpowerset:result,equipset:ts});
+                res.status(200).json({ message: "Fetched successfully",project_phase_data:project_phase_details,manpowerset:result,equipset:ts});
                 // console.log(ts[0]);
               } else {
-                res.status(200).json({ message: "Fetched successfully",manpowerset:result,equipset:[]});
+                res.status(200).json({ message: "Fetched successfully",project_phase_data:project_phase_details,manpowerset:result,equipset:[]});
                 // res.status(404).json({ message: "Project not found" });
               }
             } catch (error) {
@@ -384,6 +398,20 @@ const updateTs = async (req, res) => {
       task:data.task,
     };
     //date:"2024-02-01T18:30:00.000+00:00",
+
+    const project_data = await Project.findById(data.current_project_id)
+
+    let project_phase_details= {
+      project_id : project_data._id,    
+      project_name: project_data.name,
+      project_start: project_data.start_date,
+      project_end: project_data.end_date,
+      phase:data.phase,
+      phase_start:project_data.phases[data.phase-1].phase_start,
+      phase_end:project_data.phases[data.phase-1].phase_end,
+      task:data.task,
+    };
+
  
     try {
      
@@ -514,10 +542,10 @@ const updateTs = async (req, res) => {
               ]);    
               console.log(ts);      
               if (ts.length > 0) {
-                res.status(200).json({ message: "Fetched successfully",manpowerset:result,equipset:ts});
+                res.status(200).json({ message: "Fetched successfully",project_phase_data:project_phase_details,manpowerset:result,equipset:ts});
                 // console.log(ts[0]);
               } else {
-                res.status(200).json({ message: "Fetched successfully",manpowerset:result,equipset:[]});
+                res.status(200).json({ message: "Fetched successfully",project_phase_data:project_phase_details,manpowerset:result,equipset:[]});
                 // res.status(404).json({ message: "Project not found" });
               }
             } catch (error) {
@@ -534,7 +562,7 @@ const updateTs = async (req, res) => {
       res.status(500).json({ message: "Internal server error" });
     }
   }
-  
+
   module.exports = {
     updateTs,
     updateTsStatus,

@@ -47,6 +47,7 @@ const createProject = async (req, res) => {
                   const update = {
                     $push: {
                       projects: {
+                        project_object_id:project._id,
                         project_id: project.pid,
                         project_name: project.title,
                         phase: project.phases[index].phase,
@@ -76,6 +77,7 @@ const createProject = async (req, res) => {
                 for (let eq of item.man_power) {
                   const manpowerDetails = {
                     project_id: project.pid,
+                    project_object_id:project._id,
                     empid: eq.empid,
                     empname: eq.empname,
                     experience: eq.experience,
@@ -149,6 +151,7 @@ const createProject = async (req, res) => {
       const update = {
         $push: {
           projects: {
+            project_object_id:project._id,
             project_id: project.pid,
             project_location: project.location
           }
