@@ -376,7 +376,7 @@ const updateTs = async (req, res) => {
 
 
   const mslReport = async (req, res) => {
-    console.log( req.body);
+    console.log("body", req.body);
     let data = req.body;
     let querydata = {
       current_supervisor_id : new mongoose.Types.ObjectId(data.current_supervisor_id), //supervisor 1      
@@ -384,12 +384,12 @@ const updateTs = async (req, res) => {
       task:data.task,
     };
     //date:"2024-02-01T18:30:00.000+00:00",
-
+ 
     try {
-      
-      const startDate = data.phase_start;
-      const endDate = data.phase_end;
-      
+     
+      const startDate = new Date(data.phase_start);
+      const endDate = new Date(data.phase_end);
+     
       console.log(startDate+" "+endDate);
       TimeSheet.aggregate([
         {
@@ -405,7 +405,7 @@ const updateTs = async (req, res) => {
         },
         {
           $match: {
-            // "timesheets.date": {$gte:startDate, $lte:endDate},
+            "timesheets.date": {$gte:startDate, $lte:endDate},
             "timesheets.task": querydata.task
           }
         },
@@ -439,7 +439,7 @@ const updateTs = async (req, res) => {
         }
       ])  
       .then(async result => {
-          
+         
           // console.log(result);
        
           let eqdata =  {
@@ -449,7 +449,7 @@ const updateTs = async (req, res) => {
             supervisor_id: data.current_supervisor_id
           }
            console.log("eqiupdata ",eqdata);
-          
+         
             try {
               const ts = await User.aggregate([
                 {
@@ -490,7 +490,7 @@ const updateTs = async (req, res) => {
                                   input: "$$task.man_power",
                                   as: "mp",
                                   in: { $eq: ["$$mp.supid", eqdata.supervisor_id] }
-                                }                               
+                                }                              
                               }
                             }
                           ]
@@ -512,7 +512,7 @@ const updateTs = async (req, res) => {
                   }
                 }
               ]);    
-              console.log(ts);       
+              console.log(ts);      
               if (ts.length > 0) {
                 res.status(200).json({ message: "Fetched successfully",manpowerset:result,equipset:ts});
                 // console.log(ts[0]);
