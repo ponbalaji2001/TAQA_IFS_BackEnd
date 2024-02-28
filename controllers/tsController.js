@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const EmployeeMaster = require("../models/employee"); 
 const User = require("../models/User");
 
+
 const alive = async(req,res)=>{
     console.log("payroll");
     res.status(500).json("Success");
@@ -394,7 +395,7 @@ const updateTs = async (req, res) => {
         {
           $match: {
             current_supervisor_id: querydata.current_supervisor_id, // Supervisor 1
-            // "timesheets.date": {$gte:startDate, $lte:endDate},
+            "timesheets.date": {$gte:startDate, $lte:endDate},
             current_project_id: querydata.current_project_id,
             "timesheets.task": querydata.task
           }
