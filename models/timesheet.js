@@ -42,7 +42,6 @@ const timeSheetSchema = new mongoose.Schema({
   },
   current_project_id: {
     type: mongoose.Schema.Types.ObjectId,
-    required: true,
   },
   current_phase_start_date: {
     type: Date,

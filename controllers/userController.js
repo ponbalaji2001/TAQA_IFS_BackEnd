@@ -1,5 +1,7 @@
 const User = require("../models/User"); 
 const Project = require("../models/Project");
+const TimeSheet = require("../models/timesheet");
+const mongoose = require('mongoose');
 
 const createUser = async (req, res) => {
   try {
@@ -8,9 +10,37 @@ const createUser = async (req, res) => {
       name:data.name,
       password:data.password,
       role:data.role,
-   });
-   
-    res.status(200).json({ message: "User created successfully", user });
+      id:random5DigitNumber()
+   }).then((result)=>{
+      console.log(result);
+      if(result){
+      let sendData = {
+        _id: result._id,
+        empid: result.id,
+        supid: "65cb4ada4aed17b2c3ce2cdc",
+        projectid: "",
+        pro_start_date: "",
+        pro_end_date: "",
+      }
+      // console.log("send data",sendData);
+      const newTS = createTimeSheet(sendData);
+      res.status(200).json({ 
+        message: "User created successfully",
+        tsmsg:"Timesheet created Successfully",
+        result
+       });
+      }else{
+        res.status(200).json({ 
+          message: "User created successfully",
+          tsmsg:"Timesheet Not created",
+          result
+         });
+      }
+      
+   }).catch(err => {
+    console.error(err);
+    res.status(500).json({ message: "Internal server error",error:err });
+    });    
   } catch (error) {
     console.log(error)
     res.status(500).json({ message: "Internal server error" });
@@ -100,6 +130,40 @@ const getSupervisorTimesheetSheet = async (req, res) => {
       res.status(500).json({ message: "Internal server error" });
   }
 };
+
+const createTimeSheet = async (details) => {
+
+  try {
+    let data = details;
+    const newts = await TimeSheet.create({
+      employee_id: data._id,
+      empid: data.empid,
+      current_supervisor_id: data.supid,
+      current_project_id:  null,
+      current_phase_start_date: data.pro_start_date,
+      current_phase_end_date: data.pro_end_date,
+      timesheets: [],
+      tsStatus: "active"
+    });
+    console.log("Timesheet created : ", newts);
+    return true;
+  } catch (err) {
+    console.log("While ts creating ", err);
+    return false;
+  }
+}
+
+const random5DigitNumber = () => {
+
+  let randomNumber = Math.floor(Math.random() * 100000);
+
+  let randomString = randomNumber.toString();
+
+  while (randomString.length < 5) {
+    randomString = '0' + randomString;
+  }
+  return randomString;
+}
 
 
 
