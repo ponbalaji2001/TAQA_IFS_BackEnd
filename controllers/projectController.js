@@ -796,7 +796,7 @@ const deleteProjectById = async (req, res) => {
       console.log("Sales order deleted successfully");
     }  
 
-    const ts= await updateTsStatus(projectId );
+    const ts= await updateTsStatus(projectId);
     console.log("timesheet deactivate: ",ts);
    
 
@@ -804,26 +804,26 @@ const deleteProjectById = async (req, res) => {
    
 };
 
+
 const updateTsStatus = async (project_id) => {
-  
   try {
-    const ts = await TimeSheet.findOne({project_id});
-    console.log(ts);
-    if (ts){
-      TimeSheet.updateOne(
-        { _id: project_id}, // Specify the employee to update
-        {$set:{tsStatus:req.body.tsStatus} } // Add the new objects to the timesheets array
-      ).then(result => {
-          console.log(result);
-          return result;
-      }).catch(err => {
-          console.error(err);
-          return false;
-      });        
-      //update timesheet trigeers        
-    }      
+    const result = await TimeSheet.updateMany(
+      {_id: new mongoose.Types.ObjectId(project_id) },
+      { $set: { tsStatus: req.body.tsStatus } }
+    );
+
+    console.log(result);
+
+    if (result.nModified > 0) {
+      // Check if any document was modified
+      return result;
+    } else {
+      // No documents were modified
+      return false;
+    }
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    return false;
   }
 }
 
