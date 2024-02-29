@@ -593,7 +593,11 @@ const deleteProjectById = async (req, res) => {
       resultData["oldSO"] = true;
       console.log("Sales order deleted successfully");
     }  
-    await updateTsStatus(projectId );
+
+    const ts= await updateTsStatus(projectId );
+    console.log("timesheet deactivate: ",ts);
+   
+
     res.status(200).json({ message: "project deleted successfully"});
    
 };
