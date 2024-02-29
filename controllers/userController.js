@@ -13,7 +13,7 @@ const createUser = async (req, res) => {
       id:random5DigitNumber()
    }).then((result)=>{
       console.log(result);
-      if(result){
+      if(result && data.role==="supervisor"){
       let sendData = {
         _id: result._id,
         empid: result.id,

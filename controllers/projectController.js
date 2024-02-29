@@ -593,10 +593,33 @@ const deleteProjectById = async (req, res) => {
       resultData["oldSO"] = true;
       console.log("Sales order deleted successfully");
     }  
-   
+    await updateTsStatus(projectId );
     res.status(200).json({ message: "project deleted successfully"});
    
 };
+
+const updateTsStatus = async (project_id) => {
+  
+  try {
+    const ts = await TimeSheet.findOne({project_id});
+    console.log(ts);
+    if (ts){
+      TimeSheet.updateOne(
+        { _id: project_id}, // Specify the employee to update
+        {$set:{tsStatus:req.body.tsStatus} } // Add the new objects to the timesheets array
+      ).then(result => {
+          console.log(result);
+          return result;
+      }).catch(err => {
+          console.error(err);
+          return false;
+      });        
+      //update timesheet trigeers        
+    }      
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 const random8DigitNumber = () => {
 
