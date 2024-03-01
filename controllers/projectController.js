@@ -25,9 +25,11 @@ const createProject = async (req, res) => {
 
     let totalManpowerCost = 0;
     let totalEquipmentCost = 0;
+    let totalMaterialsCost =0;
     let totalCost = 0;
     let tax = 0;
     let allEquipments = [];
+    let allMaterials = [];
     let allManPower = [];
     let allEmpIds = [];
 
@@ -127,6 +129,21 @@ const createProject = async (req, res) => {
                   allEquipments.push(equipmentDetails);
                 };
 
+                for (let mt of item.materials) {
+                  const matDetails = {
+                    materialid: mt._id,
+                    materialname: mt.materialname,
+                    quantity: mt.quantity,
+                    cost: mt.cost,
+                    unit:mt.unit,
+                    specification: mt.specification,
+                  };
+
+                  totalMaterialsCost += mt.quantity * mt.cost;
+
+                  allMaterials.push(matDetails);
+                };
+
               };
             }
           };
@@ -138,6 +155,7 @@ const createProject = async (req, res) => {
 
     console.log("All Manpower:", allManPower);
     console.log("All Equipments:", allEquipments);
+    console.log("All Equipments:", allMaterials);
     console.log("Total Manpower Cost:", totalManpowerCost);
     console.log("Total Equipment Cost:", totalEquipmentCost);
 
@@ -204,8 +222,10 @@ const createProject = async (req, res) => {
       phases: project.phases,
       all_manpower: allManPower,
       all_equipment: allEquipments,
+      allMaterials:allMaterials,
       total_manpower_cost: totalManpowerCost,
       total_equipment_cost: totalEquipmentCost,
+      totalMaterialsCost:totalMaterialsCost,
       total_cost: totalCost,
       tax: tax,
       amount_due: totalCost + tax,

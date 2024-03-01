@@ -41,11 +41,18 @@ const salesorderSchema = new mongoose.Schema({
    all_equipment:[{   
     
    }],
+   all_material:[{   
+    
+   }],
     total_manpower_cost: {
         type: Number,
         required: true,
     },
     total_equipment_cost: {
+      type: Number,
+      required: true,
+    },
+    total_material_cost: {
       type: Number,
       required: true,
     },
