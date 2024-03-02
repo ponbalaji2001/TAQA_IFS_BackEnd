@@ -40,6 +40,20 @@ const projectSchema = new mongoose.Schema({
     status: {
       type: String,
     },
+    createdby:{
+      date:{
+         type:Date
+      },
+      name:{
+        type:String
+      },
+      _id:{
+        type:mongoose.Schema.Types.ObjectId,
+      },
+      role:{
+        type:String
+      }
+    },      
     phases:[{
 
       phase:{
@@ -62,68 +76,88 @@ const projectSchema = new mongoose.Schema({
       },
 
       tasks:[{
-    //   mls:[{
-    //     supervisor:{
-    //       admin_id:{
-    //         type:mongoose.Schema.Types.ObjectId,
-    //       },
-    //       supervisor_id:{
-    //         type:Number,
-    //       },
-    //       supervisor_name:{
-    //         type:String,
-    //       }
-    //     },
-    //     man_power:[{
-    //       empid: {
-    //         type: String,
-    //       },
-    //       empname: {
-    //           type: String,
-    //       },
-    //       designation: {
-    //           type: String,
-    //       },
-    //       experience: {
-    //           type: String,
-    //       }, 
-    //      salary: {
-    //         type: Number,
-    //       },  
-    //       start_date: {
-    //         type: Date,
-    //       },
-    //       end_date: {
-    //         type: Date,
-    //       },
-    //       duration: {
-    //         type: Number,
-    //       },
-    //     }],
-    //     equipment:[{
-    //       equipmentid: {
-    //         type: String,
-    //       },
-    //       name: {
-    //           type: String,
-    //       },
-    //       quantity: {
-    //           type: Number,
-    //       },
-    //       cost: {
-    //           type: Number,
-    //       },
-    //       specification: {
-    //           type: String,
-    //       },
-    //       start_date: {
-    //         type: Date,
-    //       },
-    //       end_date: {
-    //         type: Date,
-    //       },
-    //     }],
-    //   }],
+      // mls:[{
+      //   supervisor:{
+      //     admin_id:{
+      //       type:mongoose.Schema.Types.ObjectId,
+      //     },
+      //     supervisor_id:{
+      //       type:Number,
+      //     },
+      //     supervisor_name:{
+      //       type:String,
+      //     }
+      //   },
+      //   man_power:[{
+      //     empid: {
+      //       type: String,
+      //     },
+      //     empname: {
+      //         type: String,
+      //     },
+      //     designation: {
+      //         type: String,
+      //     },
+      //     experience: {
+      //         type: String,
+      //     }, 
+      //    salary: {
+      //       type: Number,
+      //     },  
+      //     start_date: {
+      //       type: Date,
+      //     },
+      //     end_date: {
+      //       type: Date,
+      //     },
+      //     duration: {
+      //       type: Number,
+      //     },
+      //   }],
+      //   equipment:[{
+      //     equipmentid: {
+      //       type: String,
+      //     },
+      //     name: {
+      //         type: String,
+      //     },
+      //     quantity: {
+      //         type: Number,
+      //     },
+      //     cost: {
+      //         type: Number,
+      //     },
+      //     specification: {
+      //         type: String,
+      //     },
+      //     start_date: {
+      //       type: Date,
+      //     },
+      //     end_date: {
+      //       type: Date,
+      //     },
+      //   }],
+      //   material:[{
+      //     materialid: {
+      //       type: String,
+      //     },
+      //     materialname: {
+      //         type: String,
+      //     },
+      //     quantity: {
+      //         type: Number,
+      //     },
+      //     unit:{
+      //       type:String
+      //     },
+      //     cost: {
+      //         type: Number,
+      //     },
+      //     specification: {
+      //         type: String,
+      //     }
+      //   }],
+      // }],
     //   mws:[{
 
     //     supervisor:{

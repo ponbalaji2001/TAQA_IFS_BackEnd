@@ -20,6 +20,7 @@ const createProject = async (req, res) => {
       start_date: data.start_date,
       end_date: data.end_date,
       status: data.status,
+      createdby:data.createdby,
       phases: data.phases
     });
 
@@ -60,7 +61,8 @@ const createProject = async (req, res) => {
                         tasks: [{
                           task_type: taskType,
                           man_power: item.man_power,
-                          equipment: item.equipment
+                          equipment: item.equipment,
+                          material:item.material
                         }]
                       }
                     }
@@ -134,7 +136,7 @@ const createProject = async (req, res) => {
                   allEquipments.push(equipmentDetails);
                 };
 
-                for (let mt of item.materials) {
+                for (let mt of item.material) {
                   const matDetails = {
                     materialid: mt._id,
                     materialname: mt.materialname,
@@ -211,13 +213,13 @@ const createProject = async (req, res) => {
     }
 
 
-    totalCost = totalManpowerCost + totalEquipmentCost;
-    tax = 0.1 * totalCost;
+    totalCost = totalManpowerCost + totalEquipmentCost + totalMaterialsCost;
+    tax = (15/100) * totalCost;
 
-    console.log(totalManpowerCost + " " + totalEquipmentCost + " " + totalCost);
+    console.log(totalManpowerCost + " " + totalEquipmentCost + " " + totalMaterialsCost + " " +totalCost);
     let ordDetails = {
       p_id: project.pid,
-      issue_date: new Date(),
+      issue_date: project.createdby.date,
       due_date: project.end_date,
       project_location: project.location || " ",
       name: data.title,
@@ -227,14 +229,15 @@ const createProject = async (req, res) => {
       phases: project.phases,
       all_manpower: allManPower,
       all_equipment: allEquipments,
-      allMaterials:allMaterials,
+      all_material:allMaterials,
       total_manpower_cost: totalManpowerCost,
       total_equipment_cost: totalEquipmentCost,
-      totalMaterialsCost:totalMaterialsCost,
+      total_material_cost: totalMaterialsCost,
       total_cost: totalCost,
       tax: tax,
       amount_due: totalCost + tax,
-      status: "Pending"
+      status: "Pending",
+      createdby:project.createdby
     }
 
     const cso = await createSaleOrder(ordDetails);
@@ -252,6 +255,7 @@ const createProject = async (req, res) => {
     });
   }
 };
+
 const createTimeSheet = async (details) => {
 
   try {
@@ -290,12 +294,15 @@ const createSaleOrder = async (productDetails) => {
       phases: data.phases,
       all_manpower: data.all_manpower,
       all_equipment: data.all_equipment,
+      all_material:data.all_material,
       total_manpower_cost: data.total_manpower_cost,
       total_equipment_cost: data.total_equipment_cost,
+      total_material_cost:data.total_material_cost,
       total_cost: data.total_cost,
       tax: data.tax,
       amount_due: data.amount_due,
-      status: data.status
+      status: data.status,
+      createdby:data.createdby,
     });
     return salesorder;
     // res.status(200).json({ message: "Project created successfully", salesorder});
@@ -378,15 +385,16 @@ const updateProjectbyId = async (req, res) => {
         end_date: data.end_date,
         status: data.status,
         phases: data.phases,
-        start_date: data.start_date,
-        end_date: data.end_date
+        createdby:data.createdby
       });
   
       let totalManpowerCost = 0;
       let totalEquipmentCost = 0;
+      let totalMaterialsCost =0;
       let totalCost = 0;
       let tax = 0;
       let allEquipments = [];
+      let allMaterials = [];
       let allManPower = [];
       let allEmpIds = [];
   
@@ -417,7 +425,8 @@ const updateProjectbyId = async (req, res) => {
                           tasks: [{
                             task_type: taskType,
                             man_power: item.man_power,
-                            equipment: item.equipment
+                            equipment: item.equipment,
+                            material: item.material
                           }]
                         }
                       }
@@ -488,6 +497,21 @@ const updateProjectbyId = async (req, res) => {
   
                     allEquipments.push(equipmentDetails);
                   };
+
+                  for (let mt of item.material) {
+                    const matDetails = {
+                      materialid: mt._id,
+                      materialname: mt.materialname,
+                      quantity: mt.quantity,
+                      cost: mt.cost,
+                      unit:mt.unit,
+                      specification: mt.specification,
+                    };
+  
+                    totalMaterialsCost += mt.quantity * mt.cost;
+  
+                    allMaterials.push(matDetails);
+                  };
   
                 };
               }
@@ -550,13 +574,13 @@ const updateProjectbyId = async (req, res) => {
       }
   
   
-      totalCost = totalManpowerCost + totalEquipmentCost;
-      tax = 0.1 * totalCost;
+      totalCost = totalManpowerCost + totalEquipmentCost + totalMaterialsCost;
+      tax = (15/100) * totalCost;
   
-      console.log(totalManpowerCost + " " + totalEquipmentCost + " " + totalCost);
+      console.log(totalManpowerCost + " " + totalEquipmentCost + " " + totalMaterialsCost + " " +totalCost);
       let ordDetails = {
         p_id: project.pid,
-        issue_date: new Date(),
+        issue_date: project.createdby.date,
         due_date: project.end_date,
         project_location: project.location || " ",
         name: data.title,
@@ -566,12 +590,15 @@ const updateProjectbyId = async (req, res) => {
         phases: project.phases,
         all_manpower: allManPower,
         all_equipment: allEquipments,
+        all_material:allMaterials,
         total_manpower_cost: totalManpowerCost,
         total_equipment_cost: totalEquipmentCost,
+        total_material_cost: totalMaterialsCost,
         total_cost: totalCost,
         tax: tax,
         amount_due: totalCost + tax,
-        status: "Pending"
+        status: "Pending",
+        createdby:project.createdby,
       }
   
       const cso = await createSaleOrder(ordDetails);

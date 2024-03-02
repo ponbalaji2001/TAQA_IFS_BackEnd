@@ -4,6 +4,7 @@ const Project = require("../models/Project");
 const TimeSheet = require("../models/timesheet"); 
 const mongoose = require('mongoose');
 const MaterialsMaster =  require("../models/materials");
+const User = require("../models/User"); 
 const alive = async(req,res)=>{
     res.status(500).json("Success");
 }
@@ -24,9 +25,24 @@ const createEmployee = async (req, res) => {
       nationalId_no:data.nationalId_no,
       emergency_contact:data.emergency_contact
    });
+
+   try{
+   const user = await User.create({
+     object_id:employee._id,
+     id:employee.empid,
+     name:employee.empname,
+     role:"user",
+     password:employee.empname.substring(0, 3)+"@"+employee.empid
+   });
+
+   console.log(user)
+
+  }catch(error){
+    console.log(error)
+  }
+
    console.log(employee);
-   const newTS =  await createTimeSheet(employee);
-    res.status(200).json({ message: "Employee created successfully",data:employee,ts:newTS });
+
   } catch (error) {
     console.log(error)
     res.status(500).json({ message: "Internal server error" });
@@ -190,6 +206,28 @@ const updateEmpbyId = async (req, res) => {
     if (!emp) {
       return res.status(404).json({ message: "Employee not found" });
     }
+
+    try {
+      const user = await User.findOneAndUpdate(
+        {object_id: new mongoose.Types.ObjectId(empId)},
+        {
+          object_id:emp._id,
+          id:emp.empid,
+          name:emp.empname,
+          role:"user",
+          password:emp.empname.substring(0, 3)+"@"+emp.empid
+        },
+        { new: true }
+      );
+      if (!user) {
+        console.log({ message: "user not found" });
+      }
+      
+      console.log({ message: "User updated successfully", user });
+    } catch (error) {
+      console.log(error);
+    }
+
     res.status(200).json({ message: "Employee updated successfully", emp });
   } catch (error) {
     console.log(error);
@@ -199,6 +237,16 @@ const updateEmpbyId = async (req, res) => {
 
 const deleteEmpById = async (req, res) => {
   const empId = req.params.id;
+
+  try {
+    const user = await User.findOneAndDelete({object_id:new mongoose.Types.ObjectId(empId)});
+    if (!user) {
+      console.log("user not found")
+    }
+  } catch (error) {
+    console.log(error)
+  }
+
   try {
     const emp = await EmployeeMaster.findByIdAndDelete(empId);
     if (!emp) {

@@ -73,6 +73,9 @@ const salesorderSchema = new mongoose.Schema({
       required:true
     },
     createdby:{
+      date:{
+        type:Date
+      },
       name:{
         type:String
       },
