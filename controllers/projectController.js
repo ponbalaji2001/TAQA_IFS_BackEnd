@@ -43,14 +43,27 @@ const createProject = async (req, res) => {
             if (taskArray.length > 0) {
               for(let item of taskArray) {
                 console.log(item);
+
+                const supervisorIds = item.management_members.supervisors.map(
+                  (supervisor) => supervisor.supervisor_id
+                );
+                const managerIds = item.management_members.managers.map(
+                  (manager) => manager.manager_id
+                );
+  
+                const allMemberIds = [...supervisorIds, ...managerIds];
+  
+                const uniqueMemberIds = [...new Set(allMemberIds)];
+
                 try {
                   const filter = {
-                    _id: item.supervisor.supervisor_id
+                    _id: { $in: uniqueMemberIds },
                   };
+                  
                   const update = {
                     $push: {
                       projects: {
-                        project_object_id:project._id,
+                        project_object_id: project._id,
                         project_id: project.pid,
                         project_name: project.title,
                         phase: project.phases[index].phase,
@@ -58,16 +71,18 @@ const createProject = async (req, res) => {
                         phase_description: project.phases[index].phase_description,
                         phase_start: project.phases[index].phase_start,
                         phase_end: project.phases[index].phase_end,
-                        tasks: [{
-                          task_type: taskType,
-                          man_power: item.man_power,
-                          equipment: item.equipment,
-                          material:item.material
-                        }]
-                      }
-                    }
+                        tasks: [
+                          {
+                            task_type: taskType,
+                            man_power: item.man_power,
+                            equipment: item.equipment,
+                            material: item.material,
+                          },
+                        ],
+                      },
+                    },
                   };
-
+                  
                   const result = await User.updateMany(filter, update);
 
                   if (result) {

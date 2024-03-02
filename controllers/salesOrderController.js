@@ -22,6 +22,7 @@ const getSOList = async (req, res) => {
             order_id:1,
             items:1,
             status:1,
+            createdby:1,
             _id: 1
           }
       }
