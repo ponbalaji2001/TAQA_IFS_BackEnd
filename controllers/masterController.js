@@ -3,7 +3,7 @@ const EquipmentMaster = require("../models/Equipment");
 const Project = require("../models/Project");
 const TimeSheet = require("../models/timesheet"); 
 const mongoose = require('mongoose');
-
+const MaterialsMaster =  require("../models/materials");
 const alive = async(req,res)=>{
     res.status(500).json("Success");
 }
@@ -43,6 +43,62 @@ const createEquipment = async (req, res) => {
       res.status(500).json({ message: "Internal server error" });
     }
   };
+
+  // for Materials CURD
+const createMaterials = async (req, res) => {
+    try {
+      
+      const data= req.body;
+      let mid = "CHEM"+random3DigitNumber();
+      const materials = await MaterialsMaster.create({
+        materialid:mid,
+        materialname:data.materialname,
+        quantity:data.quantity,
+        unit:data.unit,
+        cost:data.cost,
+        specification:data.specification
+     });
+     console.log(materials);
+      res.status(200).json({ message: "Materials created successfully",data:materials });
+    } catch (error) {
+      console.log(error)
+      res.status(500).json({ message: "Internal server error" });
+    }
+  };
+
+const getAllMat = async (req, res) => {
+  try {
+    const allmat = await MaterialsMaster.find();
+    res.status(200).json({message:"fetched successfully",data:allmat});
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error",data:[]});
+  }
+};
+
+const getMatrialsByName = async(req,res)=>{
+  try{
+      let searchLetter = req.body.materialname;        
+      MaterialsMaster.aggregate([
+      {
+        $match: {
+          materialname: { $regex: new RegExp(searchLetter, 'i') } // 'i' for case-insensitive search
+        }
+      }
+    ]).then(result => {
+      console.log("fetched result",result.length);
+      res.status(200).json({message:"fetched successfully",data:result});
+    }).catch(err => {
+        console.error(err);
+        res.status(500).json({ message: "Internal server error",data:[]});
+    });      
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Internal server error",data:[]});
+    }
+}
+
+// for Materials CURD
+
 
   const getAllEmployees = async (req, res) => {
     try {
@@ -283,4 +339,7 @@ module.exports = {
     deleteEmpById,
     getAvailEmployees,
     getEmployeeById,
+    createMaterials,
+    getAllMat,
+    getMatrialsByName
 };

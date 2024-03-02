@@ -2,7 +2,7 @@ const SalesOrder = require("../models/SalesOrder");
 const EquipmentMaster = require("../models/Equipment");
 const Project = require("../models/Project"); 
 const mongoose = require('mongoose');
-
+const MaterialsMaster =  require("../models/materials");
 
 // Get all projects data
 const getSOList = async (req, res) => {
@@ -59,10 +59,12 @@ const editSODetails = async(req,res)=>{
 
     if(req.body.status === "Approved"){
       const updateMaster = await updateMasterEquipment(req.body.orderid);
+      const updateMasterMaterial = await updateMasterMaterials(req.body.orderid);
+      // console.log("updated successfully",updateMasterMaterial);
       console.log("updated successfully",updateMaster);
     }
     
-    res.status(200).json({ message: "SO updated successfully", updatedOrder});
+    res.status(200).json({ message: "SO updated successfully", data:updatedOrder});
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -70,39 +72,79 @@ const editSODetails = async(req,res)=>{
 
 
 const updateMasterEquipment = async (orderid)=>{
+  try{ 
+      
+      SalesOrder.aggregate([
+        {
+          $match: {
+            order_id: new mongoose.Types.ObjectId(orderid) 
+          }
+        },
+        {
+          $unwind: "$all_equipment"
+        },
+        {
+          $group: {
+            _id: "$all_equipment.equipmentid",
+            totalcount: { $sum: "$all_equipment.quantity" }
+          }
+        },
+        {
+          $project: {
+            _id: 0, // Exclude the default _id field
+            equipmentid: "$_id",
+            totalcount: 1
+          }
+        }
+      ]).then(results => {
+      console.log("fetched result",results.length);
+      console.log(results);
+        // results is an array of objects containing _id (equipmentid) and totalQuantity
+        // Update master equipment table to reduce quantity
+        results.forEach(result => {
+            EquipmentMaster.updateOne(
+              { equipmentid: result.equipmentid },
+              { $inc: { quantity: - result.totalcount } }
+            ).then((resultset) => {
+              // console.log(resultset);
+              console.log(`Updated quantity for ${result._id}`);
+            }).catch(err => {
+              console.error("error",err);
+              // Handle error        
+            });
+        }); 
+      return true;
+    }).catch(err => {
+        console.error(err);
+        return false;
+    }); 
+  }catch(err){
+    console.log("err in updatemaster",err);
+  }
+}
+
+const updateMasterMaterials = async (orderid)=>{
   try{
-    Project.aggregate([
+    SalesOrder.aggregate([
       {
         $match: {
-            _id: new mongoose.Types.ObjectId(orderid) 
+          order_id: new mongoose.Types.ObjectId(orderid) 
         }
       },
-      { $unwind: "$task" },
-      { $unwind: { path: "$task.mls", preserveNullAndEmptyArrays: true } },
-      { $unwind: { path: "$task.mws", preserveNullAndEmptyArrays: true } },
-      { $unwind: { path: "$task.aws", preserveNullAndEmptyArrays: true } },
-      { $unwind: { path: "$task.mps", preserveNullAndEmptyArrays: true } },
-      { $unwind: { path: "$task.mss", preserveNullAndEmptyArrays: true } },
-      { $unwind: { path: "$task.mdds", preserveNullAndEmptyArrays: true } },
-      { 
-        $project: {
-          equipment: {
-            $concatArrays: [
-              "$task.mls.equipment",
-              "$task.mws.equipment",
-              "$task.aws.equipment",
-              "$task.mps.equipment",
-              "$task.mss.equipment",
-              "$task.mdds.equipment"
-            ]
-          }
-        } 
+      {
+        $unwind: "$all_materials"
       },
-      { $unwind: "$equipment" },
-      { 
+      {
         $group: {
-          _id: "$equipment.equipmentid",
-          totalQuantity: { $sum: { $toInt: "$equipment.quantity" } }
+          _id: "$all_materials.materialid",
+          totalcount: { $sum: "$all_materials.quantity" }
+        }
+      },
+      {
+        $project: {
+          _id: 0, // Exclude the default _id field
+          materialid: "$_id",
+          totalcount: 1
         }
       }
     ]).then(results => {
@@ -111,9 +153,9 @@ const updateMasterEquipment = async (orderid)=>{
         // results is an array of objects containing _id (equipmentid) and totalQuantity
         // Update master equipment table to reduce quantity
         results.forEach(result => {
-            EquipmentMaster.updateOne(
-              { equipmentid: result._id },
-              { $inc: { quantity: - result.totalQuantity } }
+          MaterialsMaster.updateOne(
+              { materialid: result.materialid },
+              { $inc: { quantity: - result.totalcount } }
             ).then(() => {
               console.log(`Updated quantity for ${result._id}`);
             }).catch(err => {

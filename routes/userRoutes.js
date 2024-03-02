@@ -23,5 +23,9 @@ router.post("/master/get/supervisor/timesheetdata", userController.getSupervisor
 router.get("/master/get/all/admins", userController.getAllAdmin);
 router.get("/master/get/all/users", userController.getAllUser);
 
+// for materials
+router.post("/master/addmaterials",masterController.createMaterials); 
+router.get("/master/getall/materials", masterController.getAllMat);
+router.post("/master/getmaterialbyname",masterController.getMatrialsByName);
 
 module.exports = router;
