@@ -15,11 +15,56 @@ const employeeMaster = new mongoose.Schema({
     },
     experience: {
         type: String,
-        required:true,
     },
     salary: {
         type: Number,
         required:true,
+    },
+    category: {
+        type: String,
+        required:true,
+    },
+    mobileno: {
+        type: String,
+        required:true,
+    },
+   email: {
+        type: String,
+    },
+    address:{
+        type: String
+    },
+    nationalId_type: {
+        type: String,
+        required:true,
+    },
+    nationalId_no: {
+        type: String,
+        required:true,
+    },
+    emergency_contact: [{
+
+        name: {
+            type: String,
+        },
+        relation: {
+            type: String,
+        },
+        mobileno: {
+            type: String,
+        },
+        email: {
+            type: String,
+        },
+        address: {
+            type: String,
+        }
+    }],
+    start_date: {
+        type: Date,
+    },
+    end_date: {
+        type: Date
     },
     projects:[{
         project_id: {

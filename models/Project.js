@@ -64,6 +64,9 @@ const projectSchema = new mongoose.Schema({
       tasks:[{
     //   mls:[{
     //     supervisor:{
+    //       admin_id:{
+    //         type:mongoose.Schema.Types.ObjectId,
+    //       },
     //       supervisor_id:{
     //         type:Number,
     //       },
@@ -87,6 +90,12 @@ const projectSchema = new mongoose.Schema({
     //      salary: {
     //         type: Number,
     //       },  
+    //       start_date: {
+    //         type: Date,
+    //       },
+    //       end_date: {
+    //         type: Date,
+    //       },
     //       duration: {
     //         type: Number,
     //       },
@@ -106,6 +115,12 @@ const projectSchema = new mongoose.Schema({
     //       },
     //       specification: {
     //           type: String,
+    //       },
+    //       start_date: {
+    //         type: Date,
+    //       },
+    //       end_date: {
+    //         type: Date,
     //       },
     //     }],
     //   }],
