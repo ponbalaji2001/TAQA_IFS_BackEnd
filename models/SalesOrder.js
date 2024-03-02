@@ -27,7 +27,7 @@ const salesorderSchema = new mongoose.Schema({
     },
     items: {
       type: Number,
-      required: true,
+      
     },
     status: {
         type: String,
@@ -64,7 +64,18 @@ const salesorderSchema = new mongoose.Schema({
     project_location:{
       type:String,
       required:true
-    }       
+    },
+    createdby:{
+      name:{
+        type:String
+      },
+      _id:{
+        type:mongoose.Schema.Types.ObjectId,
+      },
+      role:{
+        type:String
+      }
+    }          
   
 
 });

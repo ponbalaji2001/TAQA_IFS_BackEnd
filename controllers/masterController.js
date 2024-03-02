@@ -15,7 +15,14 @@ const createEmployee = async (req, res) => {
       empname:data.empname,
       designation:data.designation,
       experience:data.experience,
-      salary:data.salary
+      salary:data.salary,
+      category:data.category,
+      mobileno:data.mobileno,
+      email:data.email,
+      address:data.address,
+      nationalId_type:data.nationalId_type,
+      nationalId_no:data.nationalId_no,
+      emergency_contact:data.emergency_contact
    });
    console.log(employee);
    const newTS =  await createTimeSheet(employee);
@@ -113,7 +120,14 @@ const updateEmpbyId = async (req, res) => {
         empname:data.empname,
         designation:data.designation,
         experience:data.experience,
-        salary:data.salary
+        salary:data.salary,
+        category:data.category,
+        mobileno:data.mobileno,
+        email:data.email,
+        address:data.address,
+        nationalId_type:data.nationalId_type,
+        nationalId_no:data.nationalId_no,
+        emergency_contact:data.emergency_contact
       },
       { new: true }
     );

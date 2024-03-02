@@ -86,7 +86,9 @@ const createProject = async (req, res) => {
                     supervisor_id: eq.supid,
                     _id: eq._id,
                     phase_start: eq.phase_start,
-                    phase_end: eq.phase_end
+                    phase_end: eq.phase_end,
+                    start_date: eq.start_date,
+                    end_date: eq.end_date
                   };
 
                   try {
@@ -120,6 +122,9 @@ const createProject = async (req, res) => {
                     quantity: eq.quantity,
                     cost: eq.cost,
                     specification: eq.specification,
+                    start_date: eq.start_date,
+                    end_date: eq.end_date,
+                    usage_hours:eq.usage_hours
                   };
 
                   totalEquipmentCost += eq.quantity * eq.cost;
@@ -153,7 +158,7 @@ const createProject = async (req, res) => {
           projects: {
             project_object_id:project._id,
             project_id: project.pid,
-            project_location: project.location
+            project_location: project.location,
           }
         }
       };
@@ -352,7 +357,9 @@ const updateProjectbyId = async (req, res) => {
         start_date: data.start_date,
         end_date: data.end_date,
         status: data.status,
-        phases: data.phases
+        phases: data.phases,
+        start_date: data.start_date,
+        end_date: data.end_date
       });
   
       let totalManpowerCost = 0;
@@ -452,6 +459,9 @@ const updateProjectbyId = async (req, res) => {
                       quantity: eq.quantity,
                       cost: eq.cost,
                       specification: eq.specification,
+                      start_date: eq.start_date,
+                      end_date: eq.end_date,
+                      usage_hours:eq.usage_hours
                     };
   
                     totalEquipmentCost += eq.quantity * eq.cost;
