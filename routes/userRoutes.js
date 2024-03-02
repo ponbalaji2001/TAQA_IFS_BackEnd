@@ -22,6 +22,7 @@ router.get("/master/get/supervisor/:id", userController.getSupervisorById);
 router.post("/master/get/supervisor/timesheetdata", userController.getSupervisorTimesheetSheet);
 router.get("/master/get/all/admins", userController.getAllAdmin);
 router.get("/master/get/all/users", userController.getAllUser);
+router.get("/master/get/all/managers", userController.getAllManager);
 
 // for materials
 router.post("/master/addmaterials",masterController.createMaterials); 

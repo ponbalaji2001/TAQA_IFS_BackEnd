@@ -74,6 +74,15 @@ const getAllUser = async (req, res) => {
   }
 };
 
+const getAllManager = async (req, res) => {
+  try {
+    const allEmp = await User.find({role:"manager"});
+    res.status(200).json(allEmp);
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 const getSupervisorById = async (req, res) => {
   try {
     const sup = await User.findById(req.params.id);
@@ -172,6 +181,7 @@ module.exports = {
   getAllSupervisor,
   getAllAdmin,
   getAllUser,
+  getAllManager,
   getSupervisorById,
   getSupervisorTimesheetSheet
 };
