@@ -43,9 +43,6 @@ const createEmployee = async (req, res) => {
         empid: result.id,
         role:result.role,
         supid: "",
-        projectid: "",
-        pro_start_date: "",
-        pro_end_date: "",
       };
 
       const newTS = createTimeSheet(sendData);
@@ -408,8 +405,7 @@ const createTimeSheet = async(details)=>{
       employee_id:data._id,
       empid:data.empid,
       role:data.role,
-      current_supervisor_id:"",
-      current_project_id:"",     
+      current_supervisor_id:"",    
       timesheets:[],
       tsStatus:"active"
   });
