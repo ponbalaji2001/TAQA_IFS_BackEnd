@@ -36,6 +36,10 @@ const timeSheetSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  role: {
+    type: String,
+    required: true,
+  },
   current_supervisor_id: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,

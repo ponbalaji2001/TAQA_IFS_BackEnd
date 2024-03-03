@@ -23,26 +23,52 @@ const createEmployee = async (req, res) => {
       address:data.address,
       nationalId_type:data.nationalId_type,
       nationalId_no:data.nationalId_no,
+      role:data.role,
       emergency_contact:data.emergency_contact
    });
 
-   try{
    const user = await User.create({
      object_id:employee._id,
      id:employee.empid,
      name:employee.empname,
-     role:"user",
+     role:employee.role,
      password:employee.empname.substring(0, 3)+"@"+employee.empid
-   });
+   })
+   .then((result)=>{
+    console.log(result);
 
-   console.log(user)
+    if(result && (result.role==="supervisor" || result.role==="manager")){
+      let sendData = {
+        _id: result._id,
+        empid: result.id,
+        role:result.role,
+        supid: "",
+        projectid: "",
+        pro_start_date: "",
+        pro_end_date: "",
+      };
 
-  }catch(error){
-    console.log(error)
-  }
+      const newTS = createTimeSheet(sendData);
 
-   console.log(employee);
-   res.status(200).json({ message: "Employee created", employee });
+      res.status(200).json({ 
+        message: "Employee created successfully",
+        tsmsg:"Timesheet created Successfully",
+        employee
+       });
+
+    }else{
+      
+      res.status(200).json({ 
+        message: "Employee created successfully",
+        tsmsg:"Timesheet Not created",
+        employee
+       });
+    }
+
+  }).catch(err => {
+    console.error(err);
+  });   
+
 
   } catch (error) {
     console.log(error)
@@ -200,6 +226,7 @@ const updateEmpbyId = async (req, res) => {
         address:data.address,
         nationalId_type:data.nationalId_type,
         nationalId_no:data.nationalId_no,
+        role:data.role,
         emergency_contact:data.emergency_contact
       },
       { new: true }
@@ -380,8 +407,9 @@ const createTimeSheet = async(details)=>{
   const newts = await TimeSheet.create({
       employee_id:data._id,
       empid:data.empid,
-      current_supervisor_id:"65cb488f4aed17b2c3ce2cda",
-      current_project_id:"65d7654a3560793b336331d5",     
+      role:data.role,
+      current_supervisor_id:"",
+      current_project_id:"",     
       timesheets:[],
       tsStatus:"active"
   });
