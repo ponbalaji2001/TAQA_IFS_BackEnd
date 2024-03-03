@@ -405,7 +405,7 @@ const createTimeSheet = async(details)=>{
       employee_id:data._id,
       empid:data.empid,
       role:data.role,
-      current_supervisor_id:"",    
+      current_supervisor_id:"65e2f31ae980b93ee14d047f",    //admin id
       timesheets:[],
       tsStatus:"active"
   });
