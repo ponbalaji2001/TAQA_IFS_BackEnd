@@ -45,19 +45,22 @@ const createProject = async (req, res) => {
                 console.log(item);
 
                 const supervisorIds = item.management_members.supervisors.map(
-                  (supervisor) => supervisor.supervisor_id
+                  (supervisor) => new mongoose.Types.ObjectId(supervisor.supervisor_id)
                 );
                 const managerIds = item.management_members.managers.map(
-                  (manager) => manager.manager_id
+                  (manager) => new mongoose.Types.ObjectId(manager.manager_id)
                 );
   
                 const allMemberIds = [...supervisorIds, ...managerIds];
   
                 const uniqueMemberIds = [...new Set(allMemberIds)];
 
+                console.log("all members id",  allMemberIds)
+                console.log("unique members id", uniqueMemberIds)
+
                 try {
                   const filter = {
-                    _id: { $in: uniqueMemberIds },
+                    object_id: { $in: uniqueMemberIds },
                   };
                   
                   const update = {
@@ -112,7 +115,7 @@ const createProject = async (req, res) => {
 
                   try {
                     const filter = {
-                      _id: item.supervisor.supervisor_id
+                      _id: eq.supervisor_id
                     };
                     const update = {
                       $push: {
@@ -169,9 +172,9 @@ const createProject = async (req, res) => {
               };
             }
           };
-          console.log("Each Task", allManPower);
+          // console.log("Each Task", allManPower);
         };
-        console.log("Each Phase", allManPower);
+        // console.log("Each Phase", allManPower);
       };
     }
 
@@ -211,17 +214,20 @@ const createProject = async (req, res) => {
     let TsCreated = [];
     if (allManPower.length > 0) {
       allManPower.forEach(employee => {
+        if(employee.role==="user"){
         let sendData = {
           _id: employee._id,
           empid: employee.empid,
+          role: employee.role,
           supid: employee.supervisor_id,
           projectid: project._id,
-          pro_start_date: employee.phase_start,
-          pro_end_date: employee.phase_end,
+          pro_start_date: employee.start_date,
+          pro_end_date: employee.end_date,
         }
         // console.log("send data",sendData);
         const newTS = createTimeSheet(sendData);
         TsCreated.push(newTS);
+      }
       });
     } else {
       console.log("Emp Empty !.. Timesheet not created")
@@ -278,7 +284,8 @@ const createTimeSheet = async (details) => {
     const newts = await TimeSheet.create({
       employee_id: data._id,
       empid: data.empid,
-      current_supervisor_id: data.supid,
+      role: data.role,
+      current_supervisor_id: new mongoose.Types.ObjectId(data.supid),
       current_project_id: data.projectid,
       current_phase_start_date: data.pro_start_date,
       current_phase_end_date: data.pro_end_date,
@@ -422,9 +429,25 @@ const updateProjectbyId = async (req, res) => {
               if (taskArray.length > 0) {
                 for(let item of taskArray) {
                   console.log(item);
+
+                  const supervisorIds = item.management_members.supervisors.map(
+                    (supervisor) => new mongoose.Types.ObjectId(supervisor.supervisor_id)
+                  );
+                  const managerIds = item.management_members.managers.map(
+                    (manager) => new mongoose.Types.ObjectId(manager.manager_id)
+                  );
+    
+                  const allMemberIds = [...supervisorIds, ...managerIds];
+    
+                  const uniqueMemberIds = [...new Set(allMemberIds)];
+  
+                  console.log("all members id",  allMemberIds)
+                  console.log("unique members id", uniqueMemberIds)
+  
+  
                   try {
                     const filter = {
-                      _id: item.supervisor.supervisor_id
+                      object_id: { $in: uniqueMemberIds },
                     };
                     const update = {
                       $push: {
@@ -474,7 +497,7 @@ const updateProjectbyId = async (req, res) => {
   
                     try {
                       const filter = {
-                        _id: item.supervisor.supervisor_id
+                        _id: eq.supervisor_id
                       };
                       const update = {
                         $push: {
@@ -575,6 +598,7 @@ const updateProjectbyId = async (req, res) => {
           let sendData = {
             _id: employee._id,
             empid: employee.empid,
+            role:employee.role,
             supid: employee.supervisor_id,
             projectid: project._id,
             pro_start_date: employee.phase_start,
