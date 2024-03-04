@@ -97,6 +97,7 @@ const createProject = async (req, res) => {
 
                 console.log(item);
                 for (let eq of item.man_power) {
+
                   const manpowerDetails = {
                     project_id: project.pid,
                     project_object_id:project._id,
@@ -131,7 +132,11 @@ const createProject = async (req, res) => {
                   } catch (error) {
                     console.log(error);
                   }
-                  allEmpIds.push(eq.empid)
+
+                  if(eq.role==="user"){
+                    allEmpIds.push(eq.empid)
+                  }
+                  
                   totalManpowerCost += eq.salary;
                   allManPower.push(manpowerDetails);
                   console.log("Checking inside data", manpowerDetails, allManPower);
