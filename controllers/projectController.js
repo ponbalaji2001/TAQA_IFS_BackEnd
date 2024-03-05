@@ -800,36 +800,46 @@ const deleteProjectById = async (req, res) => {
  
     try {
    
-      const filter = {
+      const filterProjects = {
         "projects": {
           $elemMatch: {
-            project_id: project.pid
+            project_object_id: new mongoose.Types.ObjectId(projectId)
           }
-        },
+        }
+      };
+
+      const filterAssignedEmps = {
         "assigned_emps": {
           $elemMatch: {
-            project_id: project.pid
+            project_object_id: new mongoose.Types.ObjectId(projectId)
           }
         }
       };
    
-      const update = {
+      
+      const updateProjects = {
         $pull: {
           projects: {
-            project_id: project.pid,
-          },
+            project_object_id: new mongoose.Types.ObjectId(projectId)
+          }
+        }
+      };
+
+      const updateAssignedEmps = {
+        $pull: {
           assigned_emps: {
-            project_id: project.pid,
+            project_object_id: new mongoose.Types.ObjectId(projectId)
           }
         }
       };
    
-      const result = await User.updateMany(filter, update);
+      const assignemps_result = await User.updateMany(filterAssignedEmps, updateAssignedEmps);
+      const result = await User.updateMany(filterProjects ,updateProjects);
    
       if (result) {
-        console.log(`Projcet removed successfully from Supervisors`, result);
+        console.log(`Projcet removed successfully from Supervisors and Managers`, result);
       } else {
-        console.log(`Project not found in Supervisors`);
+        console.log(`Project not found in Supervisors and Managers`);
       }
    
     } catch (error) {
@@ -910,7 +920,7 @@ const updateTsStatus = async (project_id) => {
   try {
     const result = await TimeSheet.updateMany(
       {_id: new mongoose.Types.ObjectId(project_id) },
-      { $set: { tsStatus: req.body.tsStatus } }
+      { $set: { tsStatus: "deactivate" } }
     );
 
     console.log(result);
