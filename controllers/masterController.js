@@ -12,7 +12,11 @@ const createEmployee = async (req, res) => {
   try {
     const data= req.body;
     const employee = await EmployeeMaster.create({
-      empid:random3DigitNumber(),
+      empid:random5DigitNumber(),
+      first_name:data.first_name,
+      last_name:data.last_name,
+      dob:data.dob,
+      gender:data.gender,
       empname:data.empname,
       designation:data.designation,
       experience:data.experience,
@@ -214,6 +218,10 @@ const updateEmpbyId = async (req, res) => {
       empId,
       {
         empname:data.empname,
+        first_name:data.first_name,
+        last_name:data.last_name,
+        dob:data.dob,
+        gender:data.gender,
         designation:data.designation,
         experience:data.experience,
         salary:data.salary,
@@ -393,9 +401,9 @@ const getAllEquip = async (req, res) => {
 };
 
 
-const random3DigitNumber = () => {
+const random5DigitNumber = () => {
   // Generate a random number between 100 and 999
-  const randomNumber = Math.floor(Math.random() * 900) + 100;
+  const randomNumber = Math.floor(Math.random() * 90000) + 10000;
   return randomNumber.toString();
 };
 
