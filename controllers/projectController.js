@@ -139,7 +139,25 @@ const createProject = async (req, res) => {
                   
                   totalManpowerCost += eq.salary;
                   allManPower.push(manpowerDetails);
-                  console.log("Checking inside data", manpowerDetails, allManPower);
+                  // console.log("Checking inside data", manpowerDetails, allManPower);
+
+                  if (eq.role === "user") {
+                    let sendData = {
+                      _id: eq._id,
+                      empid: eq.empid,
+                      role: eq.role,
+                      supid: eq.supervisor_id,
+                      projectid: project._id,
+                      pro_start_date: eq.start_date,
+                      pro_end_date: eq.end_date,
+                    };
+                    try {
+                      const newTS = await createTimeSheet(sendData);
+                      TsCreated.push(newTS);
+                    }catch (error) {
+                      console.error("Error creating timesheet:", error);
+                    }
+                  }
                 };
 
                 for (let eq of item.equipment) {
@@ -183,11 +201,11 @@ const createProject = async (req, res) => {
       };
     }
 
-    console.log("All Manpower:", allManPower);
-    console.log("All Equipments:", allEquipments);
-    console.log("All Equipments:", allMaterials);
-    console.log("Total Manpower Cost:", totalManpowerCost);
-    console.log("Total Equipment Cost:", totalEquipmentCost);
+    // console.log("All Manpower:", allManPower);
+    // console.log("All Equipments:", allEquipments);
+    // console.log("All Equipments:", allMaterials);
+    // console.log("Total Manpower Cost:", totalManpowerCost);
+    // console.log("Total Equipment Cost:", totalEquipmentCost);
 
     console.log(allEmpIds)
     try {
@@ -215,30 +233,7 @@ const createProject = async (req, res) => {
       console.log(error);
     }
 
-    console.log("Projct Id:", project._id);
-    let TsCreated = [];
-    if (allManPower.length > 0) {
-      allManPower.forEach(employee => {
-        if(employee.role==="user"){
-        let sendData = {
-          _id: employee._id,
-          empid: employee.empid,
-          role: employee.role,
-          supid: employee.supervisor_id,
-          projectid: project._id,
-          pro_start_date: employee.start_date,
-          pro_end_date: employee.end_date,
-        }
-        // console.log("send data",sendData);
-        const newTS = createTimeSheet(sendData);
-        TsCreated.push(newTS);
-      }
-      });
-    } else {
-      console.log("Emp Empty !.. Timesheet not created")
-    }
-
-
+  
     totalCost = totalManpowerCost + totalEquipmentCost + totalMaterialsCost;
     tax = (15/100) * totalCost;
 
@@ -267,7 +262,7 @@ const createProject = async (req, res) => {
     }
 
     const cso = await createSaleOrder(ordDetails);
-    console.log("cso worked", cso);
+    // console.log("cso worked", cso);
     res.status(200).json({
       message: "Project created successfully",
       project,
@@ -611,7 +606,6 @@ const updateProjectbyId = async (req, res) => {
           }
           // console.log("send data",sendData);
           const newTS = createTimeSheet(sendData);
-          TsCreated.push(newTS);
         });
       } else {
         console.log("Emp Empty !.. Timesheet not created")
