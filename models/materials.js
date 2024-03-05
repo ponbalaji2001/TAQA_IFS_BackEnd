@@ -19,6 +19,9 @@ const materials = new mongoose.Schema({
     specification: {
         type: String,
     },    
+    description: {
+        type: String,
+    },
   });
   
   const MaterialsMaster = mongoose.model("materials", materials);

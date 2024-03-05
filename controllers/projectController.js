@@ -648,18 +648,11 @@ const updateProjectbyId = async (req, res) => {
       }
   
       const cso = await createSaleOrder(ordDetails);
-      // console.log("cso worked", cso);
-      res.status(200).json({
-        message: "Project created successfully",
-        project,
-        cso
-      });
+      console.log("cso worked", cso);
+      
   
     } catch (error) {
       console.log(error);
-      res.status(500).json({
-        message: "Internal server error"
-      });
     }
     
     
@@ -669,8 +662,7 @@ const updateProjectbyId = async (req, res) => {
       if (!project) {
         return res.status(404).json({ message: "Project not found" });
       }
-   
-      // res.status(200).json({ message: "Project deleted successfully", project });
+
    
       try {
      
@@ -723,7 +715,6 @@ const updateProjectbyId = async (req, res) => {
    
     } catch (error) {
       console.log(error)
-      // res.status(500).json({ message: "Internal server error" });
     }
    
      let d = { order_id: projectId};
@@ -916,8 +907,9 @@ const deleteProjectById = async (req, res) => {
       console.log("Sales order deleted successfully");
     }  
 
-    const ts= await updateTsStatus(projectId);
-    console.log("timesheet deactivate: ",ts);
+    // const ts= await updateTsStatus(projectId);
+    const ts= await TimeSheet.deleteMany({current_project_id:new mongoose.Types.ObjectId(projectId)})
+    console.log("timesheet deleted: ",ts);
    
 
     res.status(200).json({ message: "project deleted successfully"});
