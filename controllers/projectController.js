@@ -391,7 +391,7 @@ const getAllProjectsList = async (req, res) => {
 const updateProjectbyId = async (req, res) => {
   const projectId = req.params.id;
   const data = req.body;
-  try {
+  
     let resultData = {};
     try {
       const data = req.body;
@@ -406,8 +406,8 @@ const updateProjectbyId = async (req, res) => {
         start_date: data.start_date,
         end_date: data.end_date,
         status: data.status,
-        phases: data.phases,
-        createdby:data.createdby
+        createdby:data.createdby,
+        phases: data.phases
       });
   
       let totalManpowerCost = 0;
@@ -429,7 +429,7 @@ const updateProjectbyId = async (req, res) => {
               if (taskArray.length > 0) {
                 for(let item of taskArray) {
                   console.log(item);
-
+  
                   const supervisorIds = item.management_members.supervisors.map(
                     (supervisor) => new mongoose.Types.ObjectId(supervisor.supervisor_id)
                   );
@@ -444,15 +444,15 @@ const updateProjectbyId = async (req, res) => {
                   console.log("all members id",  allMemberIds)
                   console.log("unique members id", uniqueMemberIds)
   
-  
                   try {
                     const filter = {
                       object_id: { $in: uniqueMemberIds },
                     };
+                    
                     const update = {
                       $push: {
                         projects: {
-                          project_object_id:project._id,
+                          project_object_id: project._id,
                           project_id: project.pid,
                           project_name: project.title,
                           phase: project.phases[index].phase,
@@ -460,16 +460,18 @@ const updateProjectbyId = async (req, res) => {
                           phase_description: project.phases[index].phase_description,
                           phase_start: project.phases[index].phase_start,
                           phase_end: project.phases[index].phase_end,
-                          tasks: [{
-                            task_type: taskType,
-                            man_power: item.man_power,
-                            equipment: item.equipment,
-                            material: item.material
-                          }]
-                        }
-                      }
+                          tasks: [
+                            {
+                              task_type: taskType,
+                              man_power: item.man_power,
+                              equipment: item.equipment,
+                              material: item.material,
+                            },
+                          ],
+                        },
+                      },
                     };
-  
+                    
                     const result = await User.updateMany(filter, update);
   
                     if (result) {
@@ -481,6 +483,7 @@ const updateProjectbyId = async (req, res) => {
   
                   console.log(item);
                   for (let eq of item.man_power) {
+  
                     const manpowerDetails = {
                       project_id: project.pid,
                       project_object_id:project._id,
@@ -492,7 +495,9 @@ const updateProjectbyId = async (req, res) => {
                       supervisor_id: eq.supid,
                       _id: eq._id,
                       phase_start: eq.phase_start,
-                      phase_end: eq.phase_end
+                      phase_end: eq.phase_end,
+                      start_date: eq.start_date,
+                      end_date: eq.end_date
                     };
   
                     try {
@@ -513,10 +518,32 @@ const updateProjectbyId = async (req, res) => {
                     } catch (error) {
                       console.log(error);
                     }
-                    allEmpIds.push(eq.empid)
+  
+                    if(eq.role==="user"){
+                      allEmpIds.push(eq.empid)
+                    }
+                    
                     totalManpowerCost += eq.salary;
                     allManPower.push(manpowerDetails);
-                    console.log("Checking inside data", manpowerDetails, allManPower);
+                    // console.log("Checking inside data", manpowerDetails, allManPower);
+  
+                    if (eq.role === "user") {
+                      let sendData = {
+                        _id: eq._id,
+                        empid: eq.empid,
+                        role: eq.role,
+                        supid: eq.supervisor_id,
+                        projectid: project._id,
+                        pro_start_date: eq.start_date,
+                        pro_end_date: eq.end_date,
+                      };
+                      try {
+                        const newTS = await createTimeSheet(sendData);
+                        TsCreated.push(newTS);
+                      }catch (error) {
+                        console.error("Error creating timesheet:", error);
+                      }
+                    }
                   };
   
                   for (let eq of item.equipment) {
@@ -535,7 +562,7 @@ const updateProjectbyId = async (req, res) => {
   
                     allEquipments.push(equipmentDetails);
                   };
-
+  
                   for (let mt of item.material) {
                     const matDetails = {
                       materialid: mt._id,
@@ -554,16 +581,17 @@ const updateProjectbyId = async (req, res) => {
                 };
               }
             };
-            console.log("Each Task", allManPower);
+            // console.log("Each Task", allManPower);
           };
-          console.log("Each Phase", allManPower);
+          // console.log("Each Phase", allManPower);
         };
       }
   
-      console.log("All Manpower:", allManPower);
-      console.log("All Equipments:", allEquipments);
-      console.log("Total Manpower Cost:", totalManpowerCost);
-      console.log("Total Equipment Cost:", totalEquipmentCost);
+      // console.log("All Manpower:", allManPower);
+      // console.log("All Equipments:", allEquipments);
+      // console.log("All Equipments:", allMaterials);
+      // console.log("Total Manpower Cost:", totalManpowerCost);
+      // console.log("Total Equipment Cost:", totalEquipmentCost);
   
       console.log(allEmpIds)
       try {
@@ -577,7 +605,7 @@ const updateProjectbyId = async (req, res) => {
             projects: {
               project_object_id:project._id,
               project_id: project.pid,
-              project_location: project.location
+              project_location: project.location,
             }
           }
         };
@@ -591,27 +619,7 @@ const updateProjectbyId = async (req, res) => {
         console.log(error);
       }
   
-      console.log("Projct Id:", project._id);
-      let TsCreated = [];
-      if (allManPower.length > 0) {
-        allManPower.forEach(employee => {
-          let sendData = {
-            _id: employee._id,
-            empid: employee.empid,
-            role:employee.role,
-            supid: employee.supervisor_id,
-            projectid: project._id,
-            pro_start_date: employee.phase_start,
-            pro_end_date: employee.phase_end,
-          }
-          // console.log("send data",sendData);
-          const newTS = createTimeSheet(sendData);
-        });
-      } else {
-        console.log("Emp Empty !.. Timesheet not created")
-      }
-  
-  
+    
       totalCost = totalManpowerCost + totalEquipmentCost + totalMaterialsCost;
       tax = (15/100) * totalCost;
   
@@ -636,11 +644,11 @@ const updateProjectbyId = async (req, res) => {
         tax: tax,
         amount_due: totalCost + tax,
         status: "Pending",
-        createdby:project.createdby,
+        createdby:project.createdby
       }
   
       const cso = await createSaleOrder(ordDetails);
-      console.log("cso worked", cso);
+      // console.log("cso worked", cso);
       res.status(200).json({
         message: "Project created successfully",
         project,
@@ -653,10 +661,10 @@ const updateProjectbyId = async (req, res) => {
         message: "Internal server error"
       });
     }
-
+    
     
     try {
-      const project = await Project.findByIdAndDelete(data._id);
+      const project = await Project.findByIdAndDelete(projectId);
    
       if (!project) {
         return res.status(404).json({ message: "Project not found" });
@@ -666,36 +674,46 @@ const updateProjectbyId = async (req, res) => {
    
       try {
      
-        const filter = {
+        const filterProjects = {
           "projects": {
             $elemMatch: {
-              project_id: project.pid
+              project_object_id: new mongoose.Types.ObjectId(projectId)
             }
-          },
+          }
+        };
+  
+        const filterAssignedEmps = {
           "assigned_emps": {
             $elemMatch: {
-              project_id: project.pid
+              project_object_id: new mongoose.Types.ObjectId(projectId)
             }
           }
         };
      
-        const update = {
+        
+        const updateProjects = {
           $pull: {
             projects: {
-              project_id: project.pid,
-            },
+              project_object_id: new mongoose.Types.ObjectId(projectId)
+            }
+          }
+        };
+  
+        const updateAssignedEmps = {
+          $pull: {
             assigned_emps: {
-              project_id: project.pid,
+              project_object_id: new mongoose.Types.ObjectId(projectId)
             }
           }
         };
      
-        const result = await User.updateMany(filter, update);
+        const assignemps_result = await User.updateMany(filterAssignedEmps, updateAssignedEmps);
+        const result = await User.updateMany(filterProjects ,updateProjects);
      
         if (result) {
-          console.log(`Projcet removed successfully from Supervisors`, result);
+          console.log(`Projcet removed successfully from Supervisors and Managers`, result);
         } else {
-          console.log(`Project not found in Supervisors`);
+          console.log(`Project not found in Supervisors and Managers`);
         }
      
       } catch (error) {
@@ -708,7 +726,7 @@ const updateProjectbyId = async (req, res) => {
       // res.status(500).json({ message: "Internal server error" });
     }
    
-     let d = { order_id: data._id};
+     let d = { order_id: projectId};
    
       try {
    
@@ -763,19 +781,16 @@ const updateProjectbyId = async (req, res) => {
         console.log("Sales order deleted successfully");
       }  
   
-      const ts= await updateTsStatus(projectId );
+      const ts= await updateTsStatus(projectId);
       console.log("timesheet deactivate: ",ts);
      
     console.log(resultData);
+    
     res.status(200).json({
       message: "Project updated successfully",
       data: resultData
     });
-  } catch (error) {
-    res.status(500).json({
-      message: "Internal server error"
-    });
-  }
+ 
 }
 
 const deleteProjectById = async (req, res) => {
