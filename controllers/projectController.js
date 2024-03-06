@@ -518,10 +518,8 @@ const updateProjectbyId = async (req, res) => {
                     //   console.log(error);
                     // }
   
-                    if(eq.role==="user"){
-                      allEmpIds.push(eq.empid)
-                    }
-                    
+                   
+                    allEmpIds.push(eq.empid)
                     totalManpowerCost += eq.salary;
                     allManPower.push(manpowerDetails);
                     // console.log("Checking inside data", manpowerDetails, allManPower);
@@ -603,6 +601,7 @@ const updateProjectbyId = async (req, res) => {
           $push: {
             projects: {
               project_object_id:project._id,
+              project_name:project.title,
               project_id: project.pid,
               project_location: project.location,
             }
