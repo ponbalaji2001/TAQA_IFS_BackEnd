@@ -98,21 +98,21 @@ const createProject = async (req, res) => {
                 console.log(item);
                 for (let eq of item.man_power) {
 
-                  // const manpowerDetails = {
-                  //   project_id: project.pid,
-                  //   project_object_id:project._id,
-                  //   empid: eq.empid,
-                  //   empname: eq.empname,
-                  //   experience: eq.experience,
-                  //   designation: eq.designation,
-                  //   salary: eq.salary,
-                  //   supervisor_id: eq.supid,
-                  //   _id: eq._id,
-                  //   phase_start: eq.phase_start,
-                  //   phase_end: eq.phase_end,
-                  //   start_date: eq.start_date,
-                  //   end_date: eq.end_date
-                  // };
+                  const manpowerDetails = {
+                    project_id: project.pid,
+                    project_object_id:project._id,
+                    empid: eq.empid,
+                    empname: eq.empname,
+                    experience: eq.experience,
+                    designation: eq.designation,
+                    salary: eq.salary,
+                    supervisor_id: eq.supid,
+                    _id: eq._id,
+                    phase_start: eq.phase_start,
+                    phase_end: eq.phase_end,
+                    start_date: eq.start_date,
+                    end_date: eq.end_date
+                  };
 
                   // try {
                   //   const filter = {
@@ -483,21 +483,21 @@ const updateProjectbyId = async (req, res) => {
                   console.log(item);
                   for (let eq of item.man_power) {
   
-                    // const manpowerDetails = {
-                    //   project_id: project.pid,
-                    //   project_object_id:project._id,
-                    //   empid: eq.empid,
-                    //   empname: eq.empname,
-                    //   experience: eq.experience,
-                    //   designation: eq.designation,
-                    //   salary: eq.salary,
-                    //   supervisor_id: eq.supid,
-                    //   _id: eq._id,
-                    //   phase_start: eq.phase_start,
-                    //   phase_end: eq.phase_end,
-                    //   start_date: eq.start_date,
-                    //   end_date: eq.end_date
-                    // };
+                    const manpowerDetails = {
+                      project_id: project.pid,
+                      project_object_id:project._id,
+                      empid: eq.empid,
+                      empname: eq.empname,
+                      experience: eq.experience,
+                      designation: eq.designation,
+                      salary: eq.salary,
+                      supervisor_id: eq.supid,
+                      _id: eq._id,
+                      phase_start: eq.phase_start,
+                      phase_end: eq.phase_end,
+                      start_date: eq.start_date,
+                      end_date: eq.end_date
+                    };
   
                     // try {
                     //   const filter = {
