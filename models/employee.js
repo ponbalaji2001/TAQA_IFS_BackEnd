@@ -87,8 +87,14 @@ const employeeMaster = new mongoose.Schema({
         type: Date
     },
     projects:[{
+        project_object_id:{
+            type:mongoose.Schema.Types.ObjectId
+        },
         project_id: {
             type: Number,
+        },
+        project_name: {
+            type: String,
         },
         project_location: {
             type: String,
