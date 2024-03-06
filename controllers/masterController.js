@@ -162,7 +162,12 @@ const getMatrialsByName = async(req,res)=>{
 
   const getAvailEmployees = async (req, res) => {
     try {
-      const filter = { projects: { $size: 0 } };
+      const filter = {
+        $or: [
+        { $and: [{ role: 'user' }, { 'projects': { $size: 0 } }] }, 
+        { role: { $ne: 'user' } } 
+      ] 
+    }
       const filter_emp= await EmployeeMaster.find(filter);
       res.status(200).json(filter_emp);
 
@@ -401,8 +406,13 @@ const getAllEquip = async (req, res) => {
 };
 
 
-const random5DigitNumber = () => {
+const random3DigitNumber = () => {
   // Generate a random number between 100 and 999
+  const randomNumber = Math.floor(Math.random() * 900) + 100;
+  return randomNumber.toString();
+};
+
+const random5DigitNumber = () => {
   const randomNumber = Math.floor(Math.random() * 90000) + 10000;
   return randomNumber.toString();
 };
