@@ -4,6 +4,8 @@ const EmployeeMaster = require("../models/employee");
 const User = require("../models/User");
 const mongoose = require('mongoose');
 const TimeSheet = require("../models/timesheet");
+const EquipTs = require("../models/EquipTs");
+const MatTS = require("../models/matTs");
 
 //Create project
 const createProject = async (req, res) => {
@@ -170,6 +172,21 @@ const createProject = async (req, res) => {
                     usage_hours:eq.usage_hours
                   };
 
+                  const equipts={
+                    eqipment_id:eq.equipmentid,
+                    current_supervisor_id:eq.supervisor_id,
+                    current_project_id:project._id,
+                    current_phase:eq.current_phase,
+                    current_task:eq.current_task,
+                    current_phase_start_date:eq.start_date,
+                    current_phase_end_date:eq.end_date,
+                  }
+                  try {
+                    const newEquipTS = await createEquipTS(equipts);                    
+                  }catch (error) {
+                    console.error("Error creating timesheet:", error);
+                  }
+
                   totalEquipmentCost += eq.quantity * eq.cost;
 
                   allEquipments.push(equipmentDetails);
@@ -184,6 +201,21 @@ const createProject = async (req, res) => {
                     unit:mt.unit,
                     specification: mt.specification,
                   };
+
+                  const mats={
+                    material_id:mt._id,
+                    current_supervisor_id:my.supervisor_id,
+                    current_project_id:project._id,
+                    current_phase:mt.current_phase,
+                    current_task:mt.current_task,
+                    current_phase_start_date:mt.start_date,
+                    current_phase_end_date:mt.end_date,
+                  }
+                  try {
+                    const newEquipTS = await createMatTS(mats);                    
+                  }catch (error) {
+                    console.error("Error creating timesheet:", error);
+                  }
 
                   totalMaterialsCost += mt.quantity * mt.cost;
 
@@ -965,6 +997,51 @@ const itemRandomNumber = () => {
   return Math.floor(Math.random() * (700 - 100 + 1)) + 100;
 }
 
+const createEquipTS = async (data) => {
+
+  try {
+    // let data = req.body;
+    const newts = await EquipTs.create({
+      eqipment_id: data.equipment_id,
+      current_supervisor_id: new mongoose.Types.ObjectId(data.current_supervisor_id),
+      current_project_id: data.current_project_id,
+      current_phase:data.current_phase,
+      current_task:data.current_task,
+      current_phase_start_date: data.current_phase_start_date,
+      current_phase_end_date: data.current_phase_end_date,
+      timesheets: [],
+      tsStatus: "active"
+    });
+    console.log("Timesheet created : ", newts);
+    return "Ts creation Successfully";
+  } catch (err) {
+    console.log("While ts creating ", err);
+    return "Ts creation Failed";
+  }
+}
+
+const createMatTS = async (data) => {
+
+  try {
+    // let data = req.body;
+    const newts = await MatTS.create({
+      material_id: data.material_id,
+      current_supervisor_id: new mongoose.Types.ObjectId(data.current_supervisor_id),
+      current_project_id: data.current_project_id,
+      current_phase:data.current_phase,
+      current_task:data.current_task,
+      current_phase_start_date: data.current_phase_start_date,
+      current_phase_end_date: data.current_phase_end_date,        
+      timesheets: [],
+      tsStatus: "active"
+    });
+    console.log("Timesheet created : ", newts);
+    return "TS Creation Successfully";
+  } catch (err) {
+    console.log("While ts creating ", err);
+    return "TS Creation Failed";
+  }
+}
 
 module.exports = {
   createProject,
