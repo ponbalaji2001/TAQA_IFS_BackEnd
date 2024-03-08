@@ -175,6 +175,7 @@ const createProject = async (req, res) => {
                   const equipts={
                     eqipment_id:eq.equipmentid,
                     current_supervisor_id:eq.supervisor_id,
+                    role:"equipment",
                     current_project_id:project._id,
                     current_phase:eq.current_phase,
                     current_task:eq.current_task,
@@ -205,6 +206,7 @@ const createProject = async (req, res) => {
                   const mats={
                     material_id:mt._id,
                     current_supervisor_id:my.supervisor_id,
+                    role:'material',
                     current_project_id:project._id,
                     current_phase:mt.current_phase,
                     current_task:mt.current_task,
