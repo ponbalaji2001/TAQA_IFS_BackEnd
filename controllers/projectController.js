@@ -161,7 +161,7 @@ const createProject = async (req, res) => {
 
                 for (let eq of item.equipment) {
                   const equipmentDetails = {
-                    equipmentid: eq.equipment_id,
+                    equipmentid: eq._id,
                     name: eq.name,
                     quantity: eq.quantity,
                     cost: eq.cost,
