@@ -938,7 +938,13 @@ const deleteProjectById = async (req, res) => {
 
     // const ts= await updateTsStatus(projectId);
     const ts= await TimeSheet.deleteMany({current_project_id:new mongoose.Types.ObjectId(projectId)})
-    console.log("timesheet deleted: ",ts);
+    console.log("manpower timesheet deleted: ",ts);
+
+    const eqts= await TimeSheet.deleteMany({current_project_id:new mongoose.Types.ObjectId(projectId)})
+    console.log("equipment timesheet deleted: ",eqts);
+
+    const matts= await TimeSheet.deleteMany({current_project_id:new mongoose.Types.ObjectId(projectId)})
+    console.log("material timesheet deleted: ",matts);
    
 
     res.status(200).json({ message: "project deleted successfully"});
