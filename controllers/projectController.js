@@ -172,7 +172,7 @@ const createProject = async (req, res) => {
                   };
 
                   const equipts={
-                    eqipment_id:eq.equipmentid,
+                    equipment_id:eq.equipmentid,
                     current_supervisor_id:eq.supervisor_id,
                     current_project_id:project._id,
                     current_phase:eq.current_phase,
