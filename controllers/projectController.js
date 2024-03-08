@@ -1001,7 +1001,7 @@ const createEquipTS = async (data) => {
   try {
     // let data = req.body;
     const newts = await EquipTs.create({
-      eqipment_id: data.equipment_id,
+      equipment_id: data.equipment_id,
       current_supervisor_id: new mongoose.Types.ObjectId(data.current_supervisor_id),
       current_project_id: data.current_project_id,
       current_phase:data.current_phase,
