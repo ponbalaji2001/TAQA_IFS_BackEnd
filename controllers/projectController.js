@@ -203,7 +203,7 @@ const createProject = async (req, res) => {
 
                   const mats={
                     material_id:mt._id,
-                    current_supervisor_id:my.supervisor_id,
+                    current_supervisor_id:mt.supervisor_id,
                     current_project_id:project._id,
                     current_phase:mt.current_phase,
                     current_task:mt.current_task,
