@@ -153,7 +153,6 @@ const createProject = async (req, res) => {
                     };
                     try {
                       const newTS = await createTimeSheet(sendData);
-                      TsCreated.push(newTS);
                     }catch (error) {
                       console.error("Error creating timesheet:", error);
                     }
