@@ -940,10 +940,10 @@ const deleteProjectById = async (req, res) => {
     const ts= await TimeSheet.deleteMany({current_project_id:new mongoose.Types.ObjectId(projectId)})
     console.log("manpower timesheet deleted: ",ts);
 
-    const eqts= await TimeSheet.deleteMany({current_project_id:new mongoose.Types.ObjectId(projectId)})
+    const eqts= await EquipTs.deleteMany({current_project_id:new mongoose.Types.ObjectId(projectId)})
     console.log("equipment timesheet deleted: ",eqts);
 
-    const matts= await TimeSheet.deleteMany({current_project_id:new mongoose.Types.ObjectId(projectId)})
+    const matts= await MatTS.deleteMany({current_project_id:new mongoose.Types.ObjectId(projectId)})
     console.log("material timesheet deleted: ",matts);
    
 
