@@ -549,8 +549,8 @@ const updateProjectbyId = async (req, res) => {
                     //   console.log(error);
                     // }
   
-                   
-                    allEmpIds.push(eq.empid)
+                    
+                    allEmpIds.push(eq.empid);
                     totalManpowerCost += eq.salary;
                     allManPower.push(manpowerDetails);
                     // console.log("Checking inside data", manpowerDetails, allManPower);
@@ -567,7 +567,6 @@ const updateProjectbyId = async (req, res) => {
                       };
                       try {
                         const newTS = await createTimeSheet(sendData);
-                        TsCreated.push(newTS);
                       }catch (error) {
                         console.error("Error creating timesheet:", error);
                       }
@@ -576,7 +575,7 @@ const updateProjectbyId = async (req, res) => {
   
                   for (let eq of item.equipment) {
                     const equipmentDetails = {
-                      equipmentid: eq.equipmentid,
+                      equipmentid: eq._id,
                       name: eq.name,
                       quantity: eq.quantity,
                       cost: eq.cost,
@@ -585,6 +584,21 @@ const updateProjectbyId = async (req, res) => {
                       end_date: eq.end_date,
                       usage_hours:eq.usage_hours
                     };
+  
+                    const equipts={
+                      equipment_id:eq._id,
+                      current_supervisor_id:eq.supervisor_id,
+                      current_project_id:project._id,
+                      current_phase:eq.current_phase,
+                      current_task:eq.current_task,
+                      current_phase_start_date:eq.start_date,
+                      current_phase_end_date:eq.end_date,
+                    }
+                    try {
+                      const newEquipTS = await createEquipTS(equipts);                    
+                    }catch (error) {
+                      console.error("Error creating timesheet:", error);
+                    }
   
                     totalEquipmentCost += eq.quantity * eq.cost;
   
@@ -600,6 +614,21 @@ const updateProjectbyId = async (req, res) => {
                       unit:mt.unit,
                       specification: mt.specification,
                     };
+  
+                    const mats={
+                      material_id:mt._id,
+                      current_supervisor_id:mt.supervisor_id,
+                      current_project_id:project._id,
+                      current_phase:mt.current_phase,
+                      current_task:mt.current_task,
+                      current_phase_start_date:mt.start_date,
+                      current_phase_end_date:mt.end_date,
+                    }
+                    try {
+                      const newEquipTS = await createMatTS(mats);                    
+                    }catch (error) {
+                      console.error("Error creating timesheet:", error);
+                    }
   
                     totalMaterialsCost += mt.quantity * mt.cost;
   
@@ -632,8 +661,8 @@ const updateProjectbyId = async (req, res) => {
           $push: {
             projects: {
               project_object_id:project._id,
-              project_name:project.title,
               project_id: project.pid,
+              project_name:project.title,
               project_location: project.location,
             }
           }
@@ -678,7 +707,6 @@ const updateProjectbyId = async (req, res) => {
   
       const cso = await createSaleOrder(ordDetails);
       console.log("cso worked", cso);
-      
   
     } catch (error) {
       console.log(error);
@@ -802,7 +830,13 @@ const updateProjectbyId = async (req, res) => {
       }  
   
     const ts= await TimeSheet.deleteMany({current_project_id:new mongoose.Types.ObjectId(projectId)})
-    console.log("timesheet deleted: ",ts);
+    console.log("manpower timesheet deleted: ",ts);
+
+    const eqts= await EquipTs.deleteMany({current_project_id:new mongoose.Types.ObjectId(projectId)})
+    console.log("equipment timesheet deleted: ",eqts);
+
+    const matts= await MatTS.deleteMany({current_project_id:new mongoose.Types.ObjectId(projectId)})
+    console.log("material timesheet deleted: ",matts);
      
     console.log(resultData);
     
@@ -974,6 +1008,57 @@ const updateTsStatus = async (project_id) => {
   }
 }
 
+
+const FilterProjectsList = async (req, res) => {
+  try {
+    const data = req.body;
+    const sort_order =  parseInt(data.sort_type, 10) || 1;
+
+    const matchConditions = [
+      data.start_date && data.start_date_filter === "gte" ? { start_date: { $gte: new Date(data.start_date) } } : {},
+      data.start_date && data.start_date_filter === "gt" ? { start_date: { $gt: new Date(data.start_date) } } : {},
+      data.start_date && data.start_date_filter === "lte" ? { start_date: { $lte: new Date(data.start_date) } } : {},
+      data.start_date && data.start_date_filter === "lt" ? { start_date: { $lt: new Date(data.start_date) } } : {},
+      data.start_date && data.start_date_filter === "eq" ? { start_date: { $eq: new Date(data.start_date) } } : {},
+      data.end_date && data.end_date_filter === "gte" ? { end_date: { $gte: new Date(data.end_date) } } : {},
+      data.end_date && data.end_date_filter === "gt" ? { end_date: { $gt: new Date(data.end_date) } } : {},
+      data.end_date && data.end_date_filter === "lte" ? { end_date: { $lte: new Date(data.end_date) } } : {},
+      data.end_date && data.end_date_filter === "lt" ? { end_date: { $lt: new Date(data.end_date) } } : {},
+      data.end_date && data.end_date_filter === "eq" ? { end_date: { $eq: new Date(data.end_date) } } : {},
+      (data.status && data.status!="") ? { status: data.status } : {},
+    ];
+
+    const matchStage = { $match: { $and: matchConditions } };
+  
+    const projectList = await Project.aggregate([
+      matchStage,
+      {
+        $project: {
+          pid: 1,
+          title: 1,
+          assignee: 1,
+          status: 1,
+          start_date: 1,
+          end_date: 1,
+          location: 1,
+          _id: 1,
+        }
+      },
+      { 
+        $sort: { [data.sortby]: sort_order } 
+      }
+    ]);
+
+    console.log("fetched result", projectList.length);
+    res.status(200).json(projectList);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+
+
 const random8DigitNumber = () => {
 
   let randomNumber = Math.floor(Math.random() * 100000000);
@@ -1053,5 +1138,6 @@ module.exports = {
   getProjectById,
   deleteProjectById,
   getAllProjectsList,
-  updateProjectbyId
+  updateProjectbyId,
+  FilterProjectsList
 };

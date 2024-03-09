@@ -7,6 +7,7 @@ router.post("/project/create", projectController.createProject);
 router.patch("/project/update/:id", projectController.updateProjectbyId);
 router.post("/project/getproductbyid", projectController.getProjectById);
 router.get("/project/getallproductlist", projectController.getAllProjectsList);
+router.post("/project/filter/productlist", projectController.FilterProjectsList);
 router.get("/so/getsolist", SOController.getSOList);
 router.post("/so/updatesostatus", SOController.editSODetails);
 router.delete("/so/delete/:id", SOController.deleteSOById);
