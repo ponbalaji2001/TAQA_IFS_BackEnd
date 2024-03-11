@@ -40,12 +40,23 @@ const getSOList = async (req, res) => {
 };
 
 const filterSOList = async (req, res) => {
-  try {
-    // const allProjects = await Project.find();
+    
+    const data=req.body;
+    const sort_order =  parseInt(data.sortType, 10) || 1;
+
     SalesOrder.aggregate([
       {
         $match: {
-            status: "Pending"
+
+          $and:[
+            data.createdAt && data.createdAt_filter === "gte" ? { "createdby.date" : { $gte: new Date(data.createdAt) } } : {},
+            data.createdAt && data.createdAt_filter === "gt" ? { "createdby.date" : { $gt: new Date(data.createdAt) } } : {},
+            data.createdAt && data.createdAt_filter === "lte" ? { "createdby.date" : { $lte: new Date(data.createdAt) } } : {},
+            data.createdAt && data.createdAt_filter === "lt" ? { "createdby.date" : { $lt: new Date(data.createdAt) } } : {},
+            data.createdAt && data.createdAt_filter === "eq" ? { "createdby.date" : { $eq: new Date(data.createdAt) } } : {},
+            data.createdBy ? { "createdby.name" : data.createdBy } : {},
+            { status: "Pending" }
+          ]
         }
       },
       {
@@ -59,6 +70,9 @@ const filterSOList = async (req, res) => {
             createdby:1,
             _id: 1
           }
+      },
+      { 
+        $sort: { [data.sortBy]: sort_order } 
       }
   ]).then(result => {
     console.log("fetched result",result.length);
@@ -67,10 +81,7 @@ const filterSOList = async (req, res) => {
       console.error(err);
       res.status(500).json({ error: "Internal Server Error" });
   });  
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
+ 
 };
 
 const editSODetails = async(req,res)=>{ 
@@ -282,5 +293,6 @@ module.exports = {
   editSODetails,
   deleteSOById,
   updateSObyId,
-  getSOById
+  getSOById,
+  filterSOList
 };

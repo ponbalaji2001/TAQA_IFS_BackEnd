@@ -31,4 +31,6 @@ router.post("/mat/fetchtsbyid", matController.getMaterialTs);
 router.post("/mat/updateday", matController.updateTsExistDays);
 router.post("/mat/updatestatus", matController.updateTsStatus);
 
+router.get("/project/alltimesheets/:id", tsController.getProjectAllTs);
+
 module.exports = router;

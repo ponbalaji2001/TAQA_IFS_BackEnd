@@ -644,6 +644,30 @@ const mslReport = async (req, res) => {
   }
 }
 
+const getProjectAllTs = async (req, res) => {
+
+  const ProjectId = req.params.id;
+  console.log(ProjectId)
+  
+  try {
+    const Employees = await TimeSheet.find({current_project_id:new mongoose.Types.ObjectId(ProjectId), role:"user"});
+    const Supervisors = await TimeSheet.find({ role:"supervisor"});
+    const Managers = await TimeSheet.find({ role:"manager" });
+    const Equipments = await EquipTs.find({current_project_id: new mongoose.Types.ObjectId(ProjectId) });
+    const Materials = await MatTS.find({current_project_id: new mongoose.Types.ObjectId(ProjectId) });
+    const result={
+      Managers:Managers,
+      Supervisors:Supervisors,
+      Employees:Employees,
+      Equipments:Equipments,
+      Materials:Materials
+    }
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 module.exports = {
   updateTs,
   updateTsStatus,
@@ -651,10 +675,11 @@ module.exports = {
   alive,
   getTs,
   dslReport,
-  mslReport
+  mslReport,
+  getProjectAllTs
   
 };
-  
+
   
 
   

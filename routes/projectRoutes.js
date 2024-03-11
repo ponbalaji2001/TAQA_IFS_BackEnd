@@ -9,6 +9,7 @@ router.post("/project/getproductbyid", projectController.getProjectById);
 router.get("/project/getallproductlist", projectController.getAllProjectsList);
 router.post("/project/filter/productlist", projectController.FilterProjectsList);
 router.get("/so/getsolist", SOController.getSOList);
+router.post("/so/filter/solist", projectController.FilterProjectsList);
 router.post("/so/updatesostatus", SOController.editSODetails);
 router.delete("/so/delete/:id", SOController.deleteSOById);
 router.get("/so/get/:id", SOController.getSOById);
