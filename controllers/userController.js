@@ -109,9 +109,15 @@ const getSupervisorTimesheetSheet = async (req, res) => {
                   const taskArray = task[taskType] || [];
 
                   if (taskArray.length > 0) {
-                      const filteredTasks = taskArray.filter(item => {
-                          return item.supervisor && item.supervisor.supervisor_id === data.supervisor_id;
-                      });
+                    const filteredTasks = taskArray.filter(item => {
+                        return (
+                            item.management_members &&
+                            item.management_members.supervisors &&
+                            item.management_members.supervisors.some(
+                                supervisor => supervisor.supervisor_id === data.supervisor_id
+                            )
+                        );
+                    });
 
                       if (filteredTasks.length > 0) {
                           task[taskType] = filteredTasks;
