@@ -287,6 +287,8 @@ const dslReport = async (req, res) => {
             $push: {
               employee_id: "$employee_id",
               name: "$employee.empname",
+              designation:"$employee.designation",
+              role:"$employee.role",
               date: "$timesheets.date",
               hoursWorked: "$timesheets.hoursWorked",
               status: "$timesheets.status"
@@ -350,6 +352,8 @@ const dslReport = async (req, res) => {
                 $push: {
                   equipment_id: "$equipment_id",
                   name: "$equipment.name",
+                  specification: "$equipment.specification",
+                  quantity: "$equipment.quantity",
                   date: "$timesheets.date",
                   hoursWorked: "$timesheets.hoursWorked",
                   status: "$timesheets.status"
@@ -403,6 +407,8 @@ const dslReport = async (req, res) => {
                 $push: {
                   materialid: "$material_id",
                   name: "$material.materialname",
+                  specification: "$material.specification",
+                  quantity:"$material.quantity",
                   date: "$timesheets.date",
                   qtyconsumed: "$timesheets.hoursWorked",
                   status: "$timesheets.status"
@@ -538,6 +544,8 @@ const mslReport = async (req, res) => {
             $push: {
               employee_id: "$employee_id",
               name: "$employee.empname",
+              designation: "$employee.designation",
+              role: "$employee.role",
               date: "$timesheets.date",
               hoursWorked: "$timesheets.hoursWorked",
               status: "$timesheets.status"
@@ -601,6 +609,8 @@ const mslReport = async (req, res) => {
               $push: {
                 equipment_id: "$equipment_id",
                 name: "$equipment.name",
+                specification: "$equipment.specification",
+                quantity: "$equipment.quantity",
                 date: "$timesheets.date",
                 hoursWorked: "$timesheets.hoursWorked",
                 status: "$timesheets.status"
@@ -654,6 +664,8 @@ const mslReport = async (req, res) => {
               $push: {
                 materialid: "$material_id",
                 name: "$material.materialname",
+                specification: "$material.specification",
+                quantity: "$material.quantity",
                 date: "$timesheets.date",
                 qtyconsumed: "$timesheets.hoursWorked",
                 status: "$timesheets.status"
