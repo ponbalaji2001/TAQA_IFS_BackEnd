@@ -145,6 +145,7 @@ const createProject = async (req, res) => {
                     let sendData = {
                       _id: eq._id,
                       empid: eq.empid,
+                      empname: eq.empname,
                       role: eq.role,
                       supid: eq.supervisor_id,
                       projectid: project._id,
@@ -173,6 +174,7 @@ const createProject = async (req, res) => {
 
                   const equipts={
                     equipment_id:eq._id,
+                    equipment_name: eq.name,
                     current_supervisor_id:eq.supervisor_id,
                     current_project_id:project._id,
                     current_phase:eq.current_phase,
@@ -203,6 +205,7 @@ const createProject = async (req, res) => {
 
                   const mats={
                     material_id:mt._id,
+                    material_name: mt.materialname,
                     current_supervisor_id:mt.supervisor_id,
                     current_project_id:project._id,
                     current_phase:mt.current_phase,
@@ -314,6 +317,7 @@ const createTimeSheet = async (details) => {
     const newts = await TimeSheet.create({
       employee_id: data._id,
       empid: data.empid,
+      empname: data.empname,
       role: data.role,
       current_supervisor_id: new mongoose.Types.ObjectId(data.supid),
       current_project_id: data.projectid,
@@ -559,6 +563,7 @@ const updateProjectbyId = async (req, res) => {
                       let sendData = {
                         _id: eq._id,
                         empid: eq.empid,
+                        empname: eq.empname,
                         role: eq.role,
                         supid: eq.supervisor_id,
                         projectid: project._id,
@@ -587,6 +592,7 @@ const updateProjectbyId = async (req, res) => {
   
                     const equipts={
                       equipment_id:eq._id,
+                      equipment_name: eq.name,
                       current_supervisor_id:eq.supervisor_id,
                       current_project_id:project._id,
                       current_phase:eq.current_phase,
@@ -617,6 +623,7 @@ const updateProjectbyId = async (req, res) => {
   
                     const mats={
                       material_id:mt._id,
+                      material_name: mt.materialname,
                       current_supervisor_id:mt.supervisor_id,
                       current_project_id:project._id,
                       current_phase:mt.current_phase,
@@ -1093,6 +1100,7 @@ const createEquipTS = async (data) => {
     // let data = req.body;
     const newts = await EquipTs.create({
       equipment_id: data.equipment_id,
+      equipment_name: data.equipment_name,
       current_supervisor_id: new mongoose.Types.ObjectId(data.current_supervisor_id),
       current_project_id: data.current_project_id,
       current_phase:data.current_phase,
@@ -1116,6 +1124,7 @@ const createMatTS = async (data) => {
     // let data = req.body;
     const newts = await MatTS.create({
       material_id: data.material_id,
+      material_name: data.material_name,
       current_supervisor_id: new mongoose.Types.ObjectId(data.current_supervisor_id),
       current_project_id: data.current_project_id,
       current_phase:data.current_phase,

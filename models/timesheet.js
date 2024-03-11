@@ -36,6 +36,10 @@ const timeSheetSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  empname: {
+    type: String,
+    required: true,
+  },
   role: {
     type: String,
     required: true,

@@ -549,90 +549,151 @@ const mslReport = async (req, res) => {
     ])  
     .then(async result => {
         
-        // console.log(result);
+      console.log("MANPOWER RES",result);
       
-        let eqdata =  {
-          project_id:data.project_id,
-          phase:data.phase,
-          task:data.task,
-          supervisor_id: data.current_supervisor_id
-        }
-          console.log("eqiupdata ",eqdata);
-        
-          try {
-            const ts = await User.aggregate([
-              {
-                $unwind: "$projects" // Unwind the "projects" array
-              },
-              {
-                $match: {
-                  "projects.project_id": eqdata.project_id,
-                  "projects.phase": eqdata.phase,
-                  "projects.tasks": {
-                    $elemMatch: {
-                      "task_type": eqdata.task,
-                      "man_power": {
-                        $elemMatch: {
-                          supid: eqdata.supervisor_id
-                        }
-                      }
-                    }
-                  }
-                }
-              },
-              {
-                $project: {
-                  _id: 0,
-                  project_id: "$projects.project_id",
-                  project_name: "$projects.project_name",
-                  phase: "$projects.phase",
-                  tasks: {
-                    $filter: {
-                      input: "$projects.tasks",
-                      as: "task",
-                      cond: {
-                        $and: [
-                          { $eq: ["$$task.task_type", eqdata.task] },
-                          {
-                            $anyElementTrue: {
-                              $map: {
-                                input: "$$task.man_power",
-                                as: "mp",
-                                in: { $eq: ["$$mp.supid", eqdata.supervisor_id] }
-                              }                              
-                            }
-                          }
-                        ]
-                      }
-                    }
-                  }
-                }
-              },
-              {
-                $project: {
-                  _id: 0,
-                  project_name:1,
-                  project_id:1,
-                  phase:1,
-                  tasks: {
-                    task_type: 1,
-                    equipment: "$tasks.equipment"
-                  }
-                }
+      let eqdata =  {
+        project_id:data.project_id,
+        phase:data.phase,
+        task:data.task,
+        supervisor_id: data.current_supervisor_id
+      }
+      // console.log("eqiupdata ",eqdata);
+      
+      const EquipsTs = await EquipTs.aggregate([
+        {
+          $match: {
+            current_supervisor_id: querydata.current_supervisor_id, // Supervisor 1
+            "timesheets.date": {$gte:startDate, $lte:endDate},
+            current_project_id: querydata.current_project_id,
+            current_phase:data.phase,
+            current_task:data.task,
+            "timesheets.task": querydata.task
+          }
+        },
+        {
+          $unwind: "$timesheets"
+        },
+        {
+          $match: {
+            "timesheets.date": {$gte:startDate, $lte:endDate},
+            "timesheets.task": querydata.task
+          }
+        },
+        {
+          $lookup: {
+            from: "equipment",
+            localField: "equipment_id",
+            foreignField: "_id",
+            as: "equipment"
+          }
+        },
+        {
+          $unwind: "$equipment"
+        },
+        {
+          $group: {
+            _id: "$_id",
+            current_supervisor_id: { $first: "$current_supervisor_id" },
+            current_project_id: { $first: "$current_project_id" },
+            current_phase: { $first: "$current_phase" },
+            current_task: { $first: "$current_task" },
+            equipments: {
+              $push: {
+                equipment_id: "$equipment_id",
+                name: "$equipment.name",
+                date: "$timesheets.date",
+                hoursWorked: "$timesheets.hoursWorked",
+                status: "$timesheets.status"
               }
-            ]);    
-            console.log(ts);      
-            if (ts.length > 0) {
-              res.status(200).json({ message: "Fetched successfully",project_phase_data:project_phase_details,manpowerset:result,equipset:ts});
-              // console.log(ts[0]);
-            } else {
-              res.status(200).json({ message: "Fetched successfully",project_phase_data:project_phase_details,manpowerset:result,equipset:[]});
-              // res.status(404).json({ message: "Project not found" });
-            }
-          } catch (error) {
-            console.error(error);
-            res.status(500).json({ message: "Internal server error" });
-          }        
+            },
+            totalHoursWorked: { $sum: "$timesheets.hoursWorked" }
+          }
+        }
+      ]).then(async tsresult => {              
+      
+      console.log("TS RESULT ",tsresult);
+      const MaterialTs = await MatTS.aggregate([
+        {
+          $match: {
+            current_supervisor_id: querydata.current_supervisor_id, // Supervisor 1
+            "timesheets.date": {$gte:startDate, $lte:endDate},
+            current_project_id: querydata.current_project_id,
+            current_phase:data.phase,
+            current_task:data.task,
+            "timesheets.task": querydata.task
+          }
+        },
+        {
+          $unwind: "$timesheets"
+        },
+        {
+          $match: {
+            "timesheets.date": {$gte:startDate, $lte:endDate},
+            "timesheets.task": querydata.task
+          }
+        },
+        {
+          $lookup: {
+            from: "materials",
+            localField: "material_id",
+            foreignField: "_id",
+            as: "material"
+          }
+        },
+        {
+          $unwind: "$material"
+        },
+        {
+          $group: {
+            _id: "$_id",
+            current_supervisor_id: { $first: "$current_supervisor_id" },
+            current_project_id: { $first: "$current_project_id" },
+            current_phase: { $first: "$current_phase" },
+            current_task: { $first: "$current_task" },
+            material: {
+              $push: {
+                materialid: "$material_id",
+                name: "$material.materialname",
+                date: "$timesheets.date",
+                qtyconsumed: "$timesheets.hoursWorked",
+                status: "$timesheets.status"
+              }
+            },
+            totalqtyConsumed: { $sum: "$timesheets.hoursWorked" }
+          }
+        }
+      ]).then(async matresult => {               
+      
+      console.log("TS RESULT ",matresult);
+      res.status(200).json({ 
+        message: "Fetched successfully",
+        project_phase_data:project_phase_details,
+        manpowerset:result,
+        equipset:tsresult,
+        materialTs:matresult
+      });                   
+      }).catch(err => {
+          console.error(err);
+          res.status(200).json({ 
+            message: "Fetched successfully",
+            project_phase_data:project_phase_details,
+            manpowerset:result,
+            equipset:tsresult,
+            materialTs:[]
+          });  
+      });        
+    }).catch(err => {
+      console.error(err);
+      res.status(200).json({ 
+        message: "Fetched successfully",
+        project_phase_data:project_phase_details,
+        manpowerset:result,
+        equipset:[],
+        materialTs:[]
+      });  
+    });
+      
+       
     })
     .catch(err => {
       console.error(err);

@@ -17,6 +17,7 @@ const createUser = async (req, res) => {
       let sendData = {
         _id: result._id,
         empid: result.id,
+        empname:result.name,
         supid: "65cb4ada4aed17b2c3ce2cdc",
         projectid: "",
         pro_start_date: "",
