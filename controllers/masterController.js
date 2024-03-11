@@ -390,7 +390,7 @@ const getAllEquip = async (req, res) => {
             name: 1,    
             cost:1,
             specification:1,        
-            _id: 0 // Excluding _id field
+            _id: 1 // Excluding _id field
           }
       }
   ]).then(result => {
