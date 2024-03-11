@@ -399,10 +399,10 @@ const dslReport = async (req, res) => {
               current_project_id: { $first: "$current_project_id" },
               current_phase: { $first: "$current_phase" },
               current_task: { $first: "$current_task" },
-              materials: {
+              material: {
                 $push: {
-                  equipment_id: "$material_id",
-                  name: "$material.name",
+                  materialid: "$material_id",
+                  name: "$material.materialname",
                   date: "$timesheets.date",
                   qtyconsumed: "$timesheets.hoursWorked",
                   status: "$timesheets.status"
