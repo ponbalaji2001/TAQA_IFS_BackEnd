@@ -207,6 +207,7 @@ const createProject = async (req, res) => {
                   const mats={
                     material_id:mt._id,
                     material_name: mt.materialname,
+                    quantity: mt.quantity,
                     current_supervisor_id:mt.supervisor_id,
                     current_project_id:project._id,
                     current_phase:mt.current_phase,
@@ -1104,6 +1105,7 @@ const createEquipTS = async (data) => {
     const newts = await EquipTs.create({
       equipment_id: data.equipment_id,
       equipment_name: data.equipment_name,
+      quantity: data.quantity,
       current_supervisor_id: new mongoose.Types.ObjectId(data.current_supervisor_id),
       current_project_id: data.current_project_id,
       current_phase:data.current_phase,
@@ -1128,6 +1130,7 @@ const createMatTS = async (data) => {
     const newts = await MatTS.create({
       material_id: data.material_id,
       material_name: data.material_name,
+      quantity: data.quantity,
       current_supervisor_id: new mongoose.Types.ObjectId(data.current_supervisor_id),
       current_project_id: data.current_project_id,
       current_phase:data.current_phase,
