@@ -36,6 +36,10 @@ const matTimeSheetSchema = new mongoose.Schema({
     type:String,
     required: true
   },
+  quantity: {
+    type: Number,
+    required: true,
+  },
   current_supervisor_id: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,

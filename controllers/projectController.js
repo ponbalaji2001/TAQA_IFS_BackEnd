@@ -175,6 +175,7 @@ const createProject = async (req, res) => {
                   const equipts={
                     equipment_id:eq._id,
                     equipment_name: eq.name,
+                    quantity:eq.quantity,
                     current_supervisor_id:eq.supervisor_id,
                     current_project_id:project._id,
                     current_phase:eq.current_phase,
@@ -593,6 +594,7 @@ const updateProjectbyId = async (req, res) => {
                     const equipts={
                       equipment_id:eq._id,
                       equipment_name: eq.name,
+                      quantity:eq.quantity,
                       current_supervisor_id:eq.supervisor_id,
                       current_project_id:project._id,
                       current_phase:eq.current_phase,
@@ -624,6 +626,7 @@ const updateProjectbyId = async (req, res) => {
                     const mats={
                       material_id:mt._id,
                       material_name: mt.materialname,
+                      quantity:mt.quantity,
                       current_supervisor_id:mt.supervisor_id,
                       current_project_id:project._id,
                       current_phase:mt.current_phase,
