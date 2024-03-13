@@ -48,6 +48,9 @@ const employeeMaster = new mongoose.Schema({
         type: String,
         required:true,
     },
+    alternate_mobileno: {
+        type: String,
+    },
    email: {
         type: String,
     },
