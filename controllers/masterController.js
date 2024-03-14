@@ -43,9 +43,11 @@ const createEmployee = async (req, res) => {
     console.log(result);
 
     if(result && (result.role==="supervisor" || result.role==="manager")){
+
       let sendData = {
         _id: result._id,
         empid: result.id,
+        empname: result.name,
         role:result.role,
         supid: "",
       };
@@ -424,6 +426,7 @@ const createTimeSheet = async(details)=>{
   const newts = await TimeSheet.create({
       employee_id:data._id,
       empid:data.empid,
+      empname:data.empname,
       role:data.role,
       current_supervisor_id:"65e2f31ae980b93ee14d047f",    //admin id
       timesheets:[],
