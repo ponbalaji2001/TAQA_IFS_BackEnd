@@ -18,9 +18,9 @@ const createUser = async (req, res) => {
         _id: result._id,
         empid: result.id,
         empname:result.name,
-        supid: "65cb4ada4aed17b2c3ce2cdc",
-        projectid: "",
-        pro_start_date: "",
+        supid: "65e2f31ae980b93ee14d047f",
+        projectid:"",
+        pro_start_date:"",
         pro_end_date: "",
       }
       // console.log("send data",sendData);
