@@ -45,7 +45,7 @@ const createEmployee = async (req, res) => {
     if(result && (result.role==="supervisor" || result.role==="manager")){
 
       let sendData = {
-        _id: result._id,
+        _id: result.object_id,
         empid: result.id,
         empname: result.name,
         role:result.role,
