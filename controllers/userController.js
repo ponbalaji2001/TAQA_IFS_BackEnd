@@ -150,9 +150,9 @@ const getSupervisorTimesheetSheet = async (req, res) => {
 const createTimeSheet = async (details) => {
 
   try {
-    let data = details;
+    const data = details;
     const newts = await TimeSheet.create({
-      employee_id: data._id,
+      employee_id: data.object_id,
       empid: data.empid,
       current_supervisor_id: data.supid,
       current_project_id:  null,
